@@ -7,5 +7,5 @@ public enum MapValue {
     BEACH,
     FOREST,
     CREEK,
-    EMERGENCY_SITE
+    EMERGENCY_SITE;
 }
