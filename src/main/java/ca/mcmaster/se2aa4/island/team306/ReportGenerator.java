@@ -6,5 +6,5 @@ public class ReportGenerator{
     Map map;
     Drone drone;
     List<Decision> decision;
-    List<List<Integer>> creekCoords; 
+    List<Coords> creekCoords; 
 }
