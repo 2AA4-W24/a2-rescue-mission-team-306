@@ -3,7 +3,7 @@
 
 - Authors:
   - [Chengze, Zhao](zhaoc59@mcmaster.ca) 
-  - [Michael, Roberts] (roberm67@mcmaster.ca)
+  - [Michael, Roberts](roberm67@mcmaster.ca)
   - [Firstname_3, Lastname_3](macid@mcmaster.ca)
 
 ## Product Description
