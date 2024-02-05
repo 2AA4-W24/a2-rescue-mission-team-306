@@ -4,7 +4,7 @@ public class PhotoScanner {
     Mover mover;
     Map map;
 
-    MapValue scanForward(){return null;}
-    MapValue scanLeft(){return null;}
-    MapValue scanRight(){return null;}
+    MapValue scanForward(){return MapValue.OCEAN;}
+    MapValue scanLeft(){return MapValue.OCEAN;}
+    MapValue scanRight(){return MapValue.OCEAN;}
 }
