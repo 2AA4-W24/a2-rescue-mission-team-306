@@ -1,5 +1,10 @@
 package ca.mcmaster.se2aa4.island.team306;
 
-public class Radar {
+public class Radar implements Scanner{
 
+    public boolean scan(){
+        return false;
+    }
+
+    
 }

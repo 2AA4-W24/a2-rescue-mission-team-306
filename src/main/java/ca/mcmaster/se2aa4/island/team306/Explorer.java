@@ -25,6 +25,7 @@ public class Explorer implements IExplorerRaid {
 
     @Override
     public String takeDecision() {
+        
         JSONObject decision = new JSONObject();
         decision.put("action", "stop"); // we stop the exploration immediately
         logger.info("** Decision: {}",decision.toString());
@@ -41,6 +42,7 @@ public class Explorer implements IExplorerRaid {
         logger.info("The status of the drone is {}", status);
         JSONObject extraInfo = response.getJSONObject("extras");
         logger.info("Additional information received: {}", extraInfo);
+
     }
 
     @Override
