@@ -6,8 +6,12 @@ public class ParseResults {
      * Return value of ParseResults can be modified if necessary. Arbitrarily set as string
      */
 
-    public static String parseScan(String results){
-        return "";
+    public static MapValue parsePhotoScan(String results){
+        return MapValue.OCEAN;
+    }
+
+    public static ParsedRadarResult parseRadarScan(String results){
+        return new ParsedRadarResult(Direction.NORTH);
     }
 
     public static String parseStatus(String results){

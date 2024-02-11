@@ -9,8 +9,7 @@ public class Map {
     }
 
     public void updateStatus(String results){
-        String actionResults = ParseResults.parseScan(results);
-        //Return value of ParseResults can be modified if necessary. Arbitrarily set as string
+       
     }
 
 }
