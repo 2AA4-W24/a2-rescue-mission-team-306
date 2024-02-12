@@ -13,9 +13,44 @@ public class Drone {
         this.heading = heading;
     }
 
-    public void updateStatus(String results){
-        String newInfo = ParseResults.parseStatus(results);
-        //Return value of ParseResults can be modified if necessary. Arbitrarily set as string
+    public void updateEnergy(String results){
+        int cost = ParseResults.parseStatus(results);
+        this.energy -= cost;
+    }
+
+    public void move(Direction direction){
+        switch (heading) {
+            case NORTH:
+                position.y++;
+                break;
+            case SOUTH:
+                position.y--;
+                break;
+            case EAST:
+                position.x++;
+                break;
+            default:
+                position.x--;
+                break;
+        
+        }
+        if(direction != heading){
+            this.heading = direction;
+            switch (heading) {
+                case NORTH:
+                    position.y++;
+                    break;
+                case SOUTH:
+                    position.y--;
+                    break;
+                case EAST:
+                    position.x++;
+                    break;
+                default:
+                    position.x--;
+                    break;
+            }
+        }
     }
 
     
