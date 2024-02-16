@@ -53,5 +53,17 @@ public class Drone {
         }
     }
 
+    public int getEnergy(){
+        return this.energy;
+    }
+
+    public Direction getHeading(){
+        return this.heading;
+    }
+
+    public Coords getPosition(){
+        return this.position;
+    }
+
     
 }

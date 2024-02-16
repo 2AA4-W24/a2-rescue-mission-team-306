@@ -1,9 +1,9 @@
-package ca.mcmaster.se2aa4.island.team306;
+package a.mcmaster.se2aa4.island.team306;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
+import ca.mcmaster.se2aa4.island.team306.*;
 import org.junit.jupiter.api.BeforeEach;
 
 public class DroneTest {
@@ -17,20 +17,20 @@ public class DroneTest {
     @Test
     public void testUpdateStatus(){
         drone.updateEnergy("{ \"cost\": 3, \"extras\": {}, \"status\": \"OK\" }");
-        assertEquals(drone.energy, 96);
+        assertEquals(drone.getEnergy(), 96);
         drone.updateEnergy("{ \"cost\": 0, \"extras\": {}, \"status\": \"OK\" }");
-        assertEquals(drone.energy, 96);
+        assertEquals(drone.getEnergy(), 96);
     }
 
     @Test
     public void testMove(){
         drone.move(Direction.EAST);
-        assertEquals(drone.heading, Direction.EAST);
-        assertEquals(drone.position.x, 1);
-        assertEquals(drone.position.y, 0);
+        assertEquals(drone.getHeading(), Direction.EAST);
+        assertEquals(drone.getPosition().x, 1);
+        assertEquals(drone.getPosition().y, 0);
         drone.move(Direction.NORTH);
-        assertEquals(drone.heading, Direction.NORTH);
-        assertEquals(drone.position.y, 1);
-        assertEquals(drone.position.x, 2);
+        assertEquals(drone.getHeading(), Direction.NORTH);
+        assertEquals(drone.getPosition().y, 1);
+        assertEquals(drone.getPosition().x, 2);
     }
 }
