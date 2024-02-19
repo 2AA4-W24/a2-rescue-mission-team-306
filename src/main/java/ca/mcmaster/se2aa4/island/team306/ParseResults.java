@@ -1,5 +1,6 @@
 package ca.mcmaster.se2aa4.island.team306;
 
+import org.json.JSONObject;
 
 public class ParseResults {
     /*
@@ -14,7 +15,8 @@ public class ParseResults {
         return new ParsedRadarResult(Direction.NORTH);
     }
 
-    public static String parseStatus(String results){
-        return "";
+    public static int parseStatus(String results){
+        JSONObject jsonObject = new JSONObject(results);
+        return jsonObject.getInt("cost");
     }
 }
