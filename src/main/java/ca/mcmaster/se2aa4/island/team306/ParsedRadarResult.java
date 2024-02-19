@@ -2,7 +2,6 @@ package ca.mcmaster.se2aa4.island.team306;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 public class ParsedRadarResult{
