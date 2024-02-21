@@ -6,5 +6,9 @@ public class Radar implements Scanner{
         return false;
     }
 
+    public Direction scanTowards(){
+        return Direction.SOUTH;
+    }
+
     
 }

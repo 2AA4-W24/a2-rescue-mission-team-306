@@ -3,6 +3,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.json.JSONObject;
+
 import ca.mcmaster.se2aa4.island.team306.*;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -16,9 +19,16 @@ public class DroneTest {
     }
     @Test
     public void testUpdateStatus(){
-        drone.updateEnergy("{ \"cost\": 3, \"extras\": {}, \"status\": \"OK\" }");
+        JSONObject obj = new JSONObject("{ \"cost\": 3, \"extras\": {}, \"status\": \"OK\" }");
+        RawResults results = new RawResults(obj);
+        drone.updateRawResults(results);
+        drone.updateEnergy();
         assertEquals(drone.getEnergy(), 97);
-        drone.updateEnergy("{ \"cost\": 0, \"extras\": {}, \"status\": \"OK\" }");
+
+        // Usually unsafe (not here)
+        obj.put("cost", 0);
+
+        drone.updateEnergy();
         assertEquals(drone.getEnergy(), 97);
     }
 

@@ -31,22 +31,25 @@ public class Explorer implements IExplorerRaid {
         Decision decision = decider.getDecision();
         char d = decider.getJsonDirection().toChar();
         switch(decision){
-            case ABORT:
+            case Decision.ABORT:
                 decision_json.put("action", "stop"); // we stop the exploration immediately
                 break;
-            case FLY_FORWARD:
+            case Decision.FLY_FORWARD:
                 decision_json.put("action", "fly"); // we fly forward
                 break;
-            case TURN:
+            case Decision.TURN:
                 decision_json = new JSONObject(String.format(
                     "{ \"action\": \"heading\", \"parameters\": { \"direction\": \"%c\" } }", 
                     d
-                ));
+                )); // we set the heading for direction d
                 break;
-            case PHOTO:
-                char d = decider.getJsonDirection().toChar();
-
-                
+            case Decision.RADAR:
+                decision_json = new JSONObject(String.format(
+                    "{ \"action\": \"echo\", \"parameters\": { \"direction\": \"%c\" } }",
+                    d
+                )); // we use radar scan for direction d
+            case Decision.PHOTO:
+                decision_json.put("action", "scan"); // we use photo scan
             default:
                 throw new NullPointerException();
         }
@@ -57,6 +60,7 @@ public class Explorer implements IExplorerRaid {
 
     @Override
     public void acknowledgeResults(String s) {
+        // Starter code, may delete
         JSONObject response = new JSONObject(new JSONTokener(new StringReader(s)));
         logger.info("** Response received:\n"+response.toString(2));
         Integer cost = response.getInt("cost");
@@ -66,6 +70,9 @@ public class Explorer implements IExplorerRaid {
         JSONObject extraInfo = response.getJSONObject("extras");
         logger.info("Additional information received: {}", extraInfo);
 
+        // Important code
+        RawResults results = new RawResults(new JSONObject(s));
+        decider.updateRawResults(results);
     }
 
     @Override
