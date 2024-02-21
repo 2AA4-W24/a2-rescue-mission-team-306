@@ -6,6 +6,7 @@ public class Decider {
     private Aborter aborter;
     private PhotoScanner photo;
     private Decision decision;
+    private Direction jsonDirection;
 
     public Decider(){
         this.decision = Decision.ABORT;
@@ -14,6 +15,10 @@ public class Decider {
     public Decision getDecision(){
         updateDecision();
         return this.decision;
+    }
+
+    public Direction getJsonDirection(){
+        return jsonDirection;
     }
 
     private void updateDecision(){

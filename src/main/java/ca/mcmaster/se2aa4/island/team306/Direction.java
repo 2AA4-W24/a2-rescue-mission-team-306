@@ -5,4 +5,19 @@ public enum Direction {
     WEST,
     SOUTH,
     EAST;
+
+    public char toChar(){
+        switch(this){
+            case NORTH:
+                return 'N';
+            case SOUTH:
+                return 'S';
+            case EAST:
+                return 'E';
+            case WEST:
+                return 'W';
+            default:
+                throw new AssertionError();
+        }
+    }
 }

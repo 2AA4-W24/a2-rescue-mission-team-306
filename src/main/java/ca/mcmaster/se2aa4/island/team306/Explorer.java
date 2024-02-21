@@ -11,6 +11,8 @@ import org.json.JSONTokener;
 public class Explorer implements IExplorerRaid {
 
     private final Logger logger = LogManager.getLogger();
+    public static final Decider decider = new Decider();
+        
 
     @Override
     public void initialize(String s) {
@@ -25,11 +27,32 @@ public class Explorer implements IExplorerRaid {
 
     @Override
     public String takeDecision() {
-        
-        JSONObject decision = new JSONObject();
-        decision.put("action", "stop"); // we stop the exploration immediately
-        logger.info("** Decision: {}",decision.toString());
-        return decision.toString();
+        JSONObject decision_json = new JSONObject();
+        Decision decision = decider.getDecision();
+        char d = decider.getJsonDirection().toChar();
+        switch(decision){
+            case ABORT:
+                decision_json.put("action", "stop"); // we stop the exploration immediately
+                break;
+            case FLY_FORWARD:
+                decision_json.put("action", "fly"); // we fly forward
+                break;
+            case TURN:
+                decision_json = new JSONObject(String.format(
+                    "{ \"action\": \"heading\", \"parameters\": { \"direction\": \"%c\" } }", 
+                    d
+                ));
+                break;
+            case PHOTO:
+                char d = decider.getJsonDirection().toChar();
+
+                
+            default:
+                throw new NullPointerException();
+        }
+            
+        logger.info("** Decision: {}",decision_json.toString());
+        return decision_json.toString();
     }
 
     @Override

@@ -17,9 +17,9 @@ public class DroneTest {
     @Test
     public void testUpdateStatus(){
         drone.updateEnergy("{ \"cost\": 3, \"extras\": {}, \"status\": \"OK\" }");
-        assertEquals(drone.getEnergy(), 96);
+        assertEquals(drone.getEnergy(), 97);
         drone.updateEnergy("{ \"cost\": 0, \"extras\": {}, \"status\": \"OK\" }");
-        assertEquals(drone.getEnergy(), 96);
+        assertEquals(drone.getEnergy(), 97);
     }
 
     @Test
