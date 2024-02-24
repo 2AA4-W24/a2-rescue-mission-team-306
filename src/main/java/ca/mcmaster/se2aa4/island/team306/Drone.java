@@ -9,7 +9,7 @@ public class Drone {
     public Drone(int maxRange, int energy, Coords position, Direction heading){
         this.maxRange = maxRange; 
         this.energy = energy;
-        this.position = position;
+        this.position = new Coords(0, 0);
         this.heading = heading;
     }
 
