@@ -4,5 +4,6 @@ public enum Decision {
     ABORT,
     FLY_FORWARD,
     TURN,
-    TURN_RIGHT;
+    RADAR,
+    PHOTO;
 }
