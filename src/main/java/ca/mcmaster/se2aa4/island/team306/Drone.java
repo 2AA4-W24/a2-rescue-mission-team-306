@@ -28,16 +28,16 @@ public class Drone {
     private void moveStep(Direction direction){
         switch (direction) {
             case Direction.NORTH:
-                this.position = new Coords(position.x, position.y+1);
+                this.position = this.position.offset(0, 1);
                 break;
             case Direction.SOUTH:
-                this.position = new Coords(position.x, position.y-1);
+                this.position = this.position.offset(0, -1);
                 break;
             case Direction.EAST:
-                this.position = new Coords(position.x+1, position.y);
+                this.position = this.position.offset(1, 0);
                 break;
             case Direction.WEST:
-                this.position = new Coords(position.x-1, position.y);
+                this.position = this.position.offset(-1, 0);
                 break;
         
         }

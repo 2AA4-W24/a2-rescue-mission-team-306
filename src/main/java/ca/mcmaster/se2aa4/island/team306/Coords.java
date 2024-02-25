@@ -8,4 +8,24 @@ public class Coords {
         this.x = x; 
         this.y = y;
     }
+
+    public Coords offset(int x, int y){
+        if (x == 0 && y == 0) return this; //Save memory if no offset
+        return new Coords(this.x + x, this.y + y);
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if (this == o) return true;
+        if (!(o instanceof Coords)) return false;
+
+        Coords c = (Coords) o;
+        return this.x == c.x && this.y == c.y;
+    }
+
+    @Override
+    public int hashCode(){
+        // Picked larger prime than Objects.hash to avoid hash collisions.
+        return 65535 * this.x + this.y;
+    }
 }
