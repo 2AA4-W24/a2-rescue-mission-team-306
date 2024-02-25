@@ -1,8 +1,10 @@
 package ca.mcmaster.se2aa4.island.team306;
 
+import java.util.Objects;
+
 public class Coords {
-    public int x;
-    public int y;
+    final public int x;
+    final public int y;
 
     public Coords(int x, int y){
         this.x = x; 
@@ -21,6 +23,7 @@ public class Coords {
 
         Coords c = (Coords) o;
         return this.x == c.x && this.y == c.y;
+
     }
 
     @Override
@@ -30,3 +33,4 @@ public class Coords {
         return 65537 * this.x + this.y;
     }
 }
+
