@@ -25,38 +25,29 @@ public class Drone {
         this.energy -= cost;
     }
 
-    public void move(Direction direction){
-        switch (heading) {
-            case NORTH:
-                position.y++;
+    private void moveStep(Direction direction){
+        switch (direction) {
+            case Direction.NORTH:
+                this.position = this.position.offset(0, 1);
                 break;
-            case SOUTH:
-                position.y--;
+            case Direction.SOUTH:
+                this.position = this.position.offset(0, -1);
                 break;
-            case EAST:
-                position.x++;
+            case Direction.EAST:
+                this.position = this.position.offset(1, 0);
                 break;
-            default:
-                position.x--;
+            case Direction.WEST:
+                this.position = this.position.offset(-1, 0);
                 break;
         
         }
+    }
+
+    public void move(Direction direction){
+        moveStep(heading);
         if(direction != heading){
             this.heading = direction;
-            switch (heading) {
-                case NORTH:
-                    position.y++;
-                    break;
-                case SOUTH:
-                    position.y--;
-                    break;
-                case EAST:
-                    position.x++;
-                    break;
-                default:
-                    position.x--;
-                    break;
-            }
+            moveStep(heading);
         }
     }
 
