@@ -26,6 +26,7 @@ public class Coords {
     @Override
     public int hashCode(){
         // Picked larger prime than Objects.hash to avoid hash collisions.
+        // Picked 2^16 - 1 for bitshift optomization.
         return 65535 * this.x + this.y;
     }
 }
