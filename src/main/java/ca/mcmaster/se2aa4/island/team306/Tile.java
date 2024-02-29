@@ -25,4 +25,8 @@ public class Tile {
     public Coords getLocation(){
         return this.location;
     }
+
+    public String getID(){
+        return this.id;
+    }
 }

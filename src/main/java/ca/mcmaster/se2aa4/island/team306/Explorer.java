@@ -12,8 +12,8 @@ public class Explorer implements IExplorerRaid {
 
     private final Logger logger = LogManager.getLogger();
     public static final Decider decider = new Decider();
-    public static final Drone drone = new Drone(
-        500, 10000, new Coords(0, 0), Direction.WEST);
+    private Drone drone;
+    private Map map;
     private Direction prevDirection;
     private Decision prevDecision;
 
@@ -26,6 +26,9 @@ public class Explorer implements IExplorerRaid {
         Integer batteryLevel = info.getInt("budget");
         logger.info("The drone is facing {}", direction);
         logger.info("Battery level is {}", batteryLevel);
+
+        drone = new Drone(batteryLevel, Direction.valueOf(direction.toUpperCase()));
+        map = new Map();
 
     }
 
@@ -79,6 +82,7 @@ public class Explorer implements IExplorerRaid {
         // Important code
         ParsedResult r = ParsedResult.builder(prevDirection, prevDecision).populate(s).build();
         drone.updateResult(r);
+        map.updateStatus(r);
     }
 
     @Override

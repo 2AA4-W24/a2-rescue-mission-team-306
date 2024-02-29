@@ -7,16 +7,11 @@ public class Drone {
     private Direction heading;
     private ParsedResult result;
 
-    public Drone(int maxRange, int energy, Coords position, Direction heading){
-        this.maxRange = maxRange; 
+    public Drone(int energy, Direction heading){
+        this.maxRange = 0; 
         this.energy = energy;
-        this.position = position;
+        this.position = new Coords(0, 0);
         this.heading = heading;
-    }
-
-    private void updateEnergy(){
-        int cost = this.result.getCost();
-        this.energy -= cost;
     }
 
     private void moveStep(Direction direction){
@@ -58,12 +53,7 @@ public class Drone {
         return this.position;
     }
 
-    public ParsedResult getResult(){
-        return this.result;
-    }
-
     public void updateResult(ParsedResult r){
         this.result = r;
-        updateEnergy();
     }
 }
