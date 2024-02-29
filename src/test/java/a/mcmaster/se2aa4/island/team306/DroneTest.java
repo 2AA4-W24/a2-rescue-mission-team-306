@@ -11,8 +11,7 @@ public class DroneTest {
 
     @BeforeEach 
     public void setUp(){
-        drone = new Drone(
-            500, 100, new Coords(0, 0), Direction.EAST);
+        drone = new Drone(100, new Coords(0, 0), Direction.EAST);
     }
 
     @Test
