@@ -9,7 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class ParsedResult{
-    private List<MapValue> values = new ArrayList<>();
+    private List<MapValue> values;
     private final Direction direction;
     private final String id;
     private final Decision decision;
@@ -18,6 +18,7 @@ public class ParsedResult{
     public ParsedResult(Direction direction, Decision decision, String results){
         this.direction = direction;
         this.decision = decision;
+        this.values = null;
 
         JSONObject jsonObject = new JSONObject(results);
         this.cost = jsonObject.getInt("cost");
@@ -31,7 +32,8 @@ public class ParsedResult{
                 this.id = null;  
             break;
 
-            case RADAR:
+            case RADAR: 
+                this.values = new ArrayList<>();
                 int distance = jsonObject.getJSONObject("extras").getInt("range");
                 for(int i = 0; i<distance; i++){
                     addValue(MapValue.OCEAN);
@@ -63,19 +65,20 @@ public class ParsedResult{
         }
     }
 
-    public List<MapValue> getValues(){
-        return Collections.unmodifiableList(values);
-    }
-
-    public void addValue(MapValue value){
+    private void addValue(MapValue value){
         switch(value){
             case MapValue.OCEAN:
             case MapValue.GROUND:
                 values.add(value);
                 break;
             default:
-                throw new IllegalArgumentException(value.toString());
+                throw new AssertionError(value.toString());
         }
+    }
+
+    public List<MapValue> getValues(){
+        if (values == null) return null;
+        return Collections.unmodifiableList(values);
     }
 
     public Direction getDirection(){

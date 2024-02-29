@@ -5,6 +5,7 @@ public class Drone {
     int energy;
     Coords position;
     Direction heading;
+    ParsedResult result;
 
     public Drone(int maxRange, int energy, Coords position, Direction heading){
         this.maxRange = maxRange; 
@@ -13,43 +14,35 @@ public class Drone {
         this.heading = heading;
     }
 
-    public void updateEnergy(String results){
-        int cost = ParseResults.parseStatus(results);
+    private void updateEnergy(){
+        int cost = this.result.getCost();
         this.energy -= cost;
     }
 
-    public void move(Direction direction){
-        switch (heading) {
+    private void moveStep(Direction direction){
+        switch(direction){
             case NORTH:
-                position.y++;
+                position = position.offset(0, 1);
                 break;
             case SOUTH:
-                position.y--;
+            position = position.offset(0, -1);
                 break;
             case EAST:
-                position.x++;
+                position = position.offset(1, 0);
+                break;
+            case WEST:
+                position.offset(-1, 0);
                 break;
             default:
-                position.x--;
-                break;
-        
+                throw new NullPointerException();
         }
+    }
+
+    public void move(Direction direction){
+        moveStep(heading);
         if(direction != heading){
             this.heading = direction;
-            switch (heading) {
-                case NORTH:
-                    position.y++;
-                    break;
-                case SOUTH:
-                    position.y--;
-                    break;
-                case EAST:
-                    position.x++;
-                    break;
-                default:
-                    position.x--;
-                    break;
-            }
+            moveStep(heading);
         }
     }
 
@@ -65,5 +58,12 @@ public class Drone {
         return this.position;
     }
 
-    
+    public ParsedResult getResult(){
+        return this.result;
+    }
+
+    public void updateResult(ParsedResult r){
+        this.result = r;
+        updateEnergy();
+    }
 }

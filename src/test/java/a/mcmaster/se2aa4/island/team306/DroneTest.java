@@ -11,15 +11,21 @@ public class DroneTest {
 
     @BeforeEach 
     public void setUp(){
-        Coords start = new Coords(0, 0);
-        drone = new Drone(0, 100, start, Direction.EAST);
+        drone = Explorer.drone;
     }
+
     @Test
     public void testUpdateStatus(){
-        drone.updateEnergy("{ \"cost\": 3, \"extras\": {}, \"status\": \"OK\" }");
-        assertEquals(drone.getEnergy(), 97);
-        drone.updateEnergy("{ \"cost\": 0, \"extras\": {}, \"status\": \"OK\" }");
-        assertEquals(drone.getEnergy(), 97);
+        
+        ParsedResult result = new ParsedResult(Direction.NORTH, Decision.FLY_FORWARD,
+         "{ \"cost\": 3, \"extras\": {}, \"status\": \"OK\" }");
+        drone.updateResult(result);
+        assertEquals(drone.getEnergy(), 9997);
+
+        result = new ParsedResult(Direction.SOUTH, Decision.ABORT,
+         "{ \"cost\": 0, \"extras\": {}, \"status\": \"OK\" }");
+        drone.updateResult(result);
+        assertEquals(drone.getEnergy(), 9997);
     }
 
     @Test

@@ -6,26 +6,53 @@ public class Decider {
     private Aborter aborter;
     private PhotoScanner photo;
     private Decision decision;
-    private Direction jsonDirection;
+    private Direction direction;
+    private ParsedResult result;
+    private Drone drone;
 
     public Decider(){
         this.decision = Decision.ABORT;
     }
 
-    public Decision getDecision(){
+    public Decision getNewDecision(){
         updateDecision();
         return this.decision;
     }
 
-    public Direction getJsonDirection(){
-        return jsonDirection;
+    public Direction getNewDirection(){
+        return this.direction;
     }
+
 
     private void updateDecision(){
         boolean abortCheck = aborter.abort();
-        boolean moveCheck = mover.move();
-        boolean radarCheck = radar.scan();
+        if (abortCheck){
+            this.decision = Decision.ABORT;
+            return;
+        }
         boolean photoCheck = photo.scan();
-        this.decision = Decision.ABORT;
+        if (photoCheck){
+            this.decision = Decision.PHOTO;
+        }
+        boolean radarCheck = radar.scan();
+        if (radarCheck){
+            this.decision = Decision.RADAR;
+            return;
+        }
+        boolean moveCheck = mover.move();
+        if (moveCheck){
+            if (mover.goTowards() == this.direction) {
+                this.decision = Decision.FLY_FORWARD;
+            }
+            else {
+                this.decision = Decision.TURN;
+            }
+            return;
+        }
+        else {
+            throw new AssertionError("No direction made");
+        }
     }
+
 }
+

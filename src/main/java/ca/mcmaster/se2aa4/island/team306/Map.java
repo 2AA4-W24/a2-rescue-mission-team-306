@@ -5,10 +5,10 @@ public class Map {
     Coords base;
     
     public Map(Coords base){
-        
+        this.base = base;
     }
 
-    public void updateStatus(String results){
+    public void updateStatus(ParsedResult result){
        
     }
 
