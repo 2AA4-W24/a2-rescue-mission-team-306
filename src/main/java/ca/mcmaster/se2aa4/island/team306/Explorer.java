@@ -12,6 +12,8 @@ public class Explorer implements IExplorerRaid {
 
     private final Logger logger = LogManager.getLogger();
     public static final Decider decider = new Decider();
+    public Drone drone;
+    public Map map;
         
 
     @Override
@@ -23,6 +25,9 @@ public class Explorer implements IExplorerRaid {
         Integer batteryLevel = info.getInt("budget");
         logger.info("The drone is facing {}", direction);
         logger.info("Battery level is {}", batteryLevel);
+
+        drone = new Drone(0, batteryLevel, Direction.valueOf(direction));
+        map = new Map();
     }
 
     @Override
@@ -30,23 +35,29 @@ public class Explorer implements IExplorerRaid {
         JSONObject decision_json = new JSONObject();
         Decision decision = decider.getDecision();
         char d = decider.getJsonDirection().toChar();
+        ParseResults.setDecision(decision);
+        ParseResults.setDirection(decider.getJsonDirection());
+
         switch(decision){
-            case ABORT:
+            case Decision.ABORT:
                 decision_json.put("action", "stop"); // we stop the exploration immediately
                 break;
-            case FLY_FORWARD:
+            case Decision.FLY_FORWARD:
                 decision_json.put("action", "fly"); // we fly forward
                 break;
-            case TURN:
+            case Decision.TURN:
                 decision_json = new JSONObject(String.format(
                     "{ \"action\": \"heading\", \"parameters\": { \"direction\": \"%c\" } }", 
                     d
-                ));
+                )); // we set the heading for direction d
                 break;
-            case PHOTO:
-                char d = decider.getJsonDirection().toChar();
-
-                
+            case Decision.RADAR:
+                decision_json = new JSONObject(String.format(
+                    "{ \"action\": \"echo\", \"parameters\": { \"direction\": \"%c\" } }",
+                    d
+                )); // we use radar scan for direction d
+            case Decision.PHOTO:
+                decision_json.put("action", "scan"); // we use photo scan
             default:
                 throw new NullPointerException();
         }
@@ -65,6 +76,9 @@ public class Explorer implements IExplorerRaid {
         logger.info("The status of the drone is {}", status);
         JSONObject extraInfo = response.getJSONObject("extras");
         logger.info("Additional information received: {}", extraInfo);
+
+        drone.updateStatus(s);
+        map.updateStatus(s);
 
     }
 

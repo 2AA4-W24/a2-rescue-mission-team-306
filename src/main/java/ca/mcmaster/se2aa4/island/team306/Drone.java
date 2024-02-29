@@ -6,16 +6,15 @@ public class Drone {
     Coords position;
     Direction heading;
 
-    public Drone(int maxRange, int energy, Coords position, Direction heading){
+    public Drone(int maxRange, int energy, Direction heading){
         this.maxRange = maxRange; 
         this.energy = energy;
-        this.position = position;
+        this.position = new Coords(0, 0);
         this.heading = heading;
     }
 
-    public void updateEnergy(String results){
-        int cost = ParseResults.parseStatus(results);
-        this.energy -= cost;
+    public void updateStatus(String results){
+        //TODO
     }
 
     public void move(Direction direction){

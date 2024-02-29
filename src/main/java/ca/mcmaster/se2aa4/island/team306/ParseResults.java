@@ -7,7 +7,6 @@ public class ParseResults {
     private static Direction direction;
     private static Decision decision;
     
-    
     public static ParsedResult parse(String results){
         String id;
         int cost;
@@ -69,8 +68,5 @@ public class ParseResults {
 
     public static void setDecision(Decision newDecision){
         decision = newDecision;
-    }
-
-
-    
+    } 
 }
