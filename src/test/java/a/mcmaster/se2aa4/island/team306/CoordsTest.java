@@ -31,6 +31,7 @@ public class CoordsTest {
     }
 
     private boolean doubleEquals(double d1, double d2){
+        // Account for floating-point errrors
         return Math.abs(d1 - d2) < double_margin;
     }
 
