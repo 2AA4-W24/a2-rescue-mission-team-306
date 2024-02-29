@@ -20,4 +20,23 @@ public enum Direction {
                 throw new AssertionError();
         }
     }
+
+    public static Direction fromChar(char c){
+        switch(c){
+            case 'N':
+            case 'n':
+                return NORTH;
+            case 'W':
+            case 'w':
+                return WEST;
+            case 'S':
+            case 's':
+                return SOUTH;
+            case 'E':
+            case 'e':
+                return EAST;
+            default:
+                throw new IllegalArgumentException("Unrecognized character abbreviation");
+        }
+    }
 }

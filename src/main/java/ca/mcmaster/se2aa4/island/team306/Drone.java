@@ -1,11 +1,11 @@
 package ca.mcmaster.se2aa4.island.team306;
 
 public class Drone {
-    int maxRange;
-    int energy;
-    Coords position;
-    Direction heading;
-    ParsedResult result;
+    private int maxRange;
+    private int energy;
+    private Coords position;
+    private Direction heading;
+    private ParsedResult result;
 
     public Drone(int maxRange, int energy, Coords position, Direction heading){
         this.maxRange = maxRange; 

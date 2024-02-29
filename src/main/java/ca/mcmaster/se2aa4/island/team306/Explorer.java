@@ -12,7 +12,7 @@ public class Explorer implements IExplorerRaid {
 
     private final Logger logger = LogManager.getLogger();
     public static final Decider decider = new Decider();
-    public static Drone drone = new Drone(
+    public static final Drone drone = new Drone(
         500, 10000, new Coords(0, 0), Direction.WEST);
     private Direction prevDirection;
     private Decision prevDecision;

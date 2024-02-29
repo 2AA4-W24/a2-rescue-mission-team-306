@@ -1,8 +1,8 @@
 package ca.mcmaster.se2aa4.island.team306;
 
 public class Map {
-    Tile tiles[][];
-    Coords base;
+    private Tile tiles[][];
+    private Coords base;
     
     public Map(Coords base){
         this.base = base;
