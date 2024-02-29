@@ -77,7 +77,7 @@ public class Explorer implements IExplorerRaid {
         logger.info("Additional information received: {}", extraInfo);
 
         // Important code
-        ParsedResult r = new ParsedResult(prevDirection, prevDecision, s);
+        ParsedResult r = ParsedResult.builder(prevDirection, prevDecision).populate(s).build();
         drone.updateResult(r);
     }
 

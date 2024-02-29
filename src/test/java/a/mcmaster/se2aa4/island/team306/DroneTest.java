@@ -18,13 +18,13 @@ public class DroneTest {
     @Test
     public void testUpdateStatus(){
         
-        ParsedResult result = new ParsedResult(Direction.NORTH, Decision.FLY_FORWARD,
-         "{ \"cost\": 3, \"extras\": {}, \"status\": \"OK\" }");
+        ParsedResult result = ParsedResult.builder(Direction.NORTH, Decision.FLY_FORWARD).populate(
+         "{ \"cost\": 3, \"extras\": {}, \"status\": \"OK\" }").build();
         drone.updateResult(result);
         assertEquals(drone.getEnergy(), 97);
 
-        result = new ParsedResult(Direction.SOUTH, Decision.TURN,
-         "{ \"cost\": 0, \"extras\": {}, \"status\": \"OK\" }");
+        result = ParsedResult.builder(Direction.SOUTH, Decision.TURN).populate(
+         "{ \"cost\": 0, \"extras\": {}, \"status\": \"OK\" }").build();
         drone.updateResult(result);
         assertEquals(drone.getEnergy(), 97);
     }
