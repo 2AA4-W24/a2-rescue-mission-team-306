@@ -25,13 +25,13 @@ public class Drone {
                 position = position.offset(0, 1);
                 break;
             case SOUTH:
-            position = position.offset(0, -1);
+                position = position.offset(0, -1);
                 break;
             case EAST:
                 position = position.offset(1, 0);
                 break;
             case WEST:
-                position.offset(-1, 0);
+                position = position.offset(-1, 0);
                 break;
             default:
                 throw new NullPointerException();

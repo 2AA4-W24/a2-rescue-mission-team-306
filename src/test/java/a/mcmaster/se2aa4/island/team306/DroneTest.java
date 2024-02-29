@@ -11,7 +11,8 @@ public class DroneTest {
 
     @BeforeEach 
     public void setUp(){
-        drone = Explorer.drone;
+        drone = new Drone(
+            500, 100, new Coords(0, 0), Direction.EAST);
     }
 
     @Test
@@ -20,12 +21,12 @@ public class DroneTest {
         ParsedResult result = new ParsedResult(Direction.NORTH, Decision.FLY_FORWARD,
          "{ \"cost\": 3, \"extras\": {}, \"status\": \"OK\" }");
         drone.updateResult(result);
-        assertEquals(drone.getEnergy(), 9997);
+        assertEquals(drone.getEnergy(), 97);
 
-        result = new ParsedResult(Direction.SOUTH, Decision.ABORT,
+        result = new ParsedResult(Direction.SOUTH, Decision.TURN,
          "{ \"cost\": 0, \"extras\": {}, \"status\": \"OK\" }");
         drone.updateResult(result);
-        assertEquals(drone.getEnergy(), 9997);
+        assertEquals(drone.getEnergy(), 97);
     }
 
     @Test
