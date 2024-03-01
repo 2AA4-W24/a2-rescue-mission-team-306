@@ -2,7 +2,7 @@ package ca.mcmaster.se2aa4.island.team306;
 
 public class Mover {
     private Drone drone;
-    public Map map;
+    private Map map;
 
     public Mover(){}
 

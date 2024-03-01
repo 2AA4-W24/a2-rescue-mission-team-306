@@ -6,61 +6,51 @@ public class Decider {
     private Aborter aborter;
     private PhotoScanner photo;
     private Decision decision;
-    private Direction jsonDirection;
-    private Direction currentDirection;
+    private Direction direction;
     private Drone drone;
 
     public Decider(){
         this.decision = Decision.ABORT;
     }
 
-    public Decision getDecision(){
+    public Decision getNewDecision(){
         updateDecision();
         return this.decision;
     }
 
-    public Direction getJsonDirection(){
-        return jsonDirection;
+    public Direction getNewDirection(){
+        return this.direction;
     }
 
-    public Direction getCurrentDirection(){
-        return currentDirection;
-    }
-
-    public void updateRawResults(RawResults results){
-        drone.updateRawResults(results);
-    }
 
     private void updateDecision(){
         boolean abortCheck = aborter.abort();
-        boolean moveCheck = mover.move();
-        boolean radarCheck = radar.scan();
-        boolean photoCheck = photo.scan();
         if (abortCheck){
             this.decision = Decision.ABORT;
             return;
         }
+        boolean photoCheck = photo.scan();
+        if (photoCheck){
+            this.decision = Decision.PHOTO;
+        }
+        boolean radarCheck = radar.scan();
+        if (radarCheck){
+            this.decision = Decision.RADAR;
+            return;
+        }
+        boolean moveCheck = mover.move();
         if (moveCheck){
-            Direction towards = mover.goTowards();
-            this.jsonDirection = towards;
-            if (this.currentDirection == towards){
+            if (mover.goTowards() == this.direction) {
                 this.decision = Decision.FLY_FORWARD;
             }
             else {
-                this.currentDirection = towards;
                 this.decision = Decision.TURN;
             }
             return;
         }
-        if (radarCheck){
-            this.jsonDirection = radar.scanTowards();
-            this.decision = Decision.RADAR;
-            return;
+        else {
+            throw new AssertionError("No direction made");
         }
-        if (photoCheck){
-            this.decision = Decision.PHOTO;
-            return;
-        }
-        throw new AssertionError("No decision made");
     }
+
 }

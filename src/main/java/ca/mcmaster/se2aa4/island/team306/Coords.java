@@ -1,36 +1,35 @@
 package ca.mcmaster.se2aa4.island.team306;
 
-import java.util.Objects;
-
 public class Coords {
-    final public int x;
-    final public int y;
+    public final int x;
+    public final int y;
 
     public Coords(int x, int y){
         this.x = x; 
         this.y = y;
     }
 
-    public Coords offset(int x, int y){
-        if (x == 0 && y == 0) return this; //Save memory if no offset
-        return new Coords(this.x + x, this.y + y);
+    public double distance(Coords other){
+        return Math.sqrt(Math.pow((other.x - this.x), 2) + Math.pow((other.y - this.y), 2));
+    }
+
+    public Coords offset(int xOffset, int yOffset){
+        if (xOffset == 0 && yOffset == 0) return this;
+        return new Coords(this.x + xOffset, this.y + yOffset);
     }
 
     @Override
     public boolean equals(Object o){
-        if (this == o) return true;
-        if (!(o instanceof Coords)) return false;
-
+        if (this == o)  return true;
+        if (!(o instanceof Coords)){
+            return false;
+        }
         Coords c = (Coords) o;
-        return this.x == c.x && this.y == c.y;
-
+        return c.x == this.x && c.y == this.y;
     }
 
     @Override
     public int hashCode(){
-        // Picked larger prime than Objects.hash to avoid hash collisions.
-        // Picked 2^16 + 1 for bitshift optomization.
         return 65537 * this.x + this.y;
     }
 }
-

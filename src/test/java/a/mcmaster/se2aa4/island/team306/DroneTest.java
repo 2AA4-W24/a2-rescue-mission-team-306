@@ -3,9 +3,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import org.json.JSONObject;
-
 import ca.mcmaster.se2aa4.island.team306.*;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -14,21 +11,20 @@ public class DroneTest {
 
     @BeforeEach 
     public void setUp(){
-        Coords start = new Coords(0, 0);
-        drone = new Drone(0, 100, start, Direction.EAST);
+        drone = new Drone(100, Direction.EAST);
     }
+
     @Test
     public void testUpdateStatus(){
-        JSONObject obj = new JSONObject("{ \"cost\": 3, \"extras\": {}, \"status\": \"OK\" }");
-        RawResults results = new RawResults(obj);
-        drone.updateRawResults(results);
-        drone.updateEnergy();
+        
+        ParsedResult result = ParsedResult.builder(Direction.NORTH, Decision.FLY_FORWARD).populate(
+         "{ \"cost\": 3, \"extras\": {}, \"status\": \"OK\" }").build();
+        drone.updateResult(result);
         assertEquals(drone.getEnergy(), 97);
 
-        // Usually unsafe (not here)
-        obj.put("cost", 0);
-
-        drone.updateEnergy();
+        result = ParsedResult.builder(Direction.SOUTH, Decision.TURN).populate(
+         "{ \"cost\": 0, \"extras\": {}, \"status\": \"OK\" }").build();
+        drone.updateResult(result);
         assertEquals(drone.getEnergy(), 97);
     }
 
