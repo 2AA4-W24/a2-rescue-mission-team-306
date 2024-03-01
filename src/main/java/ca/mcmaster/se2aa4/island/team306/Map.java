@@ -14,5 +14,7 @@ public class Map {
        this.result = result;
     }
 
-    
+    public MapValue checkCoords(Coords c){
+        return MapValue.UNKNOWN;
+    }
 }
