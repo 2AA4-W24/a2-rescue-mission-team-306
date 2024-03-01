@@ -1,5 +1,7 @@
 package ca.mcmaster.se2aa4.island.team306;
 
+import org.json.JSONObject;
+
 public class Drone {
     private int maxRange;
     private int energy;
