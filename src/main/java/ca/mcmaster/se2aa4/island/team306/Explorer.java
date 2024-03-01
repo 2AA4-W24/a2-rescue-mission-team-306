@@ -12,7 +12,10 @@ public class Explorer implements IExplorerRaid {
 
     private final Logger logger = LogManager.getLogger();
     public static final Decider decider = new Decider();
-        
+    private Drone drone;
+    private Map map;
+    private Direction prevDirection;
+    private Decision prevDecision;
 
     @Override
     public void initialize(String s) {
@@ -23,13 +26,19 @@ public class Explorer implements IExplorerRaid {
         Integer batteryLevel = info.getInt("budget");
         logger.info("The drone is facing {}", direction);
         logger.info("Battery level is {}", batteryLevel);
+
+        drone = new Drone(batteryLevel, Direction.valueOf(direction.toUpperCase()));
+        map = new Map();
+
     }
 
     @Override
     public String takeDecision() {
         JSONObject decision_json = new JSONObject();
-        Decision decision = decider.getDecision();
-        char d = decider.getJsonDirection().toChar();
+        Decision decision = decider.getNewDecision();
+        this.prevDecision = decision;
+        this.prevDirection = decider.getNewDirection();
+        char d = this.prevDirection.toChar();
         switch(decision){
             case Decision.ABORT:
                 decision_json.put("action", "stop"); // we stop the exploration immediately
@@ -60,7 +69,7 @@ public class Explorer implements IExplorerRaid {
 
     @Override
     public void acknowledgeResults(String s) {
-        // Starter code, may delete
+        // Starter code
         JSONObject response = new JSONObject(new JSONTokener(new StringReader(s)));
         logger.info("** Response received:\n"+response.toString(2));
         Integer cost = response.getInt("cost");
@@ -71,8 +80,9 @@ public class Explorer implements IExplorerRaid {
         logger.info("Additional information received: {}", extraInfo);
 
         // Important code
-        RawResults results = new RawResults(new JSONObject(s));
-        decider.updateRawResults(results);
+        ParsedResult r = ParsedResult.builder(prevDirection, prevDecision).populate(s).build();
+        drone.updateResult(r);
+        map.updateStatus(r);
     }
 
     @Override

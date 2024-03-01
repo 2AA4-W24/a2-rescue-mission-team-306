@@ -1,45 +1,35 @@
 package ca.mcmaster.se2aa4.island.team306;
 
-import org.json.JSONObject;
-
 public class Drone {
-    int maxRange;
-    int energy;
-    Coords position;
-    Direction heading;
-    private RawResults rawResults;
+    private int maxRange;
+    private int energy;
+    private Coords position;
+    private Direction heading;
+    private ParsedResult result;
 
-    public Drone(int maxRange, int energy, Coords position, Direction heading){
-        this.maxRange = maxRange; 
+    public Drone(int energy, Direction heading){
+        this.maxRange = 0; 
         this.energy = energy;
         this.position = new Coords(0, 0);
         this.heading = heading;
     }
 
-    public void updateRawResults(RawResults results){
-        this.rawResults = results;
-    }
-
-    public void updateEnergy(){
-        int cost = rawResults.parseStatus();
-        this.energy -= cost;
-    }
-
     private void moveStep(Direction direction){
-        switch (direction) {
-            case Direction.NORTH:
-                this.position = this.position.offset(0, 1);
+        switch(direction){
+            case NORTH:
+                position = position.offset(0, 1);
                 break;
-            case Direction.SOUTH:
-                this.position = this.position.offset(0, -1);
+            case SOUTH:
+                position = position.offset(0, -1);
                 break;
-            case Direction.EAST:
-                this.position = this.position.offset(1, 0);
+            case EAST:
+                position = position.offset(1, 0);
                 break;
-            case Direction.WEST:
-                this.position = this.position.offset(-1, 0);
+            case WEST:
+                position = position.offset(-1, 0);
                 break;
-        
+            default:
+                throw new NullPointerException();
         }
     }
 
@@ -63,5 +53,14 @@ public class Drone {
         return this.position;
     }
 
-    
+    public void updateResult(ParsedResult r){
+        this.result = r;
+        updateEnergy();
+    }
+
+    private void updateEnergy(){
+        int cost = this.result.getCost();
+        this.energy -= cost;
+    }
+
 }
