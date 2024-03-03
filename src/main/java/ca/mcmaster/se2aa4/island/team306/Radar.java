@@ -7,6 +7,7 @@ public class Radar implements Scanner{
     private RadarState state;
 
     private boolean foundLand;
+    private boolean inFirstCycle;
     private int forwardCounter;
     private int backwardCounter;
 
@@ -17,6 +18,7 @@ public class Radar implements Scanner{
         this.state = RadarState.FORWARD;
         this.forwardCounter = this.backwardCounter = 0;
         this.foundLand = false;
+        this.inFirstCycle = true;
     }
     public boolean checkScan(){
         if (this.foundLand) {
@@ -44,7 +46,7 @@ public class Radar implements Scanner{
         ParsedResult result = drone.getLastResult();
         this.foundLand = result.hasLand();
 
-        if (beginPos == drone.getStartPosition()){
+        if (inFirstCycle){
             if (this.state == RadarState.FORWARD){
                 this.forwardCounter = result.getRange();
             }
@@ -55,6 +57,9 @@ public class Radar implements Scanner{
 
         if(!this.foundLand){
             this.state = this.state.next();
+            if (!inFirstCycle && this.state == RadarState.BACKWARD){
+                this.state = RadarState.EXHAUST;
+            }
         }
 
     }
@@ -62,9 +67,10 @@ public class Radar implements Scanner{
     private void configureInternals(){
         Coords pos = drone.getPosition();
         if (!pos.equals(beginPos)){
+            this.inFirstCycle = false;
             this.beginDirection = this.drone.getHeading();
             this.beginPos = pos;
-            this.state = RadarState.FORWARD;
+            this.state = RadarState.LEFT; // Only one forward (and backward) scan
         }
     }
 
@@ -99,6 +105,14 @@ public class Radar implements Scanner{
 
     public boolean hasFoundLand(){
         return this.foundLand;
+    }
+
+    public boolean onFirstCycle(){
+        return this.inFirstCycle;
+    }
+
+    public boolean atBinaryFork(){
+        return this.inFirstCycle && this.state == RadarState.EXHAUST;
     }
     
 }

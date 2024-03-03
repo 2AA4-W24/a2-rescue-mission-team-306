@@ -9,8 +9,8 @@ public class Decider {
     private Direction direction;
 
     public Decider(Drone drone, Map map){
-        this.aborter = new Aborter();
-        this.photo = new PhotoScanner();
+        this.aborter = new Aborter(drone, map);
+        this.photo = new PhotoScanner(map);
         this.radar = new Radar(drone);
         this.mover = new Mover(drone, map, radar);
     }

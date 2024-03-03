@@ -10,8 +10,6 @@ public class Map {
     
     public Map(Drone drone){
         this.mapping = new HashMap<>();
-        Coords start = drone.getStartPosition();
-        this.mapping.put(start, new Tile(MapValue.OCEAN, start));
         this.drone = drone;
         this.result = null;
     }
@@ -43,11 +41,12 @@ public class Map {
         }
     }
 
+    public boolean containsCoords(Coords coords){
+        return this.mapping.containsKey(coords);
+    }
+
     public Tile tileAt(Coords coords){
-        if (this.mapping.containsKey(coords)){
-            return this.mapping.get(coords);
-        }
-        throw new IllegalArgumentException();
+       return this.mapping.get(coords);
     }
 
     public Tile currentTile(){
