@@ -1,5 +1,6 @@
 package ca.mcmaster.se2aa4.island.team306;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -53,6 +54,39 @@ public class Map {
 
     public MapValue checkCoords(Coords loc){
         return tiles.get(loc).getType();
+    }
+
+    public Coords findNearestTile(MapValue val){
+        List<Coords> matches = findTile(val);
+        if(matches.isEmpty()){
+            return null;
+        }
+
+        Coords closest = matches.get(0);
+        Coords pos = drone.getPosition();
+        double d1 = pos.distance(closest);
+        double d2;
+
+        for(Coords coord: matches){
+            d2 = pos.distance(coord);
+            if(d2<d1){
+                d1 = d2;
+                closest = coord;
+            }
+        }
+
+        return closest;
+    }
+
+    private List<Coords> findTile(MapValue val){
+        List<Coords> matches = new ArrayList<>();
+        for(Tile tile: tiles.values()){
+            if(tile.getType() == val){
+                matches.add(tile.getLocation());
+            }
+        }
+
+        return matches;
     }
 
     
