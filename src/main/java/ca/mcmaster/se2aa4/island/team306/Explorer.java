@@ -28,7 +28,7 @@ public class Explorer implements IExplorerRaid {
         logger.info("Battery level is {}", batteryLevel);
 
         drone = new Drone(batteryLevel, Direction.valueOf(direction.toUpperCase()));
-        map = new Map();
+        map = new Map(drone);
 
     }
 
