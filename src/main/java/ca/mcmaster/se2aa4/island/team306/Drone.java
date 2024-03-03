@@ -1,38 +1,20 @@
 package ca.mcmaster.se2aa4.island.team306;
 
-import org.json.JSONObject;
-
 public class Drone {
-    private int maxRange;
     private int energy;
     private Coords position;
+    private Coords startPosition;
     private Direction heading;
     private ParsedResult result;
 
     public Drone(int energy, Direction heading){
-        this.maxRange = 0; 
         this.energy = energy;
-        this.position = new Coords(0, 0);
+        this.position = this.startPosition = new Coords(0, 0);
         this.heading = heading;
     }
 
     private void moveStep(Direction direction){
-        switch(direction){
-            case NORTH:
-                position = position.offset(0, 1);
-                break;
-            case SOUTH:
-                position = position.offset(0, -1);
-                break;
-            case EAST:
-                position = position.offset(1, 0);
-                break;
-            case WEST:
-                position = position.offset(-1, 0);
-                break;
-            default:
-                throw new NullPointerException();
-        }
+        this.position = this.position.step(direction);
     }
 
     public void move(Direction direction){
@@ -55,6 +37,10 @@ public class Drone {
         return this.position;
     }
 
+    public Coords getStartPosition(){
+        return this.startPosition;
+    }
+
     public void updateResult(ParsedResult r){
         this.result = r;
         updateEnergy();
@@ -63,6 +49,10 @@ public class Drone {
     private void updateEnergy(){
         int cost = this.result.getCost();
         this.energy -= cost;
+    }
+    
+    public ParsedResult getLastResult(){
+        return this.result;
     }
 
 }

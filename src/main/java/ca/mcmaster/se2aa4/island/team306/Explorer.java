@@ -11,7 +11,7 @@ import org.json.JSONTokener;
 public class Explorer implements IExplorerRaid {
 
     private final Logger logger = LogManager.getLogger();
-    public static final Decider decider = new Decider();
+    private Decider decider;
     private Drone drone;
     private Map map;
     private Direction prevDirection;
@@ -28,7 +28,8 @@ public class Explorer implements IExplorerRaid {
         logger.info("Battery level is {}", batteryLevel);
 
         drone = new Drone(batteryLevel, Direction.valueOf(direction.toUpperCase()));
-        map = new Map();
+        map = new Map(drone);
+        decider = new Decider(drone, map);
 
     }
 

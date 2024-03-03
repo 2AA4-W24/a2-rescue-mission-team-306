@@ -13,11 +13,15 @@ public class ParsedResultBuilder {
     private List<MapValue> values;
     private int cost;
     private String id;
+    private boolean containsLand;
+    private int range;
 
     ParsedResultBuilder(Direction direction, Decision decision){
         this.direction = direction;
         this.decision = decision;
         this.hasResults = false;
+        this.containsLand = false;
+        this.range = 0;
     }
 
     public ParsedResultBuilder populate(String results){
@@ -38,19 +42,22 @@ public class ParsedResultBuilder {
 
             case Decision.RADAR: 
                 this.values = new ArrayList<>();
-                int distance = results.getJSONObject("extras").getInt("range");
-                for(int i = 0; i<distance; i++){
+                this.range = results.getJSONObject("extras").getInt("range");
+                for(int i = 0; i<range; i++){
                     addValue(MapValue.OCEAN);
                 }
                 if(results.getJSONObject("extras").getString("found").equals("GROUND")){
                     addValue(MapValue.GROUND);
+                    this.containsLand = true;
                 }
                 this.id = null;
             break;
 
             case Decision.PHOTO:
-                JSONArray creek_list = results.getJSONObject("extras").getJSONArray("creeks");
-                JSONArray site_list = results.getJSONObject("extras").getJSONArray("sites");
+                JSONObject extras = results.getJSONObject("extras");
+                JSONArray creek_list = extras.getJSONArray("creeks");
+                JSONArray site_list = extras.getJSONArray("sites");
+                JSONArray biome_list = extras.getJSONArray("biomes");
         
                 if(creek_list.length() != 0){
                     this.id = creek_list.getString(0);
@@ -60,7 +67,10 @@ public class ParsedResultBuilder {
                     addValue(MapValue.EMERGENCY_SITE);
                 }else{
                     this.id = null;
+                    addValue(MapValue.ORDINARY_LAND);
                 }
+
+                this.containsLand = biome_list.length() > 0;
             break;
 
             default:
@@ -77,7 +87,7 @@ public class ParsedResultBuilder {
 
     public ParsedResult build(){
         if(hasResults){
-            return new ParsedResult(direction, decision, values, id, cost);
+            return new ParsedResult(direction, decision, values, id, cost, containsLand, range);
         }
         else {
             throw new AssertionError("cannot build an result-free parsed result");

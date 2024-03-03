@@ -7,10 +7,12 @@ public class Decider {
     private PhotoScanner photo;
     private Decision decision;
     private Direction direction;
-    private Drone drone;
 
-    public Decider(){
-        this.decision = Decision.ABORT;
+    public Decider(Drone drone, Map map){
+        this.aborter = new Aborter();
+        this.photo = new PhotoScanner();
+        this.radar = new Radar(drone);
+        this.mover = new Mover(drone, map, radar);
     }
 
     public Decision getNewDecision(){

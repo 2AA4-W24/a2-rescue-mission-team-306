@@ -32,4 +32,19 @@ public class Coords {
     public int hashCode(){
         return 65537 * this.x + this.y;
     }
+
+    public Coords step(Direction direction){
+        switch(direction){
+            case NORTH:
+                return this.offset(0, 1);
+            case SOUTH:
+                return this.offset(0, -1);
+            case EAST:
+                return this.offset(1, 0);
+            case WEST:
+                return this.offset(-1, 0);
+            default:
+                throw new NullPointerException();
+        }
+    }
 }

@@ -6,7 +6,17 @@ public enum MapValue {
     OCEAN,
     GROUND,
 
-    // Typical land
+    // Types of land relevant here
+    ORDINARY_LAND, // Not a creek or emergency site
+    CREEK,
+    EMERGENCY_SITE
+
+   
+}
+
+/*
+ * The biome list (not relevant for this project)
+ * // Typical land
     LAKE,
     BEACH,
     GRASSLAND,
@@ -31,10 +41,4 @@ public enum MapValue {
     TUNDRA,
     ALPINE,
     GLACIER,
-
-    // Relevant here
-    CREEK,
-    EMERGENCY_SITE
-
-   
-}
+ */

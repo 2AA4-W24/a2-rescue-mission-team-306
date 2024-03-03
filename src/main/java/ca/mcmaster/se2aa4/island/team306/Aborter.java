@@ -5,6 +5,9 @@ public class Aborter {
     private Map map;
 
     public boolean abort(){
-        return true;
+       if (this.map.currentTile().getType() != MapValue.OCEAN){
+            return true;
+       }
+       return false;
     }
 }

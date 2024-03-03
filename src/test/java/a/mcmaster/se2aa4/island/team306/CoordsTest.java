@@ -5,10 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import java.beans.Transient;
-
 import ca.mcmaster.se2aa4.island.team306.*;
-import org.junit.jupiter.api.BeforeEach;
 
 public class CoordsTest {
     private static final double double_margin = 0.0001;
@@ -117,5 +114,14 @@ public class CoordsTest {
         assertEquals(root.offset(c1.x, c1.y), c1);
         assertEquals(c1.offset(c2.x - c1.x, c2.y - c1.y), c2);
         assertEquals(c2.offset(-c2.x, -c2.y), root);
+    }
+
+    @Test
+    public void testStep(){
+        Coords c = new Coords(1, 0);
+        assertEquals(root.step(Direction.EAST), c);
+
+        c = new Coords(3, 3);
+        assertEquals(c2.step(Direction.SOUTH), c);
     }
 }
