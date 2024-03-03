@@ -15,6 +15,9 @@ public class Decider {
 
     public Decision getNewDecision(){
         updateDecision();
+        if((this.decision == Decision.FLY_FORWARD) || (this.decision == Decision.TURN)){
+            drone.move(direction);
+        }
         return this.decision;
     }
 
@@ -32,6 +35,7 @@ public class Decider {
         boolean photoCheck = photo.scan();
         if (photoCheck){
             this.decision = Decision.PHOTO;
+            return;
         }
         boolean radarCheck = radar.scan();
         if (radarCheck){
@@ -40,7 +44,8 @@ public class Decider {
         }
         boolean moveCheck = mover.move();
         if (moveCheck){
-            if (mover.goTowards() == this.direction) {
+            this.direction = mover.goTowards();
+            if (drone.getHeading() == this.direction) {
                 this.decision = Decision.FLY_FORWARD;
             }
             else {
