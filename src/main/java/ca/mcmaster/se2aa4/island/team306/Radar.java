@@ -1,5 +1,8 @@
 package ca.mcmaster.se2aa4.island.team306;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Radar implements Scanner{
     private Drone drone;
     private Coords beginPos;
@@ -10,6 +13,7 @@ public class Radar implements Scanner{
     private boolean inFirstCycle;
     private int forwardCounter;
     private int backwardCounter;
+    private List<Coords> memory;
 
     public Radar(Drone drone){
         this.drone = drone;
@@ -19,6 +23,7 @@ public class Radar implements Scanner{
         this.forwardCounter = this.backwardCounter = 0;
         this.foundLand = false;
         this.inFirstCycle = true;
+        this.memory = new ArrayList<>();
     }
     public boolean checkScan(){
         if (this.foundLand) {
@@ -26,6 +31,7 @@ public class Radar implements Scanner{
         }
         configureInternals();
         if (this.state == RadarState.EXHAUST) {
+            this.memory.add(beginPos);
             return false;
         }
         return true;
@@ -33,6 +39,9 @@ public class Radar implements Scanner{
 
     public boolean scan(){
         if (!checkScan()) {
+            return false;
+        }
+        if (this.memory.contains(beginPos)){
             return false;
         }
         Direction scanDirection = scanTowards();

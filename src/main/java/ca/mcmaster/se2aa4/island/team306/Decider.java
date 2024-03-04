@@ -1,5 +1,8 @@
 package ca.mcmaster.se2aa4.island.team306;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class Decider {
     private Mover mover;
     private Radar radar;
@@ -7,6 +10,8 @@ public class Decider {
     private PhotoScanner photo;
     private Decision decision;
     private Direction direction;
+
+    private final Logger logger = LogManager.getLogger();
 
     public Decider(Drone drone, Map map){
         this.aborter = new Aborter(drone, map);
@@ -17,6 +22,7 @@ public class Decider {
 
     public Decision getNewDecision(){
         updateDecision();
+        logger.info(this.decision);
         return this.decision;
     }
 
@@ -28,6 +34,7 @@ public class Decider {
     private void updateDecision(){
         boolean abortCheck = aborter.abort();
         if (abortCheck){
+           logger.info("We found land!");
             this.decision = Decision.ABORT;
             return;
         }
@@ -51,7 +58,9 @@ public class Decider {
             return;
         }
         else {
-            throw new AssertionError("No direction made");
+            this.decision = Decision.ABORT;
+            logger.warn("Aborting here :(");
+            return;
         }
     }
 

@@ -1,6 +1,5 @@
 package ca.mcmaster.se2aa4.island.team306;
 
-import java.security.KeyException;
 import java.util.HashMap;
 
 public class Map {
