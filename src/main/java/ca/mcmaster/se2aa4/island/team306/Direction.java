@@ -39,4 +39,46 @@ public enum Direction {
                 throw new IllegalArgumentException("Unrecognized character abbreviation");
         }
     }
+
+    public Direction getLeft() {
+        switch(this){
+            case NORTH:
+                return WEST;
+            case WEST:
+                return SOUTH;
+            case SOUTH:
+                return EAST;
+            case EAST:
+                return NORTH;
+        }
+        throw new AssertionError();
+    }
+
+    public Direction getBackwards() {
+        switch(this){
+            case NORTH:
+                return SOUTH;
+            case WEST:
+                return EAST;
+            case SOUTH:
+                return NORTH;
+            case EAST:
+                return WEST;
+        }
+        throw new AssertionError();
+    }
+
+    public Direction getRight() {
+        switch(this){
+            case NORTH:
+                return EAST;
+            case WEST:
+                return NORTH;
+            case SOUTH:
+                return WEST;
+            case EAST:
+                return SOUTH;
+        }
+        throw new AssertionError();
+    }
 }

@@ -9,8 +9,13 @@ public class Decider {
     private Direction direction;
     private Drone drone;
 
-    public Decider(){
-        this.decision = Decision.ABORT;
+    public Decider(Drone drone, Map map){
+        this.aborter = new Aborter();
+        this.radar = new Radar();
+        this.mover = new Mover();
+        this.photo = new PhotoScanner();
+        this.drone = drone;
+        this.direction = drone.getHeading();
     }
 
     public Decision getNewDecision(){
