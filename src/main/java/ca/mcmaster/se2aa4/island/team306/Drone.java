@@ -17,22 +17,7 @@ public class Drone {
     }
 
     private void moveStep(Direction direction){
-        switch(direction){
-            case NORTH:
-                position = position.offset(0, 1);
-                break;
-            case SOUTH:
-                position = position.offset(0, -1);
-                break;
-            case EAST:
-                position = position.offset(1, 0);
-                break;
-            case WEST:
-                position = position.offset(-1, 0);
-                break;
-            default:
-                throw new NullPointerException();
-        }
+        position = position.step(direction);
     }
 
     public void move(Direction direction){
