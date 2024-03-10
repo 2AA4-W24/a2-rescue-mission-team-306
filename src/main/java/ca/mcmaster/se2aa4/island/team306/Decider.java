@@ -7,22 +7,19 @@ public class Decider {
     private PhotoScanner photo;
     private Decision decision;
     private Direction direction;
-    private Drone drone;
+    private GameTracker tracker;
 
     public Decider(Drone drone, Map map){
         this.aborter = new Aborter(drone, map);
         this.radar = new Radar();
         this.mover = new Mover();
         this.photo = new PhotoScanner();
-        this.drone = drone;
         this.direction = drone.getHeading();
+        this.tracker = new GameTracker();
     }
 
     public Decision getNewDecision(){
         updateDecision();
-        if((this.decision == Decision.FLY_FORWARD) || (this.decision == Decision.TURN)){
-            drone.move(direction);
-        }
         return this.decision;
     }
 
@@ -49,13 +46,7 @@ public class Decider {
         }
         boolean moveCheck = mover.move();
         if (moveCheck){
-            this.direction = mover.goTowards();
-            if (drone.getHeading() == this.direction) {
-                this.decision = Decision.FLY_FORWARD;
-            }
-            else {
-                this.decision = Decision.TURN;
-            }
+            this.decision = mover.deriveDecision();
             return;
         }
         else {

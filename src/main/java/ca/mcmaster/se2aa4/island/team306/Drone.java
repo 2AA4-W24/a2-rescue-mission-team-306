@@ -1,19 +1,15 @@
 package ca.mcmaster.se2aa4.island.team306;
 
 public class Drone {
-    private int maxRange;
     private int energy;
     private Coords position;
     private Direction heading;
     private ParsedResult result;
-    private GameState state;
 
     public Drone(int energy, Direction heading){
-        this.maxRange = 0; 
         this.energy = energy;
         this.position = new Coords(0, 0);
         this.heading = heading;
-        this.state = GameState.SETUP;
     }
 
     private void moveStep(Direction direction){
@@ -50,8 +46,6 @@ public class Drone {
         this.energy -= cost;
     }
 
-    public GameState getState(){
-        return this.state;
-    }
+   
 
 }
