@@ -7,16 +7,16 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class ParsedResultBuilder {
-    private Decision decision;
+    private DecisionType decisionType;
     private Direction direction;
     private boolean hasResults;
     private List<MapValue> values;
     private int cost;
     private String id;
 
-    ParsedResultBuilder(Direction direction, Decision decision){
-        this.direction = direction;
-        this.decision = decision;
+    ParsedResultBuilder(Decision decision){
+        this.direction = decision.getDirection();
+        this.decisionType = decision.getType();
         this.hasResults = false;
     }
 
@@ -27,16 +27,16 @@ public class ParsedResultBuilder {
     public ParsedResultBuilder populate(JSONObject results){
         this.cost = results.getInt("cost");
 
-        switch (decision) {
-            case Decision.FLY_FORWARD:
+        switch (decisionType) {
+            case DecisionType.FLY_FORWARD:
                 this.id = null;
             break;
 
-            case Decision.TURN: 
+            case DecisionType.TURN: 
                 this.id = null;  
             break;
 
-            case Decision.RADAR: 
+            case DecisionType.RADAR: 
                 this.values = new ArrayList<>();
                 int distance = results.getJSONObject("extras").getInt("range");
                 for(int i = 0; i<distance; i++){
@@ -48,7 +48,7 @@ public class ParsedResultBuilder {
                 this.id = null;
             break;
 
-            case Decision.PHOTO:
+            case DecisionType.PHOTO:
                 JSONArray creek_list = results.getJSONObject("extras").getJSONArray("creeks");
                 JSONArray site_list = results.getJSONObject("extras").getJSONArray("sites");
         
@@ -77,7 +77,7 @@ public class ParsedResultBuilder {
 
     public ParsedResult build(){
         if(hasResults){
-            return new ParsedResult(direction, decision, values, id, cost);
+            return new ParsedResult(direction, decisionType, values, id, cost);
         }
         else {
             throw new AssertionError("cannot build an result-free parsed result");

@@ -1,9 +1,32 @@
 package ca.mcmaster.se2aa4.island.team306;
 
-public enum Decision {
-    ABORT,
-    FLY_FORWARD,
-    TURN,
-    PHOTO,
-    RADAR;
+public class Decision {
+    private final DecisionType type;
+    private final Direction direction;
+
+    public Decision(DecisionType type){
+        this.type = type;
+        this.direction = null;
+    }
+
+    Decision(DecisionType type, Direction direction){
+        this.type = type;
+        this.direction = direction;
+    }
+    
+    public DecisionType getType(){
+        return this.type;
+    }
+
+    public Direction getDirection(){
+        switch(this.type){
+            case ABORT:
+            case PHOTO:
+                throw new IllegalStateException();
+            default:
+                return this.direction;
+        }
+    }
+
+
 }

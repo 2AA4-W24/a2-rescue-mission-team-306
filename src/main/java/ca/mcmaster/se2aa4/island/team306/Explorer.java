@@ -40,28 +40,29 @@ public class Explorer implements IExplorerRaid {
         JSONObject decision_json = new JSONObject();
         Decision decision = decider.getNewDecision();
         this.prevDecision = decision;
-        this.prevDirection = decider.getNewDirection();
+        this.prevDirection = decision.getDirection();
         char d = this.prevDirection.toChar();
-        switch(decision){
-            case Decision.ABORT:
+        DecisionType type = decision.getType();
+        switch(type){
+            case DecisionType.ABORT:
                 decision_json.put("action", "stop"); // we stop the exploration immediately
                 break;
-            case Decision.FLY_FORWARD:
+            case DecisionType.FLY_FORWARD:
                 decision_json.put("action", "fly"); // we fly forward
                 break;
-            case Decision.TURN:
+            case DecisionType.TURN:
                 decision_json = new JSONObject(String.format(
                     "{ \"action\": \"heading\", \"parameters\": { \"direction\": \"%c\" } }", 
                     d
                 )); // we set the heading for direction d
                 break;
-            case Decision.RADAR:
+            case DecisionType.RADAR:
                 decision_json = new JSONObject(String.format(
                     "{ \"action\": \"echo\", \"parameters\": { \"direction\": \"%c\" } }",
                     d
                 )); // we use radar scan for direction d
                 break;
-            case Decision.PHOTO:
+            case DecisionType.PHOTO:
                 decision_json.put("action", "scan"); // we use photo scan
                 break;
             default:
@@ -85,7 +86,7 @@ public class Explorer implements IExplorerRaid {
         logger.info("Additional information received: {}", extraInfo);
 
         // Important code
-        ParsedResult r = ParsedResult.builder(prevDirection, prevDecision).populate(s).build();
+        ParsedResult r = ParsedResult.builder(prevDecision).populate(s).build();
         drone.updateResult(r);
         map.updateStatus(r);
     }

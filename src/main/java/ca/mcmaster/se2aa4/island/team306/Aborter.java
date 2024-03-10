@@ -8,6 +8,7 @@ public class Aborter {
     private Map map;
     private GameTracker tracker;
     private int min_energy;
+    private static final Decision DECISION = new Decision(DecisionType.ABORT);
 
     private static final Logger logger = LogManager.getLogger();
 
@@ -43,6 +44,10 @@ public class Aborter {
         Coords base = map.getBase();
         int distance = (int) pos.distance(base);
         return (2*(distance + 5));
+    }
+
+    public static Decision getDecision(){
+        return DECISION;
     }
 
 }

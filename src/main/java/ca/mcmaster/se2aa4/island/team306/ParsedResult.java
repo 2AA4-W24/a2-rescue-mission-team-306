@@ -7,16 +7,16 @@ public class ParsedResult{
     private final List<MapValue> values;
     private final Direction direction;
     private final String id;
-    private final Decision decision;
+    private final DecisionType type;
     private final int cost;
 
-    public static ParsedResultBuilder builder(Direction direction, Decision decision){
-        return new ParsedResultBuilder(direction, decision);
+    public static ParsedResultBuilder builder(Decision decision){
+        return new ParsedResultBuilder(decision);
     }
 
-    ParsedResult(Direction direction, Decision decision, List<MapValue> values, String id, int cost){
+    ParsedResult(Direction direction, DecisionType decision, List<MapValue> values, String id, int cost){
         this.direction = direction;
-        this.decision = decision;
+        this.type = decision;
         this.values = values;
         this.id = id;
         this.cost = cost;
@@ -31,8 +31,8 @@ public class ParsedResult{
         return this.direction;
     }
 
-    public Decision getDecision(){
-        return this.decision;
+    public DecisionType getType(){
+        return this.type;
     }
 
     public String getID(){

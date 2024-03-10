@@ -32,17 +32,17 @@ public class Decider {
     private void updateDecision(){
         boolean abortCheck = aborter.abort();
         if (abortCheck){
-            this.decision = Decision.ABORT;
+            this.decision = aborter.getDecision();
             return;
         }
         boolean photoCheck = photo.scan();
         if (photoCheck){
-            this.decision = Decision.PHOTO;
+            this.decision = new Decision(DecisionType.PHOTO);
             return;
         }
         boolean radarCheck = radar.scan();
         if (radarCheck){
-            this.decision = Decision.RADAR;
+            this.decision = radar.deriveDecision();
             return;
         }
         boolean moveCheck = mover.move();
@@ -54,7 +54,7 @@ public class Decider {
             // No decision was made, abort as a failure
             this.tracker.failMission(); // Fail the mission
             this.aborter.abort(); // Log the failure
-            this.decision = Decision.ABORT;
+            this.decision = aborter.getDecision();
         }
     }
 

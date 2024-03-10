@@ -22,7 +22,7 @@ public class Map {
         Coords pos = drone.getPosition();
         Direction drxn = result.getDirection();
         List<MapValue> values = result.getValues();
-        if (result.getDecision() == Decision.RADAR){
+        if (result.getType() == DecisionType.RADAR){
             for(int i = 0; i<values.size(); i++){
                 switch (drxn) {
                     case Direction.NORTH:
@@ -43,7 +43,7 @@ public class Map {
 
                 addTile(new Tile(values.get(i), pos));
             }
-        }else if(result.getDecision() == Decision.PHOTO){
+        }else if(result.getType() == DecisionType.PHOTO){
             addTile(new Tile(values.get(0), pos));
         }
     }

@@ -4,8 +4,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.json.JSONObject;
-
 import ca.mcmaster.se2aa4.island.team306.*;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -20,12 +18,12 @@ public class DroneTest {
     @Test
     public void testUpdateStatus(){
         
-        ParsedResult result = ParsedResult.builder(Direction.NORTH, Decision.FLY_FORWARD).populate(
+        ParsedResult result = ParsedResult.builder(Mover.FLY_NORTH).populate(
          "{ \"cost\": 3, \"extras\": {}, \"status\": \"OK\" }").build();
         drone.updateResult(result);
         assertEquals(drone.getEnergy(), 97);
 
-        result = ParsedResult.builder(Direction.SOUTH, Decision.TURN).populate(
+        result = ParsedResult.builder(Mover.TURN_SOUTH).populate(
          "{ \"cost\": 0, \"extras\": {}, \"status\": \"OK\" }").build();
         drone.updateResult(result);
         assertEquals(drone.getEnergy(), 97);

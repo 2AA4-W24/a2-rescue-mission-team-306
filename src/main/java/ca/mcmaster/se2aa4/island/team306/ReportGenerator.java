@@ -5,6 +5,6 @@ import java.util.List;
 public class ReportGenerator{
     private Map map;
     private Drone drone;
-    private List<Decision> decision;
+    private List<DecisionType> decision;
     private List<Coords> creekCoords; 
 }
