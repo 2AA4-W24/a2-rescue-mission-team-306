@@ -59,7 +59,8 @@ public class Decider {
             return;
         }
         else {
-            throw new AssertionError("No direction made");
+            // No decision was made, abort as a failure
+            this.decision = Decision.ABORT;
         }
     }
 

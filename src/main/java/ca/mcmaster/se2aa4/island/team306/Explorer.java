@@ -60,8 +60,10 @@ public class Explorer implements IExplorerRaid {
                     "{ \"action\": \"echo\", \"parameters\": { \"direction\": \"%c\" } }",
                     d
                 )); // we use radar scan for direction d
+                break;
             case Decision.PHOTO:
                 decision_json.put("action", "scan"); // we use photo scan
+                break;
             default:
                 throw new NullPointerException();
         }
