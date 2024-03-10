@@ -41,7 +41,6 @@ public class Explorer implements IExplorerRaid {
         Decision decision = decider.getNewDecision();
         this.prevDecision = decision;
         this.prevDirection = decision.getDirection();
-        char d = this.prevDirection.toChar();
         DecisionType type = decision.getType();
         switch(type){
             case DecisionType.ABORT:
@@ -53,13 +52,13 @@ public class Explorer implements IExplorerRaid {
             case DecisionType.TURN:
                 decision_json = new JSONObject(String.format(
                     "{ \"action\": \"heading\", \"parameters\": { \"direction\": \"%c\" } }", 
-                    d
+                    prevDirection.toChar()
                 )); // we set the heading for direction d
                 break;
             case DecisionType.RADAR:
                 decision_json = new JSONObject(String.format(
                     "{ \"action\": \"echo\", \"parameters\": { \"direction\": \"%c\" } }",
-                    d
+                    prevDirection.toChar()
                 )); // we use radar scan for direction d
                 break;
             case DecisionType.PHOTO:

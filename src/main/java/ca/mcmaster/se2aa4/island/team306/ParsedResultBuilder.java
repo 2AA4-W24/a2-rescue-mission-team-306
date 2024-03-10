@@ -12,11 +12,12 @@ public class ParsedResultBuilder {
     private boolean hasResults;
     private List<MapValue> values;
     private int cost;
+    private int range;
     private String id;
 
     ParsedResultBuilder(Decision decision){
-        this.direction = decision.getDirection();
         this.decisionType = decision.getType();
+        this.direction = decision.getDirection();
         this.hasResults = false;
     }
 
@@ -38,12 +39,15 @@ public class ParsedResultBuilder {
 
             case DecisionType.RADAR: 
                 this.values = new ArrayList<>();
-                int distance = results.getJSONObject("extras").getInt("range");
-                for(int i = 0; i<distance; i++){
+                this.range = results.getJSONObject("extras").getInt("range");
+                for(int i = 0; i<range; i++){
                     addValue(MapValue.OCEAN);
                 }
                 if(results.getJSONObject("extras").getString("found").equals("GROUND")){
                     addValue(MapValue.GROUND);
+                }
+                else {
+                    addValue(MapValue.OUT_OF_RANGE);
                 }
                 this.id = null;
             break;
@@ -77,7 +81,7 @@ public class ParsedResultBuilder {
 
     public ParsedResult build(){
         if(hasResults){
-            return new ParsedResult(direction, decisionType, values, id, cost);
+            return new ParsedResult(direction, decisionType, values, id, cost, range);
         }
         else {
             throw new AssertionError("cannot build an result-free parsed result");

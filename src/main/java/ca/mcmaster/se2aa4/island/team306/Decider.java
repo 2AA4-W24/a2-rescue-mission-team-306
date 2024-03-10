@@ -6,7 +6,6 @@ public class Decider {
     private Aborter aborter;
     private PhotoScanner photo;
     private Decision decision;
-    private Direction direction;
     private GameTracker tracker;
 
     public Decider(Drone drone, Map map){
@@ -15,8 +14,6 @@ public class Decider {
         this.radar = new Radar();
         this.mover = new Mover();
         this.photo = new PhotoScanner();
-        this.direction = drone.getHeading();
-        
     }
 
     public Decision getNewDecision(){
@@ -24,20 +21,16 @@ public class Decider {
         return this.decision;
     }
 
-    public Direction getNewDirection(){
-        return this.direction;
-    }
-
 
     private void updateDecision(){
         boolean abortCheck = aborter.abort();
         if (abortCheck){
-            this.decision = aborter.getDecision();
+            this.decision = Aborter.getDecision();
             return;
         }
         boolean photoCheck = photo.scan();
         if (photoCheck){
-            this.decision = new Decision(DecisionType.PHOTO);
+            this.decision = PhotoScanner.getDecision();
             return;
         }
         boolean radarCheck = radar.scan();
@@ -54,7 +47,7 @@ public class Decider {
             // No decision was made, abort as a failure
             this.tracker.failMission(); // Fail the mission
             this.aborter.abort(); // Log the failure
-            this.decision = aborter.getDecision();
+            this.decision = Aborter.getDecision();
         }
     }
 

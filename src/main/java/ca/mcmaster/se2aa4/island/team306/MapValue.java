@@ -4,6 +4,7 @@ public enum MapValue {
     // General
     UNKNOWN,
     OCEAN,
+    OUT_OF_RANGE,
     GROUND,
 
     // Relevant here

@@ -19,13 +19,7 @@ public class Decision {
     }
 
     public Direction getDirection(){
-        switch(this.type){
-            case ABORT:
-            case PHOTO:
-                throw new IllegalStateException();
-            default:
-                return this.direction;
-        }
+        return this.direction;
     }
 
 
