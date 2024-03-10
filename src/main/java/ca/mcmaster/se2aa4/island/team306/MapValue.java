@@ -4,35 +4,11 @@ public enum MapValue {
     // General
     UNKNOWN,
     OCEAN,
+    OUT_OF_RANGE,
     GROUND,
 
-    // Typical land
-    LAKE,
-    BEACH,
-    GRASSLAND,
-
-    // Tropical
-    MANGROVE,
-    TROPICAL_RAIN_FOREST,
-    TROPICAL_SEASONAL_FOREST,
-
-    // Subtropical
-    SHRUBLAND,
-    SUB_TROPICAL_DESERT,
-
-    // Temperate
-    TEMPERATE_DECIDUOUS_FOREST,
-    TEMPERATE_RAIN_FOREST,
-    TEMPERATE_DESERT,
-
-    // Polar
-    TAIGA,
-    SNOW,
-    TUNDRA,
-    ALPINE,
-    GLACIER,
-
     // Relevant here
+    REGULAR_LAND,
     CREEK,
     EMERGENCY_SITE
 

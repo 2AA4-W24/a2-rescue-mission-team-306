@@ -6,60 +6,48 @@ public class Decider {
     private Aborter aborter;
     private PhotoScanner photo;
     private Decision decision;
-    private Direction direction;
-    private Drone drone;
+    private GameTracker tracker;
 
     public Decider(Drone drone, Map map){
-        this.aborter = new Aborter(drone, map);
+        this.tracker = new GameTracker();
+        this.aborter = new Aborter(drone, map, this.tracker);
         this.radar = new Radar();
         this.mover = new Mover();
         this.photo = new PhotoScanner();
-        this.drone = drone;
-        this.direction = drone.getHeading();
     }
 
     public Decision getNewDecision(){
         updateDecision();
-        if((this.decision == Decision.FLY_FORWARD) || (this.decision == Decision.TURN)){
-            drone.move(direction);
-        }
         return this.decision;
-    }
-
-    public Direction getNewDirection(){
-        return this.direction;
     }
 
 
     private void updateDecision(){
         boolean abortCheck = aborter.abort();
         if (abortCheck){
-            this.decision = Decision.ABORT;
+            this.decision = Aborter.getDecision();
             return;
         }
         boolean photoCheck = photo.scan();
         if (photoCheck){
-            this.decision = Decision.PHOTO;
+            this.decision = PhotoScanner.getDecision();
             return;
         }
         boolean radarCheck = radar.scan();
         if (radarCheck){
-            this.decision = Decision.RADAR;
+            this.decision = radar.deriveDecision();
             return;
         }
         boolean moveCheck = mover.move();
         if (moveCheck){
-            this.direction = mover.goTowards();
-            if (drone.getHeading() == this.direction) {
-                this.decision = Decision.FLY_FORWARD;
-            }
-            else {
-                this.decision = Decision.TURN;
-            }
+            this.decision = mover.deriveDecision();
             return;
         }
         else {
-            throw new AssertionError("No direction made");
+            // No decision was made, abort as a failure
+            this.tracker.failMission(); // Fail the mission
+            this.aborter.abort(); // Log the failure
+            this.decision = Aborter.getDecision();
         }
     }
 

@@ -1,16 +1,12 @@
 package ca.mcmaster.se2aa4.island.team306;
 
-import org.json.JSONObject;
-
 public class Drone {
-    private int maxRange;
     private int energy;
     private Coords position;
     private Direction heading;
     private ParsedResult result;
 
     public Drone(int energy, Direction heading){
-        this.maxRange = 0; 
         this.energy = energy;
         this.position = new Coords(0, 0);
         this.heading = heading;
@@ -49,5 +45,7 @@ public class Drone {
         int cost = this.result.getCost();
         this.energy -= cost;
     }
+
+   
 
 }
