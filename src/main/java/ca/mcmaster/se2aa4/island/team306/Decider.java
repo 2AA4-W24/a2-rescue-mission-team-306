@@ -10,12 +10,13 @@ public class Decider {
     private GameTracker tracker;
 
     public Decider(Drone drone, Map map){
-        this.aborter = new Aborter(drone, map);
+        this.tracker = new GameTracker();
+        this.aborter = new Aborter(drone, map, this.tracker);
         this.radar = new Radar();
         this.mover = new Mover();
         this.photo = new PhotoScanner();
         this.direction = drone.getHeading();
-        this.tracker = new GameTracker();
+        
     }
 
     public Decision getNewDecision(){
@@ -51,6 +52,8 @@ public class Decider {
         }
         else {
             // No decision was made, abort as a failure
+            this.tracker.failMission(); // Fail the mission
+            this.aborter.abort(); // Log the failure
             this.decision = Decision.ABORT;
         }
     }
