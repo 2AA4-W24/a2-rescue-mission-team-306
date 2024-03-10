@@ -89,5 +89,8 @@ public class Map {
         return matches;
     }
 
+    public Coords getBase(){
+        return this.base;
+    }
     
 }
