@@ -13,8 +13,12 @@ public class PhotoScanner implements Scanner{
     public boolean scan(){
         switch(tracker.getState()){
             case GameState.SEARCH:
+                // Current (end of radar batch) or previous (already on land)
+                return map.currentValue() == MapValue.GROUND || 
+                    map.previousValue() == MapValue.GROUND;
             case GameState.BRANCH:
-                return map.currentValue() == MapValue.GROUND;
+                // No radar in branch state; photo is only option
+                return true;
             default:
                 return false;
         }

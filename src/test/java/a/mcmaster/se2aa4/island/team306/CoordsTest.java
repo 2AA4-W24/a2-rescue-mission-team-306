@@ -5,10 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import java.beans.Transient;
+
 
 import ca.mcmaster.se2aa4.island.team306.*;
-import org.junit.jupiter.api.BeforeEach;
 
 public class CoordsTest {
     private static final double double_margin = 0.0001;

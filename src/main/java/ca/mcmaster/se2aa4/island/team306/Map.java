@@ -95,6 +95,11 @@ public class Map {
         return matches;
     }
 
+    public MapValue previousValue(){
+        Coords prev = drone.getPosition().step(drone.getHeading().getBackwards());
+        return checkCoords(prev);
+    }
+
     public MapValue currentValue(){
         Coords current = drone.getPosition();
         return checkCoords(current);
