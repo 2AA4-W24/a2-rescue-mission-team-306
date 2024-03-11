@@ -89,6 +89,16 @@ public class Map {
         return matches;
     }
 
+    public MapValue nextValue(){
+        Coords next = drone.getPosition().step(drone.getHeading());
+        Tile tile = tiles.get(next);
+        if (tile == null){
+            tiles.put(next, new Tile(MapValue.UNKNOWN, next));
+            tile = tiles.get(next);
+        }
+        return tile.getType();
+    }
+
     public Coords getBase(){
         return this.base;
     }

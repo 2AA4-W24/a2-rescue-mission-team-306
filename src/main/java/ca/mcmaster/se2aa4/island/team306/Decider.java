@@ -10,8 +10,8 @@ public class Decider {
     private DecisionQueue queue;
 
     public Decider(Drone drone, Map map){
-        this.tracker = new GameTracker();
         this.queue = new DecisionQueue();
+        this.tracker = new GameTracker(drone, map, queue);
         this.aborter = new Aborter(drone, map, this.tracker);
         this.radar = new Radar(drone, map, queue, tracker);
         this.mover = new Mover();
@@ -19,6 +19,7 @@ public class Decider {
     }
 
     public Decision getNewDecision(){
+        tracker.update();
         updateDecision();
         return this.decision;
     }
