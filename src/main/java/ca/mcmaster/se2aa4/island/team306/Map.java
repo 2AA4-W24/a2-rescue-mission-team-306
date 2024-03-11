@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Map {
-    private HashMap<Coords, Tile> tiles;
+    private java.util.Map<Coords, Tile> tiles;
     private Coords base;
     private ParsedResult result;
     private Drone drone;
