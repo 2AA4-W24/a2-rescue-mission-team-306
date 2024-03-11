@@ -11,11 +11,11 @@ public class Decider {
 
     public Decider(Drone drone, Map map){
         this.tracker = new GameTracker();
+        this.queue = new DecisionQueue();
         this.aborter = new Aborter(drone, map, this.tracker);
-        this.radar = new Radar();
+        this.radar = new Radar(drone, map, queue, tracker);
         this.mover = new Mover();
         this.photo = new PhotoScanner();
-        this.queue = new DecisionQueue();
     }
 
     public Decision getNewDecision(){
