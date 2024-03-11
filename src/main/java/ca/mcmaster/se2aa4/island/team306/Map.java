@@ -53,7 +53,13 @@ public class Map {
     }
 
     public MapValue checkCoords(Coords loc){
-        return tiles.get(loc).getType();
+        Tile tile = tiles.get(loc);
+        if (tile == null){
+            tiles.put(loc, new Tile(MapValue.UNKNOWN, loc));
+            tile = tiles.get(loc);
+        }
+        return tile.getType();
+
     }
 
     public Coords findNearestTile(MapValue val){
@@ -89,14 +95,14 @@ public class Map {
         return matches;
     }
 
+    public MapValue currentValue(){
+        Coords current = drone.getPosition();
+        return checkCoords(current);
+    }
+
     public MapValue nextValue(){
         Coords next = drone.getPosition().step(drone.getHeading());
-        Tile tile = tiles.get(next);
-        if (tile == null){
-            tiles.put(next, new Tile(MapValue.UNKNOWN, next));
-            tile = tiles.get(next);
-        }
-        return tile.getType();
+        return checkCoords(next);
     }
 
     public Coords getBase(){
