@@ -1,82 +1,51 @@
 package ca.mcmaster.se2aa4.island.team306;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
 public class Mover {
     private Drone drone;
-    private Map map;
-
-    public static final Decision FLY_NORTH = 
-        new Decision(DecisionType.FLY_FORWARD, Direction.NORTH);
-    public static final Decision FLY_EAST = 
-        new Decision(DecisionType.FLY_FORWARD, Direction.EAST);
-    public static final Decision FLY_SOUTH = 
-        new Decision(DecisionType.FLY_FORWARD, Direction.SOUTH);
-    public static final Decision FLY_WEST = 
-        new Decision(DecisionType.FLY_FORWARD, Direction.WEST);
-
-    public static final Decision TURN_NORTH = 
-        new Decision(DecisionType.TURN, Direction.NORTH);
-    public static final Decision TURN_EAST = 
-        new Decision(DecisionType.TURN, Direction.EAST);
-    public static final Decision TURN_SOUTH = 
-        new Decision(DecisionType.TURN, Direction.SOUTH);
-    public static final Decision TURN_WEST = 
-        new Decision(DecisionType.TURN, Direction.WEST);
-
-    public Mover(){}
-
-    private boolean shouldMove(){
-        return false;
+    public Map map;
+    private Queue<Direction> path;
+    
+    public Mover(Drone drone, Map map){
+        this.drone = drone;
+        this.map = map;
+        this.path = new LinkedList<>();
     }
 
-    public boolean move(){
-        if (shouldMove()){
-            Direction d = goTowards();
-            if (d == drone.getHeading().getBackwards()){
+    public boolean move(ParsedResult result) {
+        Coords pos = drone.getPosition();
+        Coords front = pos.step(drone.getHeading());
+        Coords right = pos.step(drone.getHeading().getRight());
+        Coords left = pos.step(drone.getHeading().getLeft());
+
+        Coords nearestGround = map.findNearestTile(MapValue.GROUND);
+        if (nearestGround == null) {
+            if (map.checkCoords(left) == null && map.checkCoords(right) == null && map.checkCoords(front) == null) {
                 return false;
             }
-            drone.move(goTowards());
-            return true;
         }
-        return false;
+        return true;
     }
 
-    public Direction goTowards(){
-        return Direction.SOUTH;
-    }
+    public Queue<Direction> goTowards(Coords coords) {
+        Coords nearestGround = map.findNearestTile(MapValue.GROUND);
+        Queue<Direction> path = new LinkedList<>();
 
-    public Decision deriveDecision(){
-        Direction drxn = this.goTowards();
-        if(drxn == drone.getHeading()){
-            switch(drxn){
-                case Direction.NORTH:
-                    return FLY_NORTH;
-                case Direction.EAST:
-                    return FLY_EAST;
-                case Direction.SOUTH:
-                    return FLY_SOUTH;
-                case Direction.WEST:
-                    return FLY_WEST;
-                default:
-                    throw new NullPointerException();
-            }
+        if (nearestGround != null) {
+            Path pathfinder = new Path(drone.getPosition(), nearestGround, drone.getHeading());
+            path = pathfinder.findPath();
+        } else {
+            path.add(drone.getHeading());
         }
-        else {
-            switch(drxn){
-                case Direction.NORTH:
-                    return TURN_NORTH;
-                case Direction.EAST:
-                    return TURN_EAST;
-                case Direction.SOUTH:
-                    return TURN_SOUTH;
-                case Direction.WEST:
-                    return TURN_WEST;
-                default:
-                    throw new NullPointerException();
-            }
-        }
-        
-        
+
+        return path;
     }
 
 
+    
 }
+
+
