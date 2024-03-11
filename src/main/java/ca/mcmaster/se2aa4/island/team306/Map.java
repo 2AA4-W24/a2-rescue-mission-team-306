@@ -5,58 +5,89 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Map {
-    private java.util.Map<Coords, Tile> tiles;
-    private Coords base;
-    private ParsedResult result;
-    private Drone drone;
+    private final java.util.Map<Coords, Tile> tiles;
+    private final Coords base;
+    private final Drone drone;
+    private final java.util.Map<Direction, Integer> bounds;
     
     public Map(Drone drone){
         this.base = new Coords(0, 0);
-        this.result = null;
         this.tiles = new HashMap<>();
         this.drone = drone;
+        this.bounds = new HashMap<>();
+        initBounds();
+    }
+
+    private void initBounds(){
+        Direction backwards = this.drone.getHeading().getBackwards();
+        int value = (backwards == Direction.NORTH || backwards == Direction.SOUTH) ?
+                this.base.y : this.base.x;
+        this.bounds.put(backwards, value);
     }
 
     public void updateStatus(ParsedResult result){
-        this.result = result;
         Coords pos = drone.getPosition();
         Direction drxn = result.getDirection();
         List<MapValue> values = result.getValues();
         if (result.getType() == DecisionType.RADAR){
-            for(int i = 0; i<values.size(); i++){
-                switch (drxn) {
-                    case Direction.NORTH:
-                        pos = pos.offset(0, 1);
-                        break;
-                    case Direction.WEST:
-                        pos = pos.offset(-1, 0);
-                        break;
-                    case Direction.SOUTH:
-                        pos = pos.offset(0, -1);
-                        break;
-                    case Direction.EAST:
-                        pos = pos.offset(1, 0);
-                        break;
-                    default:
-                        throw new NullPointerException("Null Direction");
-                }
-
-                addTile(new Tile(values.get(i), pos));
+            for (MapValue value : values) {
+                pos = pos.step(drxn);
+                addTile(new Tile(value, pos));
             }
         }else if(result.getType() == DecisionType.PHOTO){
-            addTile(new Tile(values.get(0), pos));
+            addTile(new Tile(values.getFirst(), pos));
         }
+
+        updateBounds(result);
+    }
+
+    public void updateBounds(ParsedResult result){
+        if (result.getType() != DecisionType.RADAR){
+            return;
+        }
+        Direction direction = result.getDirection();
+        if (result.foundLand() || this.bounds.containsKey(direction)) {
+            return;
+        }
+        int range = result.getRange();
+        Coords boundsLoc = drone.getPosition();
+        for (int i = 0; i < range; i++){
+            boundsLoc = boundsLoc.step(direction);
+        }
+        int value = direction == Direction.NORTH || direction == Direction.SOUTH ? boundsLoc.y : boundsLoc.x;
+        this.bounds.put(direction, value);
     }
 
     private void addTile(Tile tile){
         tiles.put(tile.getLocation(), tile);
     }
 
+    private boolean inRange(Coords loc){
+        Integer northBox = bounds.get(Direction.NORTH);
+        Integer eastBox = bounds.get(Direction.EAST);
+        Integer southBox = bounds.get(Direction.SOUTH);
+        Integer westBox = bounds.get(Direction.WEST);
+
+        if (northBox != null && loc.y > northBox){
+            return false;
+        }
+        if (eastBox != null && loc.x > eastBox){
+            return false;
+        }
+        if (southBox != null && loc.y < southBox){
+            return false;
+        }
+        return westBox == null || loc.x >= westBox;
+    }
+
     public MapValue checkCoords(Coords loc){
         Tile tile = tiles.get(loc);
-        if (tile == null){
-            tiles.put(loc, new Tile(MapValue.UNKNOWN, loc));
-            tile = tiles.get(loc);
+        if (tile == null || tile.getType() == MapValue.UNKNOWN){
+            MapValue value = inRange(loc) ? MapValue.UNKNOWN : MapValue.OUT_OF_RANGE;
+            if (tile == null || value == MapValue.OUT_OF_RANGE) {
+                tiles.put(loc, new Tile(value, loc));
+                tile = tiles.get(loc);
+            }
         }
         return tile.getType();
 
@@ -68,7 +99,7 @@ public class Map {
             return null;
         }
 
-        Coords closest = matches.get(0);
+        Coords closest = matches.getFirst();
         Coords pos = drone.getPosition();
         double d1 = pos.distance(closest);
         double d2;
@@ -112,6 +143,10 @@ public class Map {
 
     public Coords getBase(){
         return this.base;
+    }
+
+    public Integer getBound(Direction direction){
+        return bounds.get(direction);
     }
     
 }
