@@ -34,7 +34,15 @@ public class Mover {
     }
 
     private boolean shouldMove(){
-        return true;
+        switch(tracker.getState()){
+            case SETUP:
+                return false;
+            case SEARCH:
+            case BRANCH:
+            default:
+                return true;
+
+        }
     }
 
     public boolean move(){
@@ -49,24 +57,28 @@ public class Mover {
     }
 
     public Direction goTowards(){
-        Coords pos = drone.getPosition();
-        Direction facing = drone.getHeading();
-        if(start_orient == facing){
-            if(map.checkCoords(pos.step(facing.getRight())) == MapValue.OUT_OF_RANGE){
-                return facing.getLeft();
-            }
-            return facing.getRight();
-        }
+        switch(tracker.getState()){
+            case SEARCH:
+                Coords pos = drone.getPosition();
+                Direction facing = drone.getHeading();
+                if(start_orient == facing){
+                    if(map.checkCoords(pos.step(facing.getRight())) == MapValue.OUT_OF_RANGE){
+                        return facing.getLeft();
+                    }
+                    return facing.getRight();
+                }
 
-        if(facing.getLeft() == start_orient){
-            return facing.getLeft();
+                if(facing.getLeft() == start_orient){
+                    return facing.getLeft();
+                }
+                return facing.getRight();
+            default:
+                return start_orient;
         }
-        return facing.getRight();
     }
 
     public Decision deriveDecision(){
         Direction drxn = this.goTowards();
-        drone.move(goTowards());
         if(drxn == drone.getHeading()){
             switch(drxn){
                 case Direction.NORTH:
