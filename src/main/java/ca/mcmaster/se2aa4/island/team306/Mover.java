@@ -31,10 +31,9 @@ public class Mover {
     public boolean move(){
         if (shouldMove()){
             Direction d = goTowards();
-            if (d == drone.getHeading().getBackwards()){
+            if (d == drone.getHeading().getBackwards()) {
                 return false;
             }
-            drone.move(goTowards());
             return true;
         }
         return false;

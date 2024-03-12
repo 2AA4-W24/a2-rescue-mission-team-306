@@ -39,6 +39,8 @@ public class Drone {
     public void updateResult(ParsedResult r){
         this.result = r;
         updateEnergy();
+        if (r.getType() == DecisionType.FLY_FORWARD || r.getType() == DecisionType.TURN)
+            move(r.getDirection());
     }
 
     private void updateEnergy(){
