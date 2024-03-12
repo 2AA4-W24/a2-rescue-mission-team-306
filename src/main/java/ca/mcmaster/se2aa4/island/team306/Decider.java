@@ -14,7 +14,7 @@ public class Decider {
         this.tracker = new GameTracker(drone, map, queue);
         this.aborter = new Aborter(drone, map, tracker);
         this.radar = new Radar(drone, map, queue, tracker);
-        this.mover = new Mover();
+        this.mover = new Mover(drone, map, queue, tracker);
         this.photo = new PhotoScanner(map, tracker);
     }
 
