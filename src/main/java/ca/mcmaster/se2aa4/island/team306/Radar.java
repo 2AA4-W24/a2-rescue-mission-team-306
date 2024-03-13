@@ -42,6 +42,7 @@ public class Radar implements Scanner{
             case GameState.SEARCH:
                 MapValue value = map.currentValue();
                 if (value != MapValue.UNKNOWN && value != MapValue.OCEAN){
+                    // We currently are on land
                     return false;
                 }
                 value = map.nextValue();
