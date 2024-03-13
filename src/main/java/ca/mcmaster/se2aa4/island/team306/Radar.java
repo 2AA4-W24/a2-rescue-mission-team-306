@@ -40,8 +40,11 @@ public class Radar implements Scanner{
                 this.towards = initHeading;
                 return true;
             case GameState.SEARCH:
-                Coords next = drone.getPosition().step(initHeading);
-                MapValue value = map.checkCoords(next);
+                MapValue value = map.currentValue();
+                if (value != MapValue.UNKNOWN && value != MapValue.OCEAN){
+                    return false;
+                }
+                value = map.nextValue();
                 this.towards = initHeading;
                 return value == MapValue.UNKNOWN;
             default:
