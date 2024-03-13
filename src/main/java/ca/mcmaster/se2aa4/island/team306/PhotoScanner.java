@@ -11,16 +11,19 @@ public class PhotoScanner implements Scanner{
     }
 
     public boolean scan(){
-        return switch (tracker.getState()) {
-            case GameState.SEARCH ->
+        switch (tracker.getState()){
+            case GameState.SEARCH:
                 // Current (end of radar batch) or previous (already on land)
-                    map.currentValue() == MapValue.GROUND ||
-                            map.previousValue() == MapValue.GROUND;
-            case GameState.BRANCH ->
+                    if (map.currentValue().isLand()){
+                        return map.currentValue() == MapValue.GROUND;
+                    }
+                    return map.currentValue() == MapValue.UNKNOWN && map.previousValue().isLand();
+            case GameState.BRANCH:
                 // Scan unless tile is known (radar is unavailable in branch state)
-                    map.currentValue() == MapValue.UNKNOWN || map.currentValue() == MapValue.GROUND;
-            default -> false;
-        };
+                    return map.currentValue() == MapValue.UNKNOWN || map.currentValue() == MapValue.GROUND;
+            default:
+                return false;
+        }
     }
 
     public static Decision getDecision(){

@@ -1,10 +1,15 @@
 package ca.mcmaster.se2aa4.island.team306;
 
+import org.apache.logging.log4j.LogManager;
+
+import org.apache.logging.log4j.Logger;
+
 public class Drone {
     private int energy;
     private Coords position;
     private Direction heading;
     private ParsedResult result;
+    private final Logger logger = LogManager.getLogger();
 
     public Drone(int energy, Direction heading){
         this.energy = energy;
@@ -41,6 +46,7 @@ public class Drone {
         updateEnergy();
         if(result.getType() == DecisionType.FLY_FORWARD || result.getType() == DecisionType.TURN){
             move(result.getDirection());
+            logger.info(String.format("(%d, %d)", position.x, position.y));
         }
     }
 
