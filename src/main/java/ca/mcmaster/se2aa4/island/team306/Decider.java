@@ -7,16 +7,19 @@ public class Decider {
     private PhotoScanner photo;
     private Decision decision;
     private GameTracker tracker;
+    private DecisionQueue queue;
 
     public Decider(Drone drone, Map map){
-        this.tracker = new GameTracker();
-        this.aborter = new Aborter(drone, map, this.tracker);
-        this.radar = new Radar();
+        this.queue = new DecisionQueue();
+        this.tracker = new GameTracker(drone, map, queue);
+        this.aborter = new Aborter(drone, map, tracker);
+        this.radar = new Radar(drone, map, queue, tracker);
         this.mover = new Mover();
-        this.photo = new PhotoScanner();
+        this.photo = new PhotoScanner(map, tracker);
     }
 
     public Decision getNewDecision(){
+        tracker.update();
         updateDecision();
         return this.decision;
     }
@@ -26,6 +29,10 @@ public class Decider {
         boolean abortCheck = aborter.abort();
         if (abortCheck){
             this.decision = Aborter.getDecision();
+            return;
+        }
+        if (!queue.isEmpty()){
+            this.decision = queue.dequeue();
             return;
         }
         boolean photoCheck = photo.scan();
