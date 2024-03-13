@@ -10,7 +10,18 @@ public enum MapValue {
     // Relevant here
     REGULAR_LAND,
     CREEK,
-    EMERGENCY_SITE
+    EMERGENCY_SITE;
+
+    public boolean isLand(){
+        switch(this){
+            case UNKNOWN:
+            case OCEAN:
+            case OUT_OF_RANGE:
+                return false;
+            default:    
+                return true;
+        }
+    }
 
    
 }

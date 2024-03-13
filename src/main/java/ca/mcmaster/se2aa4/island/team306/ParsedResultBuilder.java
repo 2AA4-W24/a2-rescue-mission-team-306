@@ -19,6 +19,7 @@ public class ParsedResultBuilder {
         this.decisionType = decision.getType();
         this.direction = decision.getDirection();
         this.hasResults = false;
+        this.values = new ArrayList<>();
     }
 
     public ParsedResultBuilder populate(String results){
@@ -55,6 +56,8 @@ public class ParsedResultBuilder {
             case DecisionType.PHOTO:
                 JSONArray creek_list = results.getJSONObject("extras").getJSONArray("creeks");
                 JSONArray site_list = results.getJSONObject("extras").getJSONArray("sites");
+                JSONArray biomes_list = results.getJSONObject("extras").getJSONArray("biomes");
+        
         
                 if(creek_list.length() != 0){
                     this.id = creek_list.getString(0);
@@ -62,7 +65,11 @@ public class ParsedResultBuilder {
                 }else if(site_list.length() != 0){
                     this.id = site_list.getString(0);
                     addValue(MapValue.EMERGENCY_SITE);
+                }else if(biomes_list.length()>1 || biomes_list.getString(0) != MapValue.OCEAN.name()){
+                    addValue(MapValue.REGULAR_LAND);
+                    this.id = null;
                 }else{
+                    addValue(MapValue.OCEAN);
                     this.id = null;
                 }
             break;
