@@ -17,19 +17,21 @@ public class Explorer implements IExplorerRaid {
     private Direction prevDirection;
     private Decision prevDecision;
 
+    private ReportGenerator generator;
+
     @Override
     public void initialize(String s) {
         logger.info("** Initializing the Exploration Command Center");
         JSONObject info = new JSONObject(new JSONTokener(new StringReader(s)));
         logger.info("** Initialization info:\n {}",info.toString(2));
         String direction = info.getString("heading");
-        Integer batteryLevel = info.getInt("budget");
+        int batteryLevel = info.getInt("budget");
         logger.info("The drone is facing {}", direction);
         logger.info("Battery level is {}", batteryLevel);
 
         prevDirection = Direction.fromChar(direction.toUpperCase().charAt(0));
         drone = new Drone(batteryLevel, prevDirection);
-        map = new Map(drone);
+        map = new Map(drone, generator);
         decider = new Decider(drone, map);
         
 
@@ -92,9 +94,9 @@ public class Explorer implements IExplorerRaid {
 
     @Override
     public String deliverFinalReport() {
-        ReportGenerator report = new ReportGenerator(map, drone);
-        return report.deliverFinalReport();
-
+        String dump =  generator.deliverReport();
+        logger.info(dump);
+        return dump;
     }
 
 

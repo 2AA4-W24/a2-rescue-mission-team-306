@@ -1,7 +1,7 @@
 package ca.mcmaster.se2aa4.island.team306;
 
 public enum GameState {
-    SETUP, // Know our inital position in the map
+    SETUP, // Know our initial position in the map
     SEARCH, // Grid-search until emergency site is found
     BRANCH, // Branch around the emergency site to find the nearest creek
     SUCCESS, // Mission was a success, abort

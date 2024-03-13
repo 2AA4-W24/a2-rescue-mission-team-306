@@ -13,14 +13,10 @@ public enum MapValue {
     EMERGENCY_SITE;
 
     public boolean isLand(){
-        switch(this){
-            case UNKNOWN:
-            case OCEAN:
-            case OUT_OF_RANGE:
-                return false;
-            default:    
-                return true;
-        }
+        return switch (this) {
+            case UNKNOWN, OCEAN, OUT_OF_RANGE -> false;
+            default -> true;
+        };
     }
 
    

@@ -1,10 +1,13 @@
 package ca.mcmaster.se2aa4.island.team306;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class ParsedResultBuilder {
     private DecisionType decisionType;
@@ -14,6 +17,8 @@ public class ParsedResultBuilder {
     private int cost;
     private int range;
     private String id;
+
+    private static final Logger logger = LogManager.getLogger();
 
     ParsedResultBuilder(Decision decision){
         this.decisionType = decision.getType();
@@ -59,15 +64,19 @@ public class ParsedResultBuilder {
                 JSONArray biomes_list = results.getJSONObject("extras").getJSONArray("biomes");
         
         
-                if(creek_list.length() != 0){
+                if(!creek_list.isEmpty()){
                     this.id = creek_list.getString(0);
                     addValue(MapValue.CREEK);
-                }else if(site_list.length() != 0){
+                }else if(!site_list.isEmpty()){
                     this.id = site_list.getString(0);
                     addValue(MapValue.EMERGENCY_SITE);
-                }else if(biomes_list.length()>1 || biomes_list.getString(0) != MapValue.OCEAN.name()){
+                }else if(biomes_list.length()>1){
                     addValue(MapValue.REGULAR_LAND);
                     this.id = null;
+                }else if (!biomes_list.getString(0).equals("OCEAN")){
+                    addValue(MapValue.REGULAR_LAND);
+                    this.id = null;
+
                 }else{
                     addValue(MapValue.OCEAN);
                     this.id = null;

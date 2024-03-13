@@ -9,12 +9,15 @@ public class Map {
     private final Coords base;
     private final Drone drone;
     private final java.util.Map<Direction, Integer> bounds;
+
+    private final ReportGenerator generator;
     
-    public Map(Drone drone){
+    public Map(Drone drone, ReportGenerator generator){
         this.base = new Coords(0, 0);
         this.tiles = new HashMap<>();
         this.drone = drone;
         this.bounds = new HashMap<>();
+        this.generator = generator;
         initBounds();
     }
 
@@ -35,7 +38,11 @@ public class Map {
                 addTile(new Tile(value, pos));
             }
         }else if(result.getType() == DecisionType.PHOTO){
-            addTile(new Tile(values.getFirst(), pos));
+            MapValue value = values.getFirst();
+            if (value == MapValue.CREEK){
+                generator.setCreekId(result.getID());
+            }
+            addTile(new Tile(value, pos));
         }
 
         updateBounds(result);
