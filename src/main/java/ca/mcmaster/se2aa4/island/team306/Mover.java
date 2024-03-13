@@ -67,11 +67,13 @@ public class Mover {
                     }
                     return facing.getRight();
                 }
-
-                if(facing.getLeft() == start_orient){
-                    return facing.getLeft();
+                if(map.checkCoords(pos.step(facing).step(facing)) == MapValue.OUT_OF_RANGE){
+                    if(facing.getLeft() == start_orient){
+                        return facing.getLeft();
+                    }
+                    return facing.getRight();
                 }
-                return facing.getRight();
+                return facing;
             default:
                 return start_orient;
         }
