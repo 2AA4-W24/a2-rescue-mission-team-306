@@ -29,6 +29,8 @@ public class Explorer implements IExplorerRaid {
         logger.info("The drone is facing {}", direction);
         logger.info("Battery level is {}", batteryLevel);
 
+        generator = new ReportGenerator();
+
         prevDirection = Direction.fromChar(direction.toUpperCase().charAt(0));
         drone = new Drone(batteryLevel, prevDirection);
         map = new Map(drone, generator);
