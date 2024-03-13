@@ -149,4 +149,7 @@ public class Map {
         return bounds.get(direction);
     }
     
+    public Tile getTileAt(Coords coords) {
+        return tiles.get(coords);
+    }
 }

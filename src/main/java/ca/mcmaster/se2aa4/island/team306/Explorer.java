@@ -92,7 +92,11 @@ public class Explorer implements IExplorerRaid {
 
     @Override
     public String deliverFinalReport() {
-        return "no creek found";
+        ReportGenerator report = new ReportGenerator(map, drone);
+        return report.deliverFinalReport();
+
     }
+
+
 
 }

@@ -3,6 +3,9 @@ package ca.mcmaster.se2aa4.island.team306;
 public class Mover {
     private Drone drone;
     private Map map;
+    private DecisionQueue queue;
+    private GameTracker tracker;
+    private Direction start_orient;
 
     public static final Decision FLY_NORTH = 
         new Decision(DecisionType.FLY_FORWARD, Direction.NORTH);
@@ -22,10 +25,24 @@ public class Mover {
     public static final Decision TURN_WEST = 
         new Decision(DecisionType.TURN, Direction.WEST);
 
-    public Mover(){}
+    public Mover(Drone drone, Map map, DecisionQueue queue, GameTracker tracker){
+        this.drone = drone;
+        this.map = map;
+        this.queue = queue;
+        this.tracker = tracker;
+        this.start_orient = drone.getHeading();
+    }
 
     private boolean shouldMove(){
-        return false;
+        switch(tracker.getState()){
+            case SETUP:
+                return false;
+            case SEARCH:
+            case BRANCH:
+            default:
+                return true;
+
+        }
     }
 
     public boolean move(){
@@ -34,14 +51,32 @@ public class Mover {
             if (d == drone.getHeading().getBackwards()){
                 return false;
             }
-            drone.move(goTowards());
             return true;
         }
         return false;
     }
 
     public Direction goTowards(){
-        return Direction.SOUTH;
+        switch(tracker.getState()){
+            case SEARCH:
+                Coords pos = drone.getPosition();
+                Direction facing = drone.getHeading();
+                if(start_orient == facing){
+                    if(map.checkCoords(pos.step(facing.getRight())) == MapValue.OUT_OF_RANGE){
+                        return facing.getLeft();
+                    }
+                    return facing.getRight();
+                }
+                if(map.checkCoords(pos.step(facing).step(facing)) == MapValue.OUT_OF_RANGE){
+                    if(facing.getLeft() == start_orient){
+                        return facing.getLeft();
+                    }
+                    return facing.getRight();
+                }
+                return facing;
+            default:
+                return start_orient;
+        }
     }
 
     public Decision deriveDecision(){
