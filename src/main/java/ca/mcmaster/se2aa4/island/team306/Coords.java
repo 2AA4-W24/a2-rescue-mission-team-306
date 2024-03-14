@@ -46,4 +46,8 @@ public class Coords {
         }
         throw new NullPointerException();
     }
+
+    public String toString(){
+        return String.format("(%d, %d)", this.x, this.y);
+    }
 }

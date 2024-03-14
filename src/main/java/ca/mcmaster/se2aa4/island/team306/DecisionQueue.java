@@ -1,5 +1,6 @@
 package ca.mcmaster.se2aa4.island.team306;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,7 @@ public class DecisionQueue {
 
     public void enqueue(Decision decision){
         this.decisions.add(decision);
-    }
+    };
 
     public Decision dequeue(){
         return decisions.removeFirst();
