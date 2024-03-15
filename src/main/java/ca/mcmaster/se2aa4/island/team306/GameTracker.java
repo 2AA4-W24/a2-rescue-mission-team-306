@@ -1,9 +1,8 @@
 package ca.mcmaster.se2aa4.island.team306;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-import java.util.List;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class GameTracker {
     private GameState state;
@@ -43,7 +42,7 @@ public class GameTracker {
             case GameState.SETUP:
                 return this.queue.isEmpty() && this.map.nextValue() != MapValue.UNKNOWN;
             case GameState.SEARCH:
-                MapValue goal = MapValue.CREEK; // Switch to emergency site after MVP
+                MapValue goal = MapValue.EMERGENCY_SITE; // Switch to emergency site after MVP
                 return this.map.findNearestTile(goal) != null;
             case GameState.BRANCH:
                 return true; // Switch to has found the closest creek
