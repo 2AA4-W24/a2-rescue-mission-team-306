@@ -54,25 +54,6 @@ public class Mover {
             if (d == drone.getHeading().getBackwards()){
                 return false;
             }
-            Coords pos = drone.getPosition();
-            Direction facing = drone.getHeading();
-            if(START_ORIENT == facing) {
-                if (map.checkCoords(pos.step(facing.getRight())) == MapValue.OUT_OF_RANGE) {
-                    Direction direction = facing.getLeft();
-                    queue.enqueue(deriveTurn(direction));
-                    direction = direction.getLeft();
-                    queue.enqueue(deriveTurn(direction));
-                    direction = direction.getRight();
-                    queue.enqueue(deriveTurn(direction));
-                } else {
-                    Direction direction = facing.getRight();
-                    queue.enqueue(deriveTurn(direction));
-                    direction = direction.getRight();
-                    queue.enqueue(deriveTurn(direction));
-                    direction = direction.getLeft();
-                    queue.enqueue(deriveTurn(direction));
-                }
-            }
             return true;
         }
         return false;
@@ -81,6 +62,14 @@ public class Mover {
     public Direction goTowards(){
         switch(tracker.getState()){
             case FIND_ISLAND:
+                if(map.findNearestTile(MapValue.GROUND) != null){
+                    Coords land = map.findNearestTile(MapValue.GROUND);
+                    Path path = new Path(drone.getPosition(), land, drone.getHeading(), map);
+                    DecisionQueue pathQueue = path.findPath();
+                    Decision first_step = pathQueue.dequeue();
+                    queue.enqueue(pathQueue);
+                    return first_step.getDirection();
+                }
                 return START_ORIENT;
             case SEARCH:
                 Coords pos = drone.getPosition();
