@@ -18,9 +18,6 @@ public class PhotoScanner implements Scanner{
                         return map.currentValue() == MapValue.GROUND;
                     }
                     return map.currentValue() == MapValue.UNKNOWN && map.previousValue().isLand();
-            case GameState.BRANCH:
-                // Scan unless tile is known (radar is unavailable in branch state)
-                    return map.currentValue() == MapValue.UNKNOWN || map.currentValue() == MapValue.GROUND;
             default:
                 return false;
         }

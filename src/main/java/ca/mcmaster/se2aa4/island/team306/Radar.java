@@ -28,6 +28,10 @@ public class Radar implements Scanner{
 
     public boolean scan(){
         Direction initHeading = drone.getHeading();
+        Coords pos = drone.getPosition();
+        Coords right = pos.step(initHeading.getRight());
+        Coords left = pos.step(initHeading.getLeft());
+        Coords forward = pos.step(initHeading);
         switch(this.tracker.getState()){
             case GameState.SETUP:
                 // Queue the left and right
@@ -40,10 +44,7 @@ public class Radar implements Scanner{
                 this.towards = initHeading;
                 return true;
             case GameState.FIND_ISLAND:
-                Coords pos = drone.getPosition();
-                Coords right = pos.step(initHeading.getRight());
-                Coords left = pos.step(initHeading.getLeft());
-                Coords forward = pos.step(initHeading);
+            case GameState.SEARCH:
                     if(map.checkCoords(left) == MapValue.UNKNOWN){
                         this.towards = initHeading.getLeft();
                         return true;
