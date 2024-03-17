@@ -39,6 +39,7 @@ public class Mover {
             case SUCCESS:
             case FAILURE:
                 return false;
+            case FIND_ISLAND:
             case SEARCH:
             case BRANCH:
             default:
@@ -79,6 +80,8 @@ public class Mover {
 
     public Direction goTowards(){
         switch(tracker.getState()){
+            case FIND_ISLAND:
+                return START_ORIENT;
             case SEARCH:
                 Coords pos = drone.getPosition();
                 Direction facing = drone.getHeading();
