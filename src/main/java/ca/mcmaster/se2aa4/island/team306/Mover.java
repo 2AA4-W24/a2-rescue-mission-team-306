@@ -73,10 +73,29 @@ public class Mover {
             case SEARCH:
                 Coords pos = drone.getPosition();
                 Direction facing = drone.getHeading();
-                if(map.checkCoords(pos.step(facing).step(facing)) == MapValue.OUT_OF_RANGE){
-                    return START_ORIENT;
+                Path path;
+                if(map.checkCoords(pos.step(facing.getRight())) == MapValue.GROUND){
+                    path = new Path(pos, pos.step(facing.getRight()), facing, map);
+                    DecisionQueue pathQueue = path.findPath();
+                    Decision first_step = pathQueue.dequeue();
+                    queue.enqueue(pathQueue);
+                    return first_step.getDirection();
                 }
-                return facing; // The queue will prevent forever loop
+
+                if(map.checkCoords(pos.step(facing)) == MapValue.GROUND){
+                    path = new Path(pos, pos.step(facing), facing, map);
+                    DecisionQueue pathQueue = path.findPath();
+                    Decision first_step = pathQueue.dequeue();
+                    queue.enqueue(pathQueue);
+                    return first_step.getDirection();
+                }
+
+                path = new Path(pos, pos.step(facing.getLeft()), facing, map);
+                DecisionQueue pathQueue = path.findPath();
+                Decision first_step = pathQueue.dequeue();
+                queue.enqueue(pathQueue);
+                return first_step.getDirection();
+
             default:
                 return START_ORIENT;
         }
