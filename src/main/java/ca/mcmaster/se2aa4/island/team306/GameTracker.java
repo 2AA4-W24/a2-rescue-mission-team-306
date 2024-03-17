@@ -24,7 +24,7 @@ public class GameTracker {
     private void progressState(){
 
         this.state = this.state.next();
-        if (this.state == GameState.BRANCH){
+        if (this.state == GameState.SUCCESS){
             succeedMission();
         }
     }
