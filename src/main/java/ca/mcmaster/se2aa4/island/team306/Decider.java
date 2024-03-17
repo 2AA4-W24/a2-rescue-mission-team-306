@@ -24,6 +24,10 @@ public class Decider {
         return this.decision;
     }
 
+    public DecisionQueue getDecisionQueue() {
+        return this.queue;
+    }
+
 
     private void updateDecision(){
         boolean abortCheck = aborter.abort();
