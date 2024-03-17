@@ -41,7 +41,6 @@ public class Mover {
                 return false;
             case FIND_ISLAND:
             case SEARCH:
-            case BRANCH:
             default:
                 return true;
 

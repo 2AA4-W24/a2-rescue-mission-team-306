@@ -47,8 +47,6 @@ public class GameTracker {
             case GameState.SEARCH:
                 MapValue goal = MapValue.EMERGENCY_SITE; // Switch to emergency site after MVP
                 return this.map.findNearestTile(goal) != null;
-            case GameState.BRANCH:
-                return true; // Switch to has found the closest creek
             default:
                 return false;
         }
