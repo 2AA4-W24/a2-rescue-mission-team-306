@@ -39,15 +39,24 @@ public class Radar implements Scanner{
                 // Return straight for the decider
                 this.towards = initHeading;
                 return true;
-            case GameState.SEARCH:
-                MapValue value = map.currentValue();
-                if (value != MapValue.UNKNOWN && value != MapValue.OCEAN){
-                    // We currently are on land
-                    return false;
+            case GameState.FIND_ISLAND:
+            Coords pos = drone.getPosition();
+            Coords right = pos.step(initHeading.getRight());
+            Coords left = pos.step(initHeading.getLeft());
+            Coords forward = pos.step(initHeading);
+                if(map.checkCoords(left) == MapValue.UNKNOWN){
+                    this.towards = initHeading.getLeft();
+                    return true;
                 }
-                value = map.nextValue();
-                this.towards = initHeading;
-                return value == MapValue.UNKNOWN;
+                if(map.checkCoords(forward) == MapValue.UNKNOWN){
+                    this.towards = initHeading;
+                    return true;
+                }
+                if(map.checkCoords(right) == MapValue.UNKNOWN){
+                    this.towards = initHeading.getRight();
+                    return true;
+                }
+                return false;
             default:
                 return false;
         }
