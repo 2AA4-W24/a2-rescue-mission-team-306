@@ -145,6 +145,8 @@ public class Path {
         facing = facing.getRight();
         queue.enqueue(new Decision(DecisionType.TURN, facing.getRight()));
         facing = facing.getRight();
+
+        pos = pos.step(heading.getRight());
         
         return queue;
     }
@@ -161,6 +163,8 @@ public class Path {
         facing = facing.getLeft();
         queue.enqueue(new Decision(DecisionType.TURN, facing.getLeft()));
         facing = facing.getLeft();
+
+        pos = pos.step(heading.getLeft());
         
         return queue;
     }
