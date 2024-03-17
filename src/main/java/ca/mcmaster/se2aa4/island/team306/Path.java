@@ -1,12 +1,8 @@
 package ca.mcmaster.se2aa4.island.team306;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
 public class Path {
     Direction heading, goTowards;
     Coords start, pos, end;
-    Queue<Direction> path = new LinkedList<>();
 
     public Path(Coords start, Coords end, Direction heading){
         this.heading = heading;
@@ -15,7 +11,8 @@ public class Path {
         goTowards = null;
     }
 
-    public Queue<Direction> findPath(){
+    public DecisionQueue findPath(){
+        DecisionQueue queue = new DecisionQueue();
         if(end.x>start.x){
             goTowards = Direction.EAST;
         }else{
@@ -24,15 +21,15 @@ public class Path {
         while(start.x != end.x){
             if(heading != goTowards){
                 if(heading.getRight() == goTowards){
-                    turnRight();
+                    queue.enqueue(turnRight());
                 }else if(heading.getLeft() == goTowards){
-                    turnLeft();
+                    queue.enqueue(turnLeft());
                 }else{
-                    turnAround();
+                    queue.enqueue(turnAround());
                 }
             }
 
-            moveForward();
+            queue.enqueue(moveForward());
         }
 
         if(end.y>start.y){
@@ -43,72 +40,80 @@ public class Path {
         while(start.y != end.y){
             if(heading != goTowards){
                 if(heading.getRight() == goTowards){
-                    turnRight();
+                    queue.enqueue(turnRight());
                 }else if(heading.getLeft() == goTowards){
-                    turnLeft();
+                    queue.enqueue(turnLeft());
                 }else{
-                    turnAround();
+                    queue.enqueue(turnAround());
                 }
             }
 
-            moveForward();
+            queue.enqueue(moveForward());
         }
-        return this.path;
+        return queue;
     }
 
-    private void turnRight(){
-        path.add(heading);
+    public DecisionQueue turnRight(){
+        DecisionQueue queue = new DecisionQueue();
+        queue.enqueue(new Decision(DecisionType.FLY_FORWARD, heading));
 
-        path.add(heading.getLeft());
+        queue.enqueue(new Decision(DecisionType.TURN, heading.getLeft()));
         heading = heading.getLeft();
 
-        path.add(heading.getLeft());
+        queue.enqueue(new Decision(DecisionType.TURN, heading.getLeft()));
         heading = heading.getLeft();
 
-        path.add(heading.getLeft());
+        queue.enqueue(new Decision(DecisionType.TURN, heading.getLeft()));
         heading = heading.getLeft();
 
-        path.add(heading);
+        queue.enqueue(new Decision(DecisionType.FLY_FORWARD, heading));
+        return queue;
         
     }
 
-    private void turnLeft(){
-        path.add(heading);
+    public DecisionQueue turnLeft(){
+        DecisionQueue queue = new DecisionQueue();
+        queue.enqueue(new Decision(DecisionType.FLY_FORWARD, heading));
 
-        path.add(heading.getRight());
+        queue.enqueue(new Decision(DecisionType.TURN, heading.getRight()));
         heading = heading.getRight();
 
-        path.add(heading.getRight());
+        queue.enqueue(new Decision(DecisionType.TURN, heading.getRight()));
         heading = heading.getRight();
 
-        path.add(heading.getRight());
+        queue.enqueue(new Decision(DecisionType.TURN, heading.getRight()));
         heading = heading.getRight();
 
-        path.add(heading);
+        queue.enqueue(new Decision(DecisionType.FLY_FORWARD, heading));
+        return queue;
 
     }
     
-    private void turnAround(){
-        path.add(heading.getRight());
+    public DecisionQueue turnAround(){
+        DecisionQueue queue = new DecisionQueue();
+        queue.enqueue(new Decision(DecisionType.TURN, heading.getRight()));
         heading = heading.getRight();
 
-        path.add(heading.getLeft());
+        queue.enqueue(new Decision(DecisionType.TURN, heading.getLeft()));
         heading = heading.getLeft();
 
-        path.add(heading.getLeft());
+        queue.enqueue(new Decision(DecisionType.TURN, heading.getLeft()));
         heading = heading.getLeft();
 
-        path.add(heading.getLeft());
+        queue.enqueue(new Decision(DecisionType.TURN, heading.getLeft()));
         heading = heading.getLeft();
 
-        path.add(heading);
+        queue.enqueue(new Decision(DecisionType.FLY_FORWARD, heading));
 
-        path.add(heading);
+        queue.enqueue(new Decision(DecisionType.FLY_FORWARD, heading));
+        return queue;
     }
 
-    private void moveForward(){
-        path.add(heading);
+    public DecisionQueue moveForward(){
+        DecisionQueue queue = new DecisionQueue();
+        queue.enqueue(new Decision(DecisionType.FLY_FORWARD, heading));
         pos = pos.step(heading);
+        return queue;
     } 
     
 }
