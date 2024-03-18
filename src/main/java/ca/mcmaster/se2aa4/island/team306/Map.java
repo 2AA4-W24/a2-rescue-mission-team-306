@@ -39,9 +39,6 @@ public class Map {
             }
         }else if(result.getType() == DecisionType.PHOTO){
             MapValue value = values.getFirst();
-            if (value == MapValue.CREEK){
-                generator.setCreekId(result.getID());
-            }
             addTile(new Tile(value, pos));
         }
 
@@ -158,5 +155,28 @@ public class Map {
     
     public Tile getTileAt(Coords coords) {
         return tiles.get(coords);
+    }
+
+    public void setReportCreek(){
+        Tile creek = null;
+        double min_distance = Double.POSITIVE_INFINITY;
+        if(findNearestTile(MapValue.CREEK) == null){
+            return;
+        }
+        if(findNearestTile(MapValue.EMERGENCY_SITE) == null){
+            creek = getTileAt(findNearestTile(MapValue.CREEK));
+            generator.setCreekId(creek.getID());
+            return;
+        }
+        Coords site = findNearestTile(MapValue.EMERGENCY_SITE);
+        List<Coords> creeks = findTile(MapValue.CREEK);
+        for(Coords creekCheck: creeks){
+            if(site.distance(creekCheck)<min_distance){
+                min_distance = site.distance(creekCheck);
+                creek = getTileAt(creekCheck);
+            }
+        }
+
+        generator.setCreekId(creek.getID());
     }
 }
