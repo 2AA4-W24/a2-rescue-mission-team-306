@@ -76,14 +76,23 @@ public class Mover {
                 Coords pos = drone.getPosition();
                 Direction facing = drone.getHeading();
                 Path path;
-                MapValue right = map.checkCoords(pos.step(facing.getRight())), 
-                    forward = map.checkCoords(pos.step(facing)), 
+                MapValue up_right = map.checkCoords(pos.step(facing.getRight()).step(facing)),
+                    back_left = map.checkCoords(pos.step(facing.getBackwards()).step(facing.getLeft())),
+                    back_right = map.checkCoords(pos.step(facing.getBackwards()).step(facing.getRight())),
+                    up_left = map.checkCoords(pos.step(facing.getLeft()).step(facing)),
+                    right = map.checkCoords(pos.step(facing.getRight())),
+                    forward = map.checkCoords(pos.step(facing)),
                     left = map.checkCoords(pos.step(facing.getLeft()));
+                MapValue curr = map.currentValue();
 
-                if(right.scanned() && forward.scanned() && left.scanned()){
-                    tracker.succeedMission();
+                if(right.scanned() && forward.scanned() && left.scanned() && up_right.scanned() && up_left.scanned() && back_right.scanned() && back_left.scanned()){
+                    if (map.findNearestTile(MapValue.EMERGENCY_SITE) != null){
+                        tracker.succeedMission();
+                    }
                 }
-                if(right == MapValue.GROUND){
+                
+                
+                if(right == MapValue.GROUND||(curr.isLand()&&!right.isLand())){
                     path = new Path(pos, pos.step(facing.getRight()), facing, map);
                     DecisionQueue pathQueue = path.findPath();
                     Decision first_step = pathQueue.dequeue();
@@ -102,7 +111,7 @@ public class Mover {
                 DecisionQueue pathQueue = path.findPath();
                 Decision first_step = pathQueue.dequeue();
                 queue.enqueue(pathQueue);
-                return first_step.getDirection();
+                return first_step.getDirection(); 
                 
                 
             default:

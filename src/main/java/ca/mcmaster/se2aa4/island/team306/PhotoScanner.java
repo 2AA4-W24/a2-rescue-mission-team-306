@@ -14,8 +14,8 @@ public class PhotoScanner implements Scanner{
         switch (tracker.getState()){
             case GameState.SEARCH:
                 // Current (end of radar batch) or previous (already on land)
-                    if (map.currentValue().isLand()){
-                        return map.currentValue() == MapValue.GROUND;
+                    if (!map.currentValue().scanned()){
+                        return true;
                     }
                     return map.currentValue() == MapValue.UNKNOWN && map.previousValue().isLand();
             default:

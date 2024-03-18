@@ -33,12 +33,17 @@ public class Path {
                 }else if(heading.getLeft() == goTowards){
                     queue.enqueue(turnLeft());
                     heading = heading.getLeft();
+
+                    System.out.println(heading.toString());
+                    System.out.println(" " + pos.x + " " + pos.y + " " + end.x + " " + end.y);
                 }else{
                     queue.enqueue(turnAround());
                 }
             }
 
-            queue.enqueue(moveForward());
+            if(pos.x != end.x){
+                queue.enqueue(moveForward());
+            }
 
         }
 
@@ -55,12 +60,17 @@ public class Path {
                 }else if(heading.getLeft() == goTowards){
                     queue.enqueue(turnLeft());
                     heading = heading.getLeft();
+                    System.out.println(heading.toString());
+                    System.out.println(" " + pos.x + " " + pos.y + " " + end.x + " " + end.y);
                 }else{
                     queue.enqueue(turnAround());
                 }
             }
-
-            queue.enqueue(moveForward());
+            if(pos.y != end.y){
+                queue.enqueue(moveForward());
+                
+            }
+            
         }
         return queue;
     }
@@ -71,11 +81,16 @@ public class Path {
 
         MapValue left = map.checkCoords(pos.step(facing.getLeft()));
         MapValue left_2 = map.checkCoords(pos.step(facing.getLeft()).step(facing.getLeft()));
+        MapValue up_2 = map.checkCoords(pos.step(facing).step(facing));
         if(left == MapValue.OUT_OF_RANGE ){
             queue.enqueue(repositionRight());
         }
         if (left_2 == MapValue.OUT_OF_RANGE){
             queue.enqueue(repositionRight());
+        }
+        if (up_2 == MapValue.OUT_OF_RANGE){
+            queue.enqueue(flatRight());
+            return queue;
         }
 
         queue.enqueue(new Decision(DecisionType.FLY_FORWARD, facing));
@@ -101,11 +116,16 @@ public class Path {
 
         MapValue right = map.checkCoords(pos.step(facing.getRight()));
         MapValue right_2 = map.checkCoords(pos.step(facing.getRight()).step(facing.getRight()));
+        MapValue up_2 = map.checkCoords(pos.step(facing).step(facing));
         if(right == MapValue.OUT_OF_RANGE ){
             queue.enqueue(repositionLeft());
         }
         if (right_2 == MapValue.OUT_OF_RANGE){
             queue.enqueue(repositionLeft());
+        }
+        if (up_2 == MapValue.OUT_OF_RANGE){
+            queue.enqueue(flatLeft());
+            return queue;
         }
 
 
@@ -176,6 +196,62 @@ public class Path {
         facing = facing.getLeft();
 
         pos = pos.step(heading.getLeft());
+        
+        return queue;
+    }
+
+    private DecisionQueue flatLeft() {
+        DecisionQueue queue = new DecisionQueue();
+        Direction facing = heading;
+        MapValue right = map.checkCoords(pos.step(facing.getRight()));
+        MapValue right_2 = map.checkCoords(pos.step(facing.getRight()).step(facing.getRight()));
+
+        if(right == MapValue.OUT_OF_RANGE ){
+            queue.enqueue(repositionLeft());
+        }
+        if (right_2 == MapValue.OUT_OF_RANGE){
+            queue.enqueue(repositionLeft());
+        }
+        queue.enqueue(new Decision(DecisionType.TURN, facing.getRight()));
+        facing = facing.getRight();
+        queue.enqueue(new Decision(DecisionType.FLY_FORWARD, facing));
+        queue.enqueue(new Decision(DecisionType.TURN, facing.getRight()));
+        facing = facing.getRight();
+        queue.enqueue(new Decision(DecisionType.FLY_FORWARD, facing));
+        queue.enqueue(new Decision(DecisionType.TURN, facing.getRight()));
+        facing = facing.getRight();
+        queue.enqueue(new Decision(DecisionType.TURN, facing.getRight()));
+        facing = facing.getRight();
+        queue.enqueue(new Decision(DecisionType.TURN, facing.getLeft()));
+        facing = facing.getLeft();
+        
+        return queue;
+    }
+
+    private DecisionQueue flatRight() {
+        DecisionQueue queue = new DecisionQueue();
+        Direction facing = heading;
+        MapValue left = map.checkCoords(pos.step(facing.getLeft()));
+        MapValue left_2 = map.checkCoords(pos.step(facing.getLeft()).step(facing.getLeft()));
+
+        if(left == MapValue.OUT_OF_RANGE ){
+            queue.enqueue(repositionRight());
+        }
+        if (left_2 == MapValue.OUT_OF_RANGE){
+            queue.enqueue(repositionRight());
+        }
+        queue.enqueue(new Decision(DecisionType.TURN, facing.getLeft()));
+        facing = facing.getLeft();
+        queue.enqueue(new Decision(DecisionType.FLY_FORWARD, facing));
+        queue.enqueue(new Decision(DecisionType.TURN, facing.getLeft()));
+        facing = facing.getLeft();
+        queue.enqueue(new Decision(DecisionType.FLY_FORWARD, facing));
+        queue.enqueue(new Decision(DecisionType.TURN, facing.getLeft()));
+        facing = facing.getLeft();
+        queue.enqueue(new Decision(DecisionType.TURN, facing.getLeft()));
+        facing = facing.getLeft();
+        queue.enqueue(new Decision(DecisionType.TURN, facing.getRight()));
+        facing = facing.getRight();
         
         return queue;
     }
