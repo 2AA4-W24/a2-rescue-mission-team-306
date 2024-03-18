@@ -15,6 +15,7 @@ public class Radar implements Scanner{
     private DecisionQueue queue;
     private GameTracker tracker;
     private Direction towards;
+    private DecisionQueue scanQueue;
 
     public Radar(Drone drone, Map map, DecisionQueue queue, GameTracker tracker){
         this.drone = drone;
@@ -22,6 +23,7 @@ public class Radar implements Scanner{
         this.queue = queue;
         this.tracker = tracker;
         this.towards = drone.getHeading();
+        this.scanQueue = new DecisionQueue();
     }
 
 
@@ -45,19 +47,26 @@ public class Radar implements Scanner{
                 return true;
             case GameState.FIND_ISLAND:
             case GameState.SEARCH:
+                scanQueue.clear();
                     if(map.checkCoords(left) == MapValue.UNKNOWN){
                         this.towards = initHeading.getLeft();
-                        return true;
+                        scanQueue.enqueue(deriveDecision());
                     }
                     if(map.checkCoords(forward) == MapValue.UNKNOWN){
                         this.towards = initHeading;
-                        return true;
+                        scanQueue.enqueue(deriveDecision());
                     }
                     if(map.checkCoords(right) == MapValue.UNKNOWN){
                         this.towards = initHeading.getRight();
-                        return true;
+                        scanQueue.enqueue(deriveDecision());
                     }
-                    return false;
+                    if(scanQueue.isEmpty()){
+                        return false;
+                    }
+                    this.towards = scanQueue.dequeue().getDirection();
+                    queue.enqueue(scanQueue);
+                    return true;
+                        
             default:
                 return false;
         }

@@ -19,5 +19,12 @@ public enum MapValue {
         };
     }
 
+    public boolean scanned(){
+        return switch (this) {
+            case UNKNOWN, OCEAN, OUT_OF_RANGE, GROUND -> false;
+            default -> true;
+        };
+    }
+
    
 }

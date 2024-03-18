@@ -6,6 +6,7 @@ public class Mover {
     private final DecisionQueue queue;
     private final GameTracker tracker;
     private final Direction START_ORIENT;
+    private Direction towards;
 
     public static final Decision FLY_NORTH = 
         new Decision(DecisionType.FLY_FORWARD, Direction.NORTH);
@@ -31,6 +32,7 @@ public class Mover {
         this.queue = queue;
         this.tracker = tracker;
         this.START_ORIENT = drone.getHeading();
+        this.towards = null;
     }
 
     private boolean shouldMove(){
@@ -49,8 +51,8 @@ public class Mover {
 
     public boolean move(){
         if (shouldMove()){
-            Direction d = goTowards();
-            if (d == drone.getHeading().getBackwards()){
+            towards = goTowards();
+            if (towards == drone.getHeading().getBackwards()){
                 return false;
             }
             return true;
@@ -74,36 +76,42 @@ public class Mover {
                 Coords pos = drone.getPosition();
                 Direction facing = drone.getHeading();
                 Path path;
-                if(map.checkCoords(pos.step(facing.getRight())) == MapValue.GROUND){
+                MapValue right = map.checkCoords(pos.step(facing.getRight())), 
+                    forward = map.checkCoords(pos.step(facing)), 
+                    left = map.checkCoords(pos.step(facing.getLeft()));
+
+                if(right.scanned() && forward.scanned() && left.scanned()){
+                    tracker.succeedMission();
+                }
+                if(right == MapValue.GROUND){
                     path = new Path(pos, pos.step(facing.getRight()), facing, map);
                     DecisionQueue pathQueue = path.findPath();
                     Decision first_step = pathQueue.dequeue();
                     queue.enqueue(pathQueue);
                     return first_step.getDirection();
                 }
-
-                if(map.checkCoords(pos.step(facing)) == MapValue.GROUND){
+                if(forward == MapValue.GROUND){
                     path = new Path(pos, pos.step(facing), facing, map);
                     DecisionQueue pathQueue = path.findPath();
                     Decision first_step = pathQueue.dequeue();
                     queue.enqueue(pathQueue);
                     return first_step.getDirection();
                 }
-
+                
                 path = new Path(pos, pos.step(facing.getLeft()), facing, map);
                 DecisionQueue pathQueue = path.findPath();
                 Decision first_step = pathQueue.dequeue();
                 queue.enqueue(pathQueue);
                 return first_step.getDirection();
-
+                
+                
             default:
                 return START_ORIENT;
         }
     }
 
     public Decision deriveDecision() {
-        Direction drxn = this.goTowards();
-        return deriveDecision(drxn);
+        return deriveDecision(towards);
     }
 
     private Decision deriveDecision(Direction drxn){

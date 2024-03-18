@@ -45,8 +45,8 @@ public class GameTracker {
                 MapValue current = map.checkCoords(drone.getPosition());
                 return current.isLand();
             case GameState.SEARCH:
-                MapValue goal = MapValue.EMERGENCY_SITE; // Switch to emergency site after MVP
-                return this.map.findNearestTile(goal) != null;
+                // MapValue goal = MapValue.EMERGENCY_SITE; // Switch to emergency site after MVP
+                // return this.map.findNearestTile(goal) != null;
             default:
                 return false;
         }
