@@ -49,6 +49,7 @@ public class Explorer implements IExplorerRaid {
         switch(type){
             case DecisionType.ABORT:
                 decision_json.put("action", "stop"); // we stop the exploration immediately
+                map.setReportCreek();
                 break;
             case DecisionType.FLY_FORWARD:
                 decision_json.put("action", "fly"); // we fly forward
