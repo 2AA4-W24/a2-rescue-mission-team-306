@@ -32,7 +32,6 @@ public class Map {
         Coords pos = drone.getPosition();
         Direction drxn = result.getDirection();
         List<MapValue> values = result.getValues();
-        String id = result.getID();
         if (result.getType() == DecisionType.RADAR){
             for (MapValue value : values) {
                 pos = pos.step(drxn);
@@ -40,7 +39,7 @@ public class Map {
             }
         }else if(result.getType() == DecisionType.PHOTO){
             MapValue value = values.getFirst();
-            addTile(new Tile(value, pos, id));
+            addTile(new Tile(value, pos));
         }
 
         updateBounds(result);
@@ -177,6 +176,7 @@ public class Map {
                 creek = getTileAt(creekCheck);
             }
         }
+
         generator.setCreekId(creek.getID());
     }
 }
