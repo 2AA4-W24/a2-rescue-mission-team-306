@@ -15,6 +15,7 @@ public class Radar implements Scanner{
     private DecisionQueue queue;
     private GameTracker tracker;
     private Direction towards;
+    private DecisionQueue scanQueue;
 
     public Radar(Drone drone, Map map, DecisionQueue queue, GameTracker tracker){
         this.drone = drone;
@@ -22,12 +23,17 @@ public class Radar implements Scanner{
         this.queue = queue;
         this.tracker = tracker;
         this.towards = drone.getHeading();
+        this.scanQueue = new DecisionQueue();
     }
 
 
 
     public boolean scan(){
         Direction initHeading = drone.getHeading();
+        Coords pos = drone.getPosition();
+        Coords right = pos.step(initHeading.getRight());
+        Coords left = pos.step(initHeading.getLeft());
+        Coords forward = pos.step(initHeading);
         switch(this.tracker.getState()){
             case GameState.SETUP:
                 // Queue the left and right
@@ -39,15 +45,28 @@ public class Radar implements Scanner{
                 // Return straight for the decider
                 this.towards = initHeading;
                 return true;
+            case GameState.FIND_ISLAND:
             case GameState.SEARCH:
-                MapValue value = map.currentValue();
-                if (value != MapValue.UNKNOWN && value != MapValue.OCEAN){
-                    // We currently are on land
-                    return false;
-                }
-                value = map.nextValue();
-                this.towards = initHeading;
-                return value == MapValue.UNKNOWN;
+                scanQueue.clear();
+                    if(map.checkCoords(left) == MapValue.UNKNOWN){
+                        this.towards = initHeading.getLeft();
+                        scanQueue.enqueue(deriveDecision());
+                    }
+                    if(map.checkCoords(forward) == MapValue.UNKNOWN){
+                        this.towards = initHeading;
+                        scanQueue.enqueue(deriveDecision());
+                    }
+                    if(map.checkCoords(right) == MapValue.UNKNOWN){
+                        this.towards = initHeading.getRight();
+                        scanQueue.enqueue(deriveDecision());
+                    }
+                    if(scanQueue.isEmpty()){
+                        return false;
+                    }
+                    this.towards = scanQueue.dequeue().getDirection();
+                    queue.enqueue(scanQueue);
+                    return true;
+                        
             default:
                 return false;
         }

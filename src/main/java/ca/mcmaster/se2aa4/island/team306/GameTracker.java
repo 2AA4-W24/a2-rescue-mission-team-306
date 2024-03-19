@@ -24,7 +24,7 @@ public class GameTracker {
     private void progressState(){
 
         this.state = this.state.next();
-        if (this.state == GameState.BRANCH){
+        if (this.state == GameState.SUCCESS){
             succeedMission();
         }
     }
@@ -41,11 +41,12 @@ public class GameTracker {
         switch (state) {
             case GameState.SETUP:
                 return this.queue.isEmpty() && this.map.nextValue() != MapValue.UNKNOWN;
+            case GameState.FIND_ISLAND:
+                MapValue current = map.checkCoords(drone.getPosition());
+                return current.isLand();
             case GameState.SEARCH:
-                MapValue goal = MapValue.EMERGENCY_SITE; // Switch to emergency site after MVP
-                return this.map.findNearestTile(goal) != null;
-            case GameState.BRANCH:
-                return true; // Switch to has found the closest creek
+                // MapValue goal = MapValue.EMERGENCY_SITE; // Switch to emergency site after MVP
+                // return this.map.findNearestTile(goal) != null;
             default:
                 return false;
         }

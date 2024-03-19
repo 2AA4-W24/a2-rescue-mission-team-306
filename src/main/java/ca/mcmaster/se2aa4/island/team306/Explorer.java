@@ -49,6 +49,7 @@ public class Explorer implements IExplorerRaid {
         switch(type){
             case DecisionType.ABORT:
                 decision_json.put("action", "stop"); // we stop the exploration immediately
+                map.setReportCreek();
                 break;
             case DecisionType.FLY_FORWARD:
                 decision_json.put("action", "fly"); // we fly forward
@@ -79,14 +80,7 @@ public class Explorer implements IExplorerRaid {
     @Override
     public void acknowledgeResults(String s) {
         // Starter code
-        JSONObject response = new JSONObject(new JSONTokener(new StringReader(s)));
-        logger.info("** Response received:\n"+response.toString(2));
-        Integer cost = response.getInt("cost");
-        logger.info("The cost of the action was {}", cost);
-        String status = response.getString("status");
-        logger.info("The status of the drone is {}", status);
-        JSONObject extraInfo = response.getJSONObject("extras");
-        logger.info("Additional information received: {}", extraInfo);
+       
 
         // Important code
         ParsedResult r = ParsedResult.builder(prevDecision).populate(s).build();

@@ -6,6 +6,7 @@ public class Mover {
     private final DecisionQueue queue;
     private final GameTracker tracker;
     private final Direction START_ORIENT;
+    private Direction towards;
 
     public static final Decision FLY_NORTH = 
         new Decision(DecisionType.FLY_FORWARD, Direction.NORTH);
@@ -31,6 +32,7 @@ public class Mover {
         this.queue = queue;
         this.tracker = tracker;
         this.START_ORIENT = drone.getHeading();
+        this.towards = null;
     }
 
     private boolean shouldMove(){
@@ -39,8 +41,8 @@ public class Mover {
             case SUCCESS:
             case FAILURE:
                 return false;
+            case FIND_ISLAND:
             case SEARCH:
-            case BRANCH:
             default:
                 return true;
 
@@ -49,28 +51,9 @@ public class Mover {
 
     public boolean move(){
         if (shouldMove()){
-            Direction d = goTowards();
-            if (d == drone.getHeading().getBackwards()){
+            towards = goTowards();
+            if (towards == drone.getHeading().getBackwards()){
                 return false;
-            }
-            Coords pos = drone.getPosition();
-            Direction facing = drone.getHeading();
-            if(START_ORIENT == facing) {
-                if (map.checkCoords(pos.step(facing.getRight())) == MapValue.OUT_OF_RANGE) {
-                    Direction direction = facing.getLeft();
-                    queue.enqueue(deriveTurn(direction));
-                    direction = direction.getLeft();
-                    queue.enqueue(deriveTurn(direction));
-                    direction = direction.getRight();
-                    queue.enqueue(deriveTurn(direction));
-                } else {
-                    Direction direction = facing.getRight();
-                    queue.enqueue(deriveTurn(direction));
-                    direction = direction.getRight();
-                    queue.enqueue(deriveTurn(direction));
-                    direction = direction.getLeft();
-                    queue.enqueue(deriveTurn(direction));
-                }
             }
             return true;
         }
@@ -79,21 +62,65 @@ public class Mover {
 
     public Direction goTowards(){
         switch(tracker.getState()){
+            case FIND_ISLAND:
+                if(map.findNearestTile(MapValue.GROUND) != null){
+                    Coords land = map.findNearestTile(MapValue.GROUND);
+                    Path path = new Path(drone.getPosition(), land, drone.getHeading(), map);
+                    DecisionQueue pathQueue = path.findPath();
+                    Decision first_step = pathQueue.dequeue();
+                    queue.enqueue(pathQueue);
+                    return first_step.getDirection();
+                }
+                return START_ORIENT;
             case SEARCH:
                 Coords pos = drone.getPosition();
                 Direction facing = drone.getHeading();
-                if(map.checkCoords(pos.step(facing).step(facing)) == MapValue.OUT_OF_RANGE){
-                    return START_ORIENT;
+                Path path;
+                MapValue up_right = map.checkCoords(pos.step(facing.getRight()).step(facing)),
+                    back_left = map.checkCoords(pos.step(facing.getBackwards()).step(facing.getLeft())),
+                    back_right = map.checkCoords(pos.step(facing.getBackwards()).step(facing.getRight())),
+                    up_left = map.checkCoords(pos.step(facing.getLeft()).step(facing)),
+                    right = map.checkCoords(pos.step(facing.getRight())),
+                    forward = map.checkCoords(pos.step(facing)),
+                    left = map.checkCoords(pos.step(facing.getLeft()));
+                MapValue curr = map.currentValue();
+
+                if(right.scanned() && forward.scanned() && left.scanned() && up_right.scanned() && up_left.scanned() && back_right.scanned() && back_left.scanned()){
+                    if (map.findNearestTile(MapValue.EMERGENCY_SITE) != null){
+                        tracker.succeedMission();
+                    }
                 }
-                return facing; // The queue will prevent forever loop
+                
+                
+                if(right == MapValue.GROUND||(curr.isLand()&&!right.isLand())){
+                    path = new Path(pos, pos.step(facing.getRight()), facing, map);
+                    DecisionQueue pathQueue = path.findPath();
+                    Decision first_step = pathQueue.dequeue();
+                    queue.enqueue(pathQueue);
+                    return first_step.getDirection();
+                }
+                if(forward == MapValue.GROUND){
+                    path = new Path(pos, pos.step(facing), facing, map);
+                    DecisionQueue pathQueue = path.findPath();
+                    Decision first_step = pathQueue.dequeue();
+                    queue.enqueue(pathQueue);
+                    return first_step.getDirection();
+                }
+                
+                path = new Path(pos, pos.step(facing.getLeft()), facing, map);
+                DecisionQueue pathQueue = path.findPath();
+                Decision first_step = pathQueue.dequeue();
+                queue.enqueue(pathQueue);
+                return first_step.getDirection(); 
+                
+                
             default:
                 return START_ORIENT;
         }
     }
 
     public Decision deriveDecision() {
-        Direction drxn = this.goTowards();
-        return deriveDecision(drxn);
+        return deriveDecision(towards);
     }
 
     private Decision deriveDecision(Direction drxn){

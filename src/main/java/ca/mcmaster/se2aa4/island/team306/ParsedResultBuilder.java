@@ -78,7 +78,7 @@ public class ParsedResultBuilder {
                     this.id = null;
 
                 }else{
-                    addValue(MapValue.OCEAN);
+                    addValue(MapValue.SCANNED_OCEAN);
                     this.id = null;
                 }
             break;
