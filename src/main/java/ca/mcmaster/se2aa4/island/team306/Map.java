@@ -177,6 +177,7 @@ public class Map {
                 creek = getTileAt(creekCheck);
             }
         }
-        generator.setCreekId(creek.getID());
+        if (!(creek == null))
+            generator.setCreekId(creek.getID());
     }
 }
