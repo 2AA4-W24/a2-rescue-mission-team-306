@@ -9,6 +9,10 @@ public class ReportGenerator {
         this.creekId = null;
     }
 
+    public String getCreekId(){
+        return creekId;
+    }
+
     public void setCreekId(String id){
         this.creekId = id;
     }

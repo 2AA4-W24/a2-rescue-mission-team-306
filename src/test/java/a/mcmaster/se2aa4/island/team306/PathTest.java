@@ -22,8 +22,6 @@ public class PathTest {
         root = new Coords(0, 0);
         drone = new Drone(100, Direction.EAST);
         map = new Map(drone, new ReportGenerator());
-        String southbound = "{ \"cost\": 1, \"extras\": { \"range\": 0, \"found\": \"OUT_OF_RANGE\" }, \"status\": \"OK\" }";
-        map.updateBounds(ParsedResult.builder(Radar.SCAN_SOUTH).populate(southbound).build());
     }
 
     @Test
