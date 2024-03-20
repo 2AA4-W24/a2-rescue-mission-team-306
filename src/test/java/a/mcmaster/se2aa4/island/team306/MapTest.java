@@ -92,6 +92,7 @@ public class MapTest {
             assertEquals(map.findNearestTile(MapValue.SCANNED_OCEAN), c);
         }
 
+        // Regular land
         drone.move(Direction.SOUTH);
         assertNull(map.findNearestTile(MapValue.REGULAR_LAND));
         assertEquals(map.currentValue(), MapValue.UNKNOWN);
@@ -100,7 +101,7 @@ public class MapTest {
         assertEquals(map.currentValue(), MapValue.REGULAR_LAND);
 
 
-
+        // Emergency site
         drone.move(Direction.EAST);
         drone.move(Direction.NORTH);
         assertNull(map.findNearestTile(MapValue.EMERGENCY_SITE));
@@ -109,6 +110,8 @@ public class MapTest {
         map.updateStatus(ParsedResult.builder(PhotoScanner.getDecision()).populate(response).build());
         assertEquals(map.currentValue(), MapValue.EMERGENCY_SITE);
 
+
+        // Distant creek
         for (int i = 0; i < 10; i++) drone.move(Direction.SOUTH);
 
         assertEquals(map.currentValue(), MapValue.UNKNOWN);
@@ -118,8 +121,14 @@ public class MapTest {
         assertEquals(map.getTileAt(drone.getPosition()).getID(), "moon-beach");
         assertEquals(map.findNearestTile(MapValue.CREEK), drone.getPosition());
 
+        // Updated creek
         map.setReportCreek();
         assertEquals(generator.getCreekId(), "quick-beach");
+
+
+        // Assert ids are properly source
+        assertEquals(map.getTileAt(map.getBase()).getID(), "quick-beach");
+        assertEquals(map.getTileAt(drone.getPosition()).getID(), "moon-beach");
 
 
     }
