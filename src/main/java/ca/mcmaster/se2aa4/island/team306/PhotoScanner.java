@@ -12,6 +12,8 @@ public class PhotoScanner implements Scanner{
 
     public boolean scan(){
         switch (tracker.getState()){
+            case GameState.FOLLOW_COAST_OUTSIDE:
+            case GameState.FOLLOW_COAST_INSIDE:
             case GameState.SEARCH:
                 // Current (end of radar batch) or previous (already on land)
                     if (!map.currentValue().scanned()){

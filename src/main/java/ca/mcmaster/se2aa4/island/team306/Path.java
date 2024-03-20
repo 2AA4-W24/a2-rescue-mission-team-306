@@ -33,9 +33,6 @@ public class Path {
                 }else if(heading.getLeft() == goTowards){
                     queue.enqueue(turnLeft());
                     heading = heading.getLeft();
-
-                    System.out.println(heading.toString());
-                    System.out.println(" " + pos.x + " " + pos.y + " " + end.x + " " + end.y);
                 }else{
                     queue.enqueue(turnAround());
                 }
@@ -60,8 +57,6 @@ public class Path {
                 }else if(heading.getLeft() == goTowards){
                     queue.enqueue(turnLeft());
                     heading = heading.getLeft();
-                    System.out.println(heading.toString());
-                    System.out.println(" " + pos.x + " " + pos.y + " " + end.x + " " + end.y);
                 }else{
                     queue.enqueue(turnAround());
                 }
@@ -92,7 +87,7 @@ public class Path {
             queue.enqueue(flatRight());
             return queue;
         }
-
+        
         queue.enqueue(new Decision(DecisionType.FLY_FORWARD, facing));
 
         queue.enqueue(new Decision(DecisionType.TURN, facing.getLeft()));

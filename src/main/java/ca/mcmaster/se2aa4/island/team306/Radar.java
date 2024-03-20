@@ -46,6 +46,8 @@ public class Radar implements Scanner{
                 this.towards = initHeading;
                 return true;
             case GameState.FIND_ISLAND:
+            case GameState.FOLLOW_COAST_OUTSIDE:
+            case GameState.FOLLOW_COAST_INSIDE:
             case GameState.SEARCH:
                 scanQueue.clear();
                     if(map.checkCoords(left) == MapValue.UNKNOWN){

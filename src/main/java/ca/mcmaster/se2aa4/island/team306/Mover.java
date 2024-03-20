@@ -1,5 +1,8 @@
 package ca.mcmaster.se2aa4.island.team306;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class Mover {
     private final Drone drone;
     private final Map map;
@@ -7,6 +10,11 @@ public class Mover {
     private final GameTracker tracker;
     private final Direction START_ORIENT;
     private Direction towards;
+    private Coords initial_land;
+    private Coords initial_water;
+    private int start;
+    private Coords start_pos;
+    private final Logger logger = LogManager.getLogger();
 
     public static final Decision FLY_NORTH = 
         new Decision(DecisionType.FLY_FORWARD, Direction.NORTH);
@@ -33,6 +41,7 @@ public class Mover {
         this.tracker = tracker;
         this.START_ORIENT = drone.getHeading();
         this.towards = null;
+        start = 0;
     }
 
     private boolean shouldMove(){
@@ -61,58 +70,136 @@ public class Mover {
     }
 
     public Direction goTowards(){
+        Coords pos = drone.getPosition();
+        Direction facing = drone.getHeading();
+        Path path;
+        MapValue right = map.checkCoords(pos.step(facing.getRight())),
+                forward = map.checkCoords(pos.step(facing)),
+                left = map.checkCoords(pos.step(facing.getLeft()));
+        DecisionQueue pathQueue;
+        Decision first_step;
         switch(tracker.getState()){
             case FIND_ISLAND:
                 if(map.findNearestTile(MapValue.GROUND) != null){
                     Coords land = map.findNearestTile(MapValue.GROUND);
-                    Path path = new Path(drone.getPosition(), land, drone.getHeading(), map);
-                    DecisionQueue pathQueue = path.findPath();
-                    Decision first_step = pathQueue.dequeue();
+                    initial_land = land;
+                    path = new Path(drone.getPosition(), land, drone.getHeading(), map);
+                    pathQueue = path.findPath();
+                    first_step = pathQueue.dequeue();
                     queue.enqueue(pathQueue);
                     return first_step.getDirection();
                 }
                 return START_ORIENT;
-            case SEARCH:
-                Coords pos = drone.getPosition();
-                Direction facing = drone.getHeading();
-                Path path;
-                MapValue up_right = map.checkCoords(pos.step(facing.getRight()).step(facing)),
-                    back_left = map.checkCoords(pos.step(facing.getBackwards()).step(facing.getLeft())),
-                    back_right = map.checkCoords(pos.step(facing.getBackwards()).step(facing.getRight())),
-                    up_left = map.checkCoords(pos.step(facing.getLeft()).step(facing)),
-                    right = map.checkCoords(pos.step(facing.getRight())),
-                    forward = map.checkCoords(pos.step(facing)),
-                    left = map.checkCoords(pos.step(facing.getLeft()));
-                MapValue curr = map.currentValue();
-
-                if(right.scanned() && forward.scanned() && left.scanned() && up_right.scanned() && up_left.scanned() && back_right.scanned() && back_left.scanned()){
-                    if (map.findNearestTile(MapValue.EMERGENCY_SITE) != null){
-                        tracker.succeedMission();
+            case FOLLOW_COAST_OUTSIDE:
+                logger.info("OUTSIDE");
+                if(pos.equals(initial_land)){
+                    if(left == MapValue.OCEAN){
+                        initial_water = pos.step(facing.getLeft());
+                    }else if(forward == MapValue.OCEAN){
+                        initial_water = pos.step(facing);
+                    }else{
+                        initial_water = pos.step(facing.getRight());
                     }
                 }
-                
-                
-                if(right == MapValue.GROUND||(curr.isLand()&&!right.isLand())){
-                    path = new Path(pos, pos.step(facing.getRight()), facing, map);
-                    DecisionQueue pathQueue = path.findPath();
-                    Decision first_step = pathQueue.dequeue();
+                if(pos.equals(initial_water)){
+                    if(start > 1){
+                        start = 0;
+                        path = new Path(pos, initial_land, facing, map);
+                        pathQueue = path.findPath();
+                        first_step = pathQueue.dequeue();
+                        queue.enqueue(pathQueue);
+                        tracker.completeLoop();
+                        return first_step.getDirection();
+                    }
+                    start++;
+                }
+                if(left == MapValue.OCEAN || left == MapValue.SCANNED_OCEAN){
+                    path = new Path(pos, pos.step(facing.getLeft()), facing, map);
+                    pathQueue = path.findPath();
+                    first_step = pathQueue.dequeue();
                     queue.enqueue(pathQueue);
                     return first_step.getDirection();
                 }
-                if(forward == MapValue.GROUND){
+                if(forward == MapValue.OCEAN || forward == MapValue.SCANNED_OCEAN){
                     path = new Path(pos, pos.step(facing), facing, map);
-                    DecisionQueue pathQueue = path.findPath();
-                    Decision first_step = pathQueue.dequeue();
+                    pathQueue = path.findPath();
+                    first_step = pathQueue.dequeue();
                     queue.enqueue(pathQueue);
                     return first_step.getDirection();
                 }
                 
-                path = new Path(pos, pos.step(facing.getLeft()), facing, map);
-                DecisionQueue pathQueue = path.findPath();
-                Decision first_step = pathQueue.dequeue();
+                if(right == MapValue.OCEAN || right == MapValue.SCANNED_OCEAN){
+                    path = new Path(pos, pos.step(facing.getRight()), facing, map);
+                    pathQueue = path.findPath();
+                    first_step = pathQueue.dequeue();
+                    queue.enqueue(pathQueue);
+                    return first_step.getDirection(); 
+                }
+
+                path = new Path(pos, pos.step(facing.getBackwards()), facing, map);
+                pathQueue = path.findPath();
+                first_step = pathQueue.dequeue();
                 queue.enqueue(pathQueue);
                 return first_step.getDirection(); 
+
+            case FOLLOW_COAST_INSIDE:
+            logger.info("INSIDE");
+                if(pos.equals(start_pos)){
+                    tracker.completeLoop();
+                }
+                if(start == 0){
+                    start_pos = pos;
+                    start++;
+                }
+                if(right.isLand()){
+                    path = new Path(pos, pos.step(facing.getRight()), facing, map);
+                    pathQueue = path.findPath();
+                    first_step = pathQueue.dequeue();
+                    queue.enqueue(pathQueue);
+                    return first_step.getDirection();
+                }
+                if(forward.isLand()){
+                    path = new Path(pos, pos.step(facing), facing, map);
+                    pathQueue = path.findPath();
+                    first_step = pathQueue.dequeue();
+                    queue.enqueue(pathQueue);
+                    return first_step.getDirection();
+                }
                 
+                if(left.isLand()){
+                    path = new Path(pos, pos.step(facing.getLeft()), facing, map);
+                    pathQueue = path.findPath();
+                    first_step = pathQueue.dequeue();
+                    queue.enqueue(pathQueue);
+                    return first_step.getDirection();
+                }
+
+                path = new Path(pos, pos.step(facing.getBackwards()), facing, map);
+                pathQueue = path.findPath();
+                first_step = pathQueue.dequeue();
+                queue.enqueue(pathQueue);
+                return first_step.getDirection();
+            case SEARCH:
+                logger.info("SEARCHING");
+                if(!right.scanned()){
+                    path = new Path(pos, pos.step(facing.getRight()), facing, map);
+                    pathQueue = path.findPath();
+                    first_step = pathQueue.dequeue();
+                    queue.enqueue(pathQueue);
+                    return first_step.getDirection();
+                }
+                if(!forward.scanned()){
+                    path = new Path(pos, pos.step(facing), facing, map);
+                    pathQueue = path.findPath();
+                    first_step = pathQueue.dequeue();
+                    queue.enqueue(pathQueue);
+                    return first_step.getDirection();
+                }
+                path = new Path(pos, pos.step(facing.getLeft()), facing, map);
+                pathQueue = path.findPath();
+                first_step = pathQueue.dequeue();
+                queue.enqueue(pathQueue);
+                return first_step.getDirection();
                 
             default:
                 return START_ORIENT;
