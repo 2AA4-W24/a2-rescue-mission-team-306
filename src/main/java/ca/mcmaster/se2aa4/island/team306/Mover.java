@@ -8,6 +8,7 @@ public class Mover {
     private final Direction START_ORIENT;
     private Direction towards;
 
+    // Constants representing movement decisions
     public static final Decision FLY_NORTH = 
         new Decision(DecisionType.FLY_FORWARD, Direction.NORTH);
     public static final Decision FLY_EAST = 
@@ -26,6 +27,14 @@ public class Mover {
     public static final Decision TURN_WEST = 
         new Decision(DecisionType.TURN, Direction.WEST);
 
+    /**
+     * Constructs a Mover object with the specified drone, map, decision queue, and game tracker.
+     *
+     * @param drone   the drone controlled by the mover
+     * @param map     the map representing the drone's environment
+     * @param queue   the decision queue for storing movement decisions
+     * @param tracker the game tracker for monitoring the game state
+     */
     public Mover(Drone drone, Map map, DecisionQueue queue, GameTracker tracker){
         this.drone = drone;
         this.map = map;
@@ -35,6 +44,11 @@ public class Mover {
         this.towards = null;
     }
 
+    /**
+     * Determines whether the drone should make a movement decision based on the current game state.
+     *
+     * @return true if the drone should make a movement decision, false otherwise
+     */
     private boolean shouldMove(){
         switch(tracker.getState()){
             case SETUP:
@@ -49,6 +63,11 @@ public class Mover {
         }
     }
 
+    /**
+     * Executes a movement decision for the drone based on the current game state and environmental conditions.
+     *
+     * @return true if the drone successfully executes a movement decision, false otherwise
+     */
     public boolean move(){
         if (shouldMove()){
             towards = goTowards();
@@ -60,6 +79,11 @@ public class Mover {
         return false;
     }
 
+    /**
+     * Determines the direction towards which the drone should move based on the current game state and environment.
+     *
+     * @return the direction towards which the drone should move
+     */
     public Direction goTowards(){
         switch(tracker.getState()){
             case FIND_ISLAND:
@@ -127,7 +151,13 @@ public class Mover {
         return deriveDecision(drxn, drone.getHeading());
     }
 
-
+    /**
+     * Derives a movement decision for the drone based on the specified direction and current heading.
+     *
+     * @param drxn    the direction towards which the drone should move
+     * @param heading the current heading of the drone
+     * @return the movement decision derived from the specified direction and heading
+     */
     private Decision deriveDecision(Direction drxn, Direction heading){
         if(drxn == heading){
            return deriveFly(drxn);
@@ -137,6 +167,13 @@ public class Mover {
         }
     }
 
+    /**
+     * Derives a forward movement decision for the drone based on the specified direction.
+     *
+     * @param drxn the direction towards which the drone should move
+     * @return the forward movement decision derived from the specified direction
+     * @throws NullPointerException if the specified direction is null
+     */
     public Decision deriveFly(Direction drxn){
         switch(drxn){
             case Direction.NORTH:
@@ -151,7 +188,14 @@ public class Mover {
                 throw new NullPointerException();
         }
     }
-
+    
+    /**
+     * Derives a turning decision based on the specified direction.
+     *
+     * @param drxn the direction to turn towards
+     * @return the turning decision corresponding to the specified direction
+     * @throws NullPointerException if the specified direction is null
+     */
     public Decision deriveTurn(Direction drxn){
         switch(drxn){
             case Direction.NORTH:
