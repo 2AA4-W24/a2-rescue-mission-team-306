@@ -13,6 +13,11 @@ public enum MapValue {
     CREEK,
     EMERGENCY_SITE;
 
+    /**
+     * Checks if the map value represents land.
+     *
+     * @return True if the map value represents land, false otherwise.
+     */
     public boolean isLand(){
         return switch (this) {
             case UNKNOWN, OCEAN, OUT_OF_RANGE, SCANNED_OCEAN -> false;
@@ -20,6 +25,11 @@ public enum MapValue {
         };
     }
 
+    /**
+     * Checks if the map value has been scanned.
+     *
+     * @return True if the map value has been scanned, false otherwise.
+     */
     public boolean scanned(){
         return switch (this) {
             case UNKNOWN, OCEAN, OUT_OF_RANGE, GROUND -> false;
