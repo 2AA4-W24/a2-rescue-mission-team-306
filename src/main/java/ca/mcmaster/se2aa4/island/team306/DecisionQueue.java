@@ -1,41 +1,70 @@
 package ca.mcmaster.se2aa4.island.team306;
 
-
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class DecisionQueue {
     private List<Decision> decisions;
 
-    public DecisionQueue(){
+    /**
+     * Constructs an empty DecisionQueue.
+     */
+    public DecisionQueue() {
         this.decisions = new ArrayList<>();
     }
 
-    public void enqueue(Decision decision){
+    /**
+     * Enqueues a decision into the queue.
+     *
+     * @param decision The decision to enqueue.
+     */
+    public void enqueue(Decision decision) {
         this.decisions.add(decision);
-    };
+    }
 
-    public void enqueue(DecisionQueue queue){
+    /**
+     * Enqueues all decisions from another DecisionQueue into this queue.
+     *
+     * @param queue The DecisionQueue containing decisions to enqueue.
+     */
+    public void enqueue(DecisionQueue queue) {
         while (!queue.isEmpty()) {
             this.decisions.add(queue.dequeue());
         }
     }
 
-    public Decision dequeue(){
-        return decisions.removeFirst();
+    /**
+     * Dequeues a decision from the queue.
+     *
+     * @return The dequeued decision.
+     */
+    public Decision dequeue() {
+        return decisions.remove(0);
     }
 
-    public void clear(){
+    /**
+     * Clears all decisions from the queue.
+     */
+    public void clear() {
         this.decisions.clear();
     }
 
-    public int length(){
+    /**
+     * Gets the length of the queue.
+     *
+     * @return The number of decisions in the queue.
+     */
+    public int length() {
         return decisions.size();
     }
 
-    public boolean isEmpty(){
+    /**
+     * Checks if the queue is empty.
+     *
+     * @return True if the queue is empty, false otherwise.
+     */
+    public boolean isEmpty() {
         return decisions.isEmpty();
     }
 }
-
-
