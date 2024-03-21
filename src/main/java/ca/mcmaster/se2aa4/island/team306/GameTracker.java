@@ -10,6 +10,13 @@ public class GameTracker {
     private Map map;
     private DecisionQueue queue;
 
+    /**
+     * Constructs a GameTracker object with the given drone, map, and decision queue.
+     *
+     * @param drone The drone object used for exploration.
+     * @param map The map object representing the island.
+     * @param queue The decision queue containing the sequence of decisions to execute.
+     */
     public GameTracker(Drone drone, Map map, DecisionQueue queue){
         this.drone = drone;
         this.map = map;
@@ -17,6 +24,11 @@ public class GameTracker {
         this.state = GameState.SETUP;
     }
 
+    /**
+     * Retrieves the current state of the exploration game.
+     *
+     * @return The current state of the game.
+     */
     public GameState getState(){
         return this.state;
     }
