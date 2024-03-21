@@ -1,16 +1,14 @@
 package ca.mcmaster.se2aa4.island.team306;
 
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-
 public class GameTracker {
     private GameState state;
-    private Drone drone;
-    private Map map;
-    private DecisionQueue queue;
-    private Coords initial;
+    private final Drone drone;
+    private final Map map;
+    private final DecisionQueue queue;
     private boolean complete_loop_1, complete_loop_2;
+    private Coords initial;
+
+
     public GameTracker(Drone drone, Map map, DecisionQueue queue){
         this.drone = drone;
         this.map = map;
@@ -31,6 +29,7 @@ public class GameTracker {
             succeedMission();
         }
     }
+
     public void completeLoop(){
         if(state == GameState.FOLLOW_COAST_OUTSIDE){
             complete_loop_1 = true;

@@ -61,17 +61,10 @@ public class Mover {
      * @return true if the drone should make a movement decision, false otherwise
      */
     private boolean shouldMove(){
-        switch(tracker.getState()){
-            case SETUP:
-            case SUCCESS:
-            case FAILURE:
-                return false;
-            case FIND_ISLAND:
-            case SEARCH:
-            default:
-                return true;
-
-        }
+        return switch (tracker.getState()) {
+            case SETUP, SUCCESS, FAILURE -> false;
+            default -> true;
+        };
     }
 
     /**
@@ -82,10 +75,7 @@ public class Mover {
     public boolean move(){
         if (shouldMove()){
             towards = goTowards();
-            if (towards == drone.getHeading().getBackwards()){
-                return false;
-            }
-            return true;
+            return towards != drone.getHeading().getBackwards();
         }
         return false;
     }
@@ -377,7 +367,7 @@ public class Mover {
      * @return the forward movement decision derived from the specified direction
      * @throws NullPointerException if the specified direction is null
      */
-    public Decision deriveFly(Direction drxn){
+    public static Decision deriveFly(Direction drxn){
         switch(drxn){
             case Direction.NORTH:
                 return FLY_NORTH;
@@ -399,7 +389,7 @@ public class Mover {
      * @return the turning decision corresponding to the specified direction
      * @throws NullPointerException if the specified direction is null
      */
-    public Decision deriveTurn(Direction drxn){
+    public static Decision deriveTurn(Direction drxn){
         switch(drxn){
             case Direction.NORTH:
                 return TURN_NORTH;
