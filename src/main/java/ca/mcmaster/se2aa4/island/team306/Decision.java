@@ -4,7 +4,7 @@ public class Decision {
     private final DecisionType type;
     private final Direction direction;
 
-    public Decision(DecisionType type){
+    Decision(DecisionType type){
         this.type = type;
         this.direction = null;
     }

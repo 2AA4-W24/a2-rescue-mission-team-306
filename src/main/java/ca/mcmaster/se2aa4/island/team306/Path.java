@@ -4,7 +4,7 @@ import org.apache.logging.log4j.Logger;
 
 
 public class Path {
-    
+
 
     Direction heading, goTowards;
     Coords start, pos, end;
@@ -63,9 +63,9 @@ public class Path {
             }
             if(pos.y != end.y){
                 queue.enqueue(moveForward());
-                
+
             }
-            
+
         }
         return queue;
     }
@@ -87,21 +87,21 @@ public class Path {
             queue.enqueue(flatRight());
             return queue;
         }
-        
-        queue.enqueue(new Decision(DecisionType.FLY_FORWARD, facing));
 
-        queue.enqueue(new Decision(DecisionType.TURN, facing.getLeft()));
+        queue.enqueue(Mover.deriveFly(facing));
+
+        queue.enqueue(Mover.deriveTurn(facing.getLeft()));
         facing = facing.getLeft();
 
-        queue.enqueue(new Decision(DecisionType.TURN, facing.getLeft()));
+        queue.enqueue(Mover.deriveTurn(facing.getLeft()));
         facing = facing.getLeft();
 
-        queue.enqueue(new Decision(DecisionType.TURN, facing.getLeft()));
+        queue.enqueue(Mover.deriveTurn(facing.getLeft()));
         facing = facing.getLeft();
 
-        queue.enqueue(new Decision(DecisionType.FLY_FORWARD, facing));
+        queue.enqueue(Mover.deriveFly(facing));
         return queue;
-        
+
     }
 
     private DecisionQueue turnLeft(){
@@ -124,22 +124,22 @@ public class Path {
         }
 
 
-        queue.enqueue(new Decision(DecisionType.FLY_FORWARD, facing));
+        queue.enqueue(Mover.deriveFly(facing));
 
-        queue.enqueue(new Decision(DecisionType.TURN, facing.getRight()));
+        queue.enqueue(Mover.deriveTurn(facing.getRight()));
         facing = facing.getRight();
 
-        queue.enqueue(new Decision(DecisionType.TURN, facing.getRight()));
+        queue.enqueue(Mover.deriveTurn(facing.getRight()));
         facing = facing.getRight();
 
-        queue.enqueue(new Decision(DecisionType.TURN, facing.getRight()));
+        queue.enqueue(Mover.deriveTurn(facing.getRight()));
         facing = facing.getRight();
 
-        queue.enqueue(new Decision(DecisionType.FLY_FORWARD, facing));
+        queue.enqueue(Mover.deriveFly(facing));
         return queue;
 
     }
-    
+
     private DecisionQueue turnAround(){
         DecisionQueue queue = new DecisionQueue();
         queue.enqueue(turnRight());
@@ -151,47 +151,44 @@ public class Path {
 
     private DecisionQueue moveForward(){
         DecisionQueue queue = new DecisionQueue();
-        queue.enqueue(new Decision(DecisionType.FLY_FORWARD, heading));
+        queue.enqueue(Mover.deriveFly(heading));
         pos = pos.step(heading);
         return queue;
-    } 
-    
+    }
+
     private DecisionQueue repositionRight(){
         /*
          * Moves 1 square right or left if turn will go out of bounds
          */
         DecisionQueue queue = new DecisionQueue();
         Direction facing = heading;
-        queue.enqueue(new Decision(DecisionType.TURN, facing.getRight()));
+        queue.enqueue(Mover.deriveTurn(facing.getRight()));
         facing = facing.getRight();
-        queue.enqueue(new Decision(DecisionType.FLY_FORWARD, facing));
-        queue.enqueue(new Decision(DecisionType.TURN, facing.getRight()));
+        queue.enqueue(Mover.deriveFly(facing));
+        queue.enqueue(Mover.deriveTurn(facing.getRight()));
         facing = facing.getRight();
-        queue.enqueue(new Decision(DecisionType.TURN, facing.getRight()));
+        queue.enqueue(Mover.deriveTurn(facing.getRight()));
         facing = facing.getRight();
-        queue.enqueue(new Decision(DecisionType.TURN, facing.getRight()));
-        facing = facing.getRight();
+        queue.enqueue(Mover.deriveTurn(facing.getRight()));
 
         pos = pos.step(heading.getRight());
-        
+
         return queue;
     }
 
     private DecisionQueue repositionLeft(){
         DecisionQueue queue = new DecisionQueue();
         Direction facing = heading;
-        queue.enqueue(new Decision(DecisionType.TURN, facing.getLeft()));
+        queue.enqueue(Mover.deriveTurn(facing.getLeft()));
         facing = facing.getLeft();
-        queue.enqueue(new Decision(DecisionType.FLY_FORWARD, facing));
-        queue.enqueue(new Decision(DecisionType.TURN, facing.getLeft()));
+        queue.enqueue(Mover.deriveFly(facing));
+        queue.enqueue(Mover.deriveTurn(facing.getLeft()));
         facing = facing.getLeft();
-        queue.enqueue(new Decision(DecisionType.TURN, facing.getLeft()));
+        queue.enqueue(Mover.deriveTurn(facing.getLeft()));
         facing = facing.getLeft();
-        queue.enqueue(new Decision(DecisionType.TURN, facing.getLeft()));
-        facing = facing.getLeft();
-
+        queue.enqueue(Mover.deriveTurn(facing.getLeft()));
         pos = pos.step(heading.getLeft());
-        
+
         return queue;
     }
 
@@ -207,19 +204,17 @@ public class Path {
         if (right_2 == MapValue.OUT_OF_RANGE){
             queue.enqueue(repositionLeft());
         }
-        queue.enqueue(new Decision(DecisionType.TURN, facing.getRight()));
+        queue.enqueue(Mover.deriveTurn(facing.getRight()));
         facing = facing.getRight();
-        queue.enqueue(new Decision(DecisionType.FLY_FORWARD, facing));
-        queue.enqueue(new Decision(DecisionType.TURN, facing.getRight()));
+        queue.enqueue(Mover.deriveFly(facing));
+        queue.enqueue(Mover.deriveTurn(facing.getRight()));
         facing = facing.getRight();
-        queue.enqueue(new Decision(DecisionType.FLY_FORWARD, facing));
-        queue.enqueue(new Decision(DecisionType.TURN, facing.getRight()));
+        queue.enqueue(Mover.deriveFly(facing));
+        queue.enqueue(Mover.deriveTurn(facing.getRight()));
         facing = facing.getRight();
-        queue.enqueue(new Decision(DecisionType.TURN, facing.getRight()));
+        queue.enqueue(Mover.deriveTurn(facing.getRight()));
         facing = facing.getRight();
-        queue.enqueue(new Decision(DecisionType.TURN, facing.getLeft()));
-        facing = facing.getLeft();
-        
+        queue.enqueue(Mover.deriveTurn(facing.getLeft()));
         return queue;
     }
 
@@ -235,21 +230,20 @@ public class Path {
         if (left_2 == MapValue.OUT_OF_RANGE){
             queue.enqueue(repositionRight());
         }
-        queue.enqueue(new Decision(DecisionType.TURN, facing.getLeft()));
+        queue.enqueue(Mover.deriveTurn(facing.getLeft()));
         facing = facing.getLeft();
-        queue.enqueue(new Decision(DecisionType.FLY_FORWARD, facing));
-        queue.enqueue(new Decision(DecisionType.TURN, facing.getLeft()));
+        queue.enqueue(Mover.deriveFly(facing));
+        queue.enqueue(Mover.deriveTurn(facing.getLeft()));
         facing = facing.getLeft();
-        queue.enqueue(new Decision(DecisionType.FLY_FORWARD, facing));
-        queue.enqueue(new Decision(DecisionType.TURN, facing.getLeft()));
+        queue.enqueue(Mover.deriveFly(facing));
+        queue.enqueue(Mover.deriveTurn(facing.getLeft()));
         facing = facing.getLeft();
-        queue.enqueue(new Decision(DecisionType.TURN, facing.getLeft()));
+        queue.enqueue(Mover.deriveTurn(facing.getLeft()));
         facing = facing.getLeft();
-        queue.enqueue(new Decision(DecisionType.TURN, facing.getRight()));
-        facing = facing.getRight();
-        
+        queue.enqueue(Mover.deriveTurn(facing.getRight()));
+
         return queue;
     }
 
-    
+
 }

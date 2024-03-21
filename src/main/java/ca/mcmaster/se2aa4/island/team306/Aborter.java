@@ -4,16 +4,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Aborter {
-    private Drone drone;
-    private Map map;
-    private GameTracker tracker;
-    private int min_energy;
+    private final Drone drone;
+    private final Map map;
+    private final GameTracker tracker;
     private static final Decision DECISION = new Decision(DecisionType.ABORT);
 
     private static final Logger logger = LogManager.getLogger();
 
     public Aborter(Drone drone, Map map, GameTracker tracker){
-        min_energy = 0;
         this.drone = drone;
         this.map = map;
         this.tracker = tracker;
@@ -21,7 +19,7 @@ public class Aborter {
     public boolean abort(){
         switch(tracker.getState()){
             case GameState.FAILURE:
-                logger.fatal("Our mission failed");
+                logger.info("Our mission failed");
                 return true;
             case GameState.SUCCESS:
                 logger.info("Mission accomplished!");
@@ -29,10 +27,10 @@ public class Aborter {
             default:
                 // Abort based in emergency criteria
         }
-        min_energy = findMinEnergy();
+        int min_energy = findMinEnergy();
         if(min_energy > drone.getEnergy()){
             tracker.failMission();
-            logger.fatal("Our mission failed");
+            logger.info("Our mission failed");
             return true;
         }
         return false;
