@@ -8,16 +8,30 @@ public class Aborter {
     private Map map;
     private GameTracker tracker;
     private int min_energy;
-    private static final Decision DECISION = new Decision(DecisionType.ABORT);
+    private static final Decision DECISION = new Decision(DecisionType.ABORT); // The decision to abort the mission
+
 
     private static final Logger logger = LogManager.getLogger();
 
+    /**
+     * Constructs an Aborter with the specified drone, map, and game tracker instances.
+     *
+     * @param drone    The drone instance.
+     * @param map      The map instance.
+     * @param tracker  The game tracker instance.
+     */
     public Aborter(Drone drone, Map map, GameTracker tracker){
         min_energy = 0;
         this.drone = drone;
         this.map = map;
         this.tracker = tracker;
     }
+
+    /**
+     * Determines whether the mission should be aborted.
+     *
+     * @return True if the mission should be aborted, false otherwise.
+     */
     public boolean abort(){
         switch(tracker.getState()){
             case GameState.FAILURE:
@@ -46,6 +60,11 @@ public class Aborter {
         return (2*(distance + 5));
     }
 
+    /**
+     * Gets the decision to abort the mission.
+     *
+     * @return The decision to abort the mission.
+     */
     public static Decision getDecision(){
         return DECISION;
     }
