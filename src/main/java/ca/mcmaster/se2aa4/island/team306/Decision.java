@@ -22,5 +22,9 @@ public class Decision {
         return this.direction;
     }
 
+    public String toString(){
+        return String.format("Decision(%s, %s)", this.type, this.direction);
+    }
+
 
 }

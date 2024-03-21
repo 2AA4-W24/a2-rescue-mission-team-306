@@ -39,13 +39,19 @@ public class Map {
             }
         }else if(result.getType() == DecisionType.PHOTO){
             MapValue value = values.getFirst();
-            addTile(new Tile(value, pos));
+            switch (value){
+                case CREEK, EMERGENCY_SITE:
+                    if(result.getID() == null) throw new NullPointerException();
+                default:
+                    // Nothing
+            }
+            addTile(new Tile(value, pos, result.getID()));
         }
 
         updateBounds(result);
     }
 
-    public void updateBounds(ParsedResult result){
+    private void updateBounds(ParsedResult result){
         if (result.getType() != DecisionType.RADAR){
             return;
         }
@@ -176,6 +182,8 @@ public class Map {
                 creek = getTileAt(creekCheck);
             }
         }
+
+
 
         generator.setCreekId(creek.getID());
     }

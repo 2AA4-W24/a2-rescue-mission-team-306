@@ -53,21 +53,8 @@ public class GameTracker {
     }
 
 
-    private void testBounds(){
-        if (state == GameState.SETUP) {
-            Logger logger = LogManager.getLogger();
-            for (Direction direction : Direction.values()) {
-                Integer boundBox = map.getBound(direction);
-                int bound = boundBox != null ? boundBox : Integer.MIN_VALUE;
-                logger.info(String.format("%c: %d", direction.toChar(), bound));
-            }
-        }
-    }
-
     public void update(){
         if (shouldProgress()) {
-            // Uncomment to test bounds
-            //testBounds();
             progressState();
         }
     }
