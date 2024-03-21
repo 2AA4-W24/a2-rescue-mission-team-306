@@ -9,6 +9,12 @@ public class Decider {
     private GameTracker tracker;
     private DecisionQueue queue;
 
+    /**
+     * Constructs a Decider object with the given drone and map.
+     *
+     * @param drone The drone object.
+     * @param map   The map object.
+     */
     public Decider(Drone drone, Map map){
         this.queue = new DecisionQueue();
         this.tracker = new GameTracker(drone, map, queue);
@@ -18,6 +24,11 @@ public class Decider {
         this.photo = new PhotoScanner(map, tracker);
     }
 
+    /**
+     * Gets a new decision for the drone based on the current game state.
+     *
+     * @return The decision for the drone to execute.
+     */
     public Decision getNewDecision(){
         tracker.update();
         updateDecision();
