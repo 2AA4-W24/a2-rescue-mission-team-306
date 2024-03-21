@@ -6,6 +6,11 @@ public enum Direction {
     SOUTH,
     EAST;
 
+    /**
+     * Converts the direction to its corresponding character representation.
+     *
+     * @return The character representation of the direction.
+     */
     public char toChar(){
         switch(this){
             case NORTH:
@@ -21,6 +26,13 @@ public enum Direction {
         }
     }
 
+    /**
+     * Creates a Direction enum from its character representation.
+     *
+     * @param c The character representing the direction.
+     * @return The Direction enum corresponding to the character.
+     * @throws IllegalArgumentException if the character is not recognized.
+     */
     public static Direction fromChar(char c){
         switch(c){
             case 'N':
@@ -40,6 +52,12 @@ public enum Direction {
         }
     }
 
+    /**
+     * Gets the direction to the left of the current direction.
+     *
+     * @return The direction to the left.
+     * @throws AssertionError if the direction is not recognized.
+     */
     public Direction getLeft() {
         switch(this){
             case NORTH:
@@ -54,6 +72,12 @@ public enum Direction {
         throw new AssertionError();
     }
 
+    /**
+     * Gets the direction opposite to the current direction.
+     *
+     * @return The opposite direction.
+     * @throws AssertionError if the direction is not recognized.
+     */
     public Direction getBackwards() {
         switch(this){
             case NORTH:
@@ -68,6 +92,12 @@ public enum Direction {
         throw new AssertionError();
     }
 
+    /**
+     * Gets the direction to the right of the current direction.
+     *
+     * @return The direction to the right.
+     * @throws AssertionError if the direction is not recognized.
+     */
     public Direction getRight() {
         switch(this){
             case NORTH:
