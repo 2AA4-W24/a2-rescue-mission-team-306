@@ -12,6 +12,12 @@ public class Map {
 
     private final ReportGenerator generator;
     
+    /**
+     * Constructs a new map with the given drone and report generator.
+     *
+     * @param drone     the drone operating on the map
+     * @param generator the report generator for generating reports
+     */
     public Map(Drone drone, ReportGenerator generator){
         this.base = new Coords(0, 0);
         this.tiles = new HashMap<>();
@@ -21,6 +27,7 @@ public class Map {
         initBounds();
     }
 
+    
     private void initBounds(){
         Direction backwards = this.drone.getHeading().getBackwards();
         int value = (backwards == Direction.NORTH || backwards == Direction.SOUTH) ?
@@ -28,6 +35,11 @@ public class Map {
         this.bounds.put(backwards, value);
     }
 
+    /**
+     * Updates the status of the map based on the parsed result.
+     * 
+     * @param result the parsed result containing information about the update
+     */
     public void updateStatus(ParsedResult result){
         Coords pos = drone.getPosition();
         Direction drxn = result.getDirection();
@@ -45,6 +57,11 @@ public class Map {
         updateBounds(result);
     }
 
+    /**
+     * Updates the boundaries of the map based on the parsed result.
+     * 
+     * @param result the parsed result containing information about the update
+     */
     public void updateBounds(ParsedResult result){
         if (result.getType() != DecisionType.RADAR){
             return;
@@ -84,6 +101,12 @@ public class Map {
         return westBox == null || loc.x >= westBox;
     }
 
+    /**
+     * Checks the map value at the specified coordinates.
+     * 
+     * @param loc the coordinates to check
+     * @return the map value at the specified coordinates
+     */
     public MapValue checkCoords(Coords loc){
         Tile tile = tiles.get(loc);
         if (tile == null || tile.getType() == MapValue.UNKNOWN){
@@ -97,6 +120,12 @@ public class Map {
 
     }
 
+    /**
+     * Finds the nearest tile with the specified value.
+     * 
+     * @param val the value to search for
+     * @return the coordinates of the nearest tile with the specified value
+     */
     public Coords findNearestTile(MapValue val){
         List<Coords> matches = findTile(val);
         if(matches.isEmpty()){
@@ -157,6 +186,10 @@ public class Map {
         return tiles.get(coords);
     }
 
+    /**
+     * Sets the report generator's creek ID based on the nearest creek to the emergency site.
+     * If no creek is found, the creek ID is not set.
+     */
     public void setReportCreek(){
         Tile creek = null;
         double min_distance = Double.POSITIVE_INFINITY;
@@ -168,8 +201,11 @@ public class Map {
             generator.setCreekId(creek.getID());
             return;
         }
+        // Find the emergency site
         Coords site = findNearestTile(MapValue.EMERGENCY_SITE);
         List<Coords> creeks = findTile(MapValue.CREEK);
+
+        // Find the closest creek to the emergency site
         for(Coords creekCheck: creeks){
             if(site.distance(creekCheck)<min_distance){
                 min_distance = site.distance(creekCheck);
