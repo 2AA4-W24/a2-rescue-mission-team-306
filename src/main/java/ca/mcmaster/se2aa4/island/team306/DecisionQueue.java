@@ -15,6 +15,12 @@ public class DecisionQueue {
         this.decisions.add(decision);
     };
 
+    public void enqueue(DecisionQueue queue){
+        while (!queue.isEmpty()) {
+            this.decisions.add(queue.dequeue());
+        }
+    }
+
     public Decision dequeue(){
         return decisions.removeFirst();
     }

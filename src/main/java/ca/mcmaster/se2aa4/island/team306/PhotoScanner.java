@@ -12,15 +12,14 @@ public class PhotoScanner implements Scanner{
 
     public boolean scan(){
         switch (tracker.getState()){
+            case GameState.FOLLOW_COAST_OUTSIDE:
+            case GameState.FOLLOW_COAST_INSIDE:
             case GameState.SEARCH:
                 // Current (end of radar batch) or previous (already on land)
-                    if (map.currentValue().isLand()){
-                        return map.currentValue() == MapValue.GROUND;
+                    if (!map.currentValue().scanned()){
+                        return true;
                     }
                     return map.currentValue() == MapValue.UNKNOWN && map.previousValue().isLand();
-            case GameState.BRANCH:
-                // Scan unless tile is known (radar is unavailable in branch state)
-                    return map.currentValue() == MapValue.UNKNOWN || map.currentValue() == MapValue.GROUND;
             default:
                 return false;
         }
