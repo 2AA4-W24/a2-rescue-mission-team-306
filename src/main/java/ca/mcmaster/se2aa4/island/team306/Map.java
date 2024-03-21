@@ -52,7 +52,7 @@ public class Map {
         updateBounds(result);
     }
 
-    public void updateBounds(ParsedResult result){
+    private void updateBounds(ParsedResult result){
         if (result.getType() != DecisionType.RADAR){
             return;
         }
@@ -183,6 +183,8 @@ public class Map {
                 creek = getTileAt(creekCheck);
             }
         }
+
+
 
         generator.setCreekId(creek.getID());
     }

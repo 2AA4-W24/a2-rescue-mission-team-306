@@ -79,18 +79,16 @@ public class Radar implements Scanner{
     }
 
     public Decision deriveDecision(){
-       switch(scanTowards()){
-            case Direction.NORTH:
-                return SCAN_NORTH;
-            case Direction.EAST:
-                return SCAN_EAST;
-            case Direction.SOUTH:
-                return SCAN_SOUTH;
-            case Direction.WEST:
-                return SCAN_WEST;
-            default:
-                throw new NullPointerException();
-       }
+       return deriveDecision(scanTowards());
+    }
+
+    public static Decision deriveDecision(Direction direction){
+        return switch (direction) {
+            case Direction.NORTH -> SCAN_NORTH;
+            case Direction.EAST -> SCAN_EAST;
+            case Direction.SOUTH -> SCAN_SOUTH;
+            case Direction.WEST -> SCAN_WEST;
+        };
     }
 
     
