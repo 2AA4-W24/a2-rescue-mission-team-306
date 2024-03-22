@@ -1,9 +1,10 @@
 package ca.mcmaster.se2aa4.island.team306;
 
-public enum DecisionType {
-    ABORT,
-    FLY_FORWARD,
-    TURN,
-    PHOTO,
-    RADAR;
+
+/*
+ * A decision type for an explorer on the Island game engine.
+ * DecisionTypes need no methods; they may be simply enumerated.
+ */
+public interface DecisionType {
+
 }

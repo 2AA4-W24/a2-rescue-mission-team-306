@@ -1,23 +1,23 @@
 package ca.mcmaster.se2aa4.island.team306;
 
-public class Radar implements Scanner{
-    public static final Decision SCAN_NORTH = 
-        new Decision(DecisionType.RADAR, Direction.NORTH);
-    public static final Decision SCAN_EAST = 
-        new Decision(DecisionType.RADAR, Direction.EAST);
-    public static final Decision SCAN_SOUTH = 
-        new Decision(DecisionType.RADAR, Direction.SOUTH);
-    public static final Decision SCAN_WEST = 
-        new Decision(DecisionType.RADAR, Direction.WEST);
+public class SpiralRadar implements RadarScanner{
+    public static final SpiralDecision SCAN_NORTH = 
+        new SpiralDecision(SpiralDecisionType.RADAR, Direction.NORTH);
+    public static final SpiralDecision SCAN_EAST = 
+        new SpiralDecision(SpiralDecisionType.RADAR, Direction.EAST);
+    public static final SpiralDecision SCAN_SOUTH = 
+        new SpiralDecision(SpiralDecisionType.RADAR, Direction.SOUTH);
+    public static final SpiralDecision SCAN_WEST = 
+        new SpiralDecision(SpiralDecisionType.RADAR, Direction.WEST);
 
     private Drone drone;
-    private Map map;
+    private GameMap map;
     private DecisionQueue queue;
-    private GameTracker tracker;
+    private SpiralGameTracker tracker;
     private Direction towards;
     private DecisionQueue scanQueue;
 
-    public Radar(Drone drone, Map map, DecisionQueue queue, GameTracker tracker){ //constructor
+    public SpiralRadar(Drone drone, GameMap map, DecisionQueue queue, SpiralGameTracker tracker){ //constructor
         this.drone = drone;
         this.map = map;
         this.queue = queue;
@@ -38,7 +38,7 @@ public class Radar implements Scanner{
         Coords left = pos.step(initHeading.getLeft());
         Coords forward = pos.step(initHeading);
         switch(this.tracker.getState()){
-            case GameState.SETUP:
+            case SpiralGameState.SETUP:
                 // Queue the left and right
                 this.towards = initHeading.getLeft();
                 this.queue.enqueue(deriveDecision());
@@ -48,20 +48,20 @@ public class Radar implements Scanner{
                 // Return straight for the decider
                 this.towards = initHeading;
                 return true;
-            case GameState.FIND_ISLAND:
-            case GameState.FOLLOW_COAST_OUTSIDE:
-            case GameState.FOLLOW_COAST_INSIDE:
-            case GameState.SEARCH:
+            case SpiralGameState.FIND_ISLAND:
+            case SpiralGameState.FOLLOW_COAST_OUTSIDE:
+            case SpiralGameState.FOLLOW_COAST_INSIDE:
+            case SpiralGameState.SEARCH:
                 scanQueue.clear();
-                    if(map.checkCoords(left) == MapValue.UNKNOWN){
+                    if(map.checkCoords(left) == SpiralMapValue.UNKNOWN){
                         this.towards = initHeading.getLeft();
                         scanQueue.enqueue(deriveDecision());
                     }
-                    if(map.checkCoords(forward) == MapValue.UNKNOWN){
+                    if(map.checkCoords(forward) == SpiralMapValue.UNKNOWN){
                         this.towards = initHeading;
                         scanQueue.enqueue(deriveDecision());
                     }
-                    if(map.checkCoords(right) == MapValue.UNKNOWN){
+                    if(map.checkCoords(right) == SpiralMapValue.UNKNOWN){
                         this.towards = initHeading.getRight();
                         scanQueue.enqueue(deriveDecision());
                     }
@@ -91,11 +91,11 @@ public class Radar implements Scanner{
      *
      * @return The decision object for radar scanning in the current direction.
      */
-    public Decision deriveDecision(){
+    public SpiralDecision deriveDecision(){
        return deriveDecision(scanTowards());
     }
 
-    public static Decision deriveDecision(Direction direction){
+    public static SpiralDecision deriveDecision(Direction direction){
         return switch (direction) {
             case Direction.NORTH -> SCAN_NORTH;
             case Direction.EAST -> SCAN_EAST;

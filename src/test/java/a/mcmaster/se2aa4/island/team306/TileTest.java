@@ -10,7 +10,7 @@ public class TileTest {
     @Test
     public void verify(){
         Coords c = new Coords(0, 0);
-        MapValue value = MapValue.OUT_OF_RANGE;
+        SpiralMapValue value = SpiralMapValue.OUT_OF_RANGE;
         String id = "id";
         Tile tile = new Tile(value, c, id);
         Tile tile2 = new Tile(value, c);

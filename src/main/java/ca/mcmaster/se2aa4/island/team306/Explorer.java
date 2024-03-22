@@ -15,10 +15,10 @@ public class Explorer implements IExplorerRaid {
     private final Logger logger = LogManager.getLogger();
     private Decider decider;
     private Drone drone;
-    private Map map;
+    private GameMap map;
     private Decision prevDecision;
 
-    private ReportGenerator generator;
+    private CreekReportGenerator generator;
 
     /**
      * Initializes the exploration command center with the given information.
@@ -35,12 +35,12 @@ public class Explorer implements IExplorerRaid {
         logger.info("The drone is facing {}", direction);
         logger.info("Battery level is {}", batteryLevel);
 
-        generator = new ReportGenerator();
+        generator = new CreekReportGenerator();
 
         Direction prevDirection = Direction.fromChar(direction.toUpperCase(Locale.ENGLISH).charAt(0));
         drone = new Drone(batteryLevel, prevDirection);
-        map = new Map(drone, generator);
-        decider = new Decider(drone, map);
+        map = new SpiralMap(drone, generator);
+        decider = new SpiralDecider(drone, map);
         
 
     }
@@ -58,26 +58,26 @@ public class Explorer implements IExplorerRaid {
         Direction prevDirection = decision.getDirection();
         DecisionType type = decision.getType();
         switch(type){
-            case DecisionType.ABORT:
+            case SpiralDecisionType.ABORT:
                 decisionJson.put("action", "stop"); // we stop the exploration immediately
                 map.setReportCreek();
                 break;
-            case DecisionType.FLY_FORWARD:
+            case SpiralDecisionType.FLY_FORWARD:
                 decisionJson.put("action", "fly"); // we fly forward
                 break;
-            case DecisionType.TURN:
+            case SpiralDecisionType.TURN:
                 decisionJson = new JSONObject(String.format(
                     "{ \"action\": \"heading\", \"parameters\": { \"direction\": \"%c\" } }", 
                     prevDirection.toChar()
                 )); // we set the heading for direction d
                 break;
-            case DecisionType.RADAR:
+            case SpiralDecisionType.RADAR:
                 decisionJson = new JSONObject(String.format(
                     "{ \"action\": \"echo\", \"parameters\": { \"direction\": \"%c\" } }",
                     prevDirection.toChar()
                 )); // we use radar scan for direction d
                 break;
-            case DecisionType.PHOTO:
+            case SpiralDecisionType.PHOTO:
                 decisionJson.put("action", "scan"); // we use photo scan
                 break;
             default:

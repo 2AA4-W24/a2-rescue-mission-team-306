@@ -70,7 +70,7 @@ public class Drone {
     public void updateResult(ParsedResult r){
         this.result = r;
         updateEnergy();
-        if(result.getType() == DecisionType.FLY_FORWARD || result.getType() == DecisionType.TURN){
+        if(result.getType() == SpiralDecisionType.FLY_FORWARD || result.getType() == SpiralDecisionType.TURN){
             move(result.getDirection());
         }
     }
