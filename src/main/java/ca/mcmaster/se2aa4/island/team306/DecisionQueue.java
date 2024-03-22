@@ -13,7 +13,7 @@ public class DecisionQueue {
 
     public void enqueue(Decision decision){
         this.decisions.add(decision);
-    };
+    }
 
     public void enqueue(DecisionQueue queue){
         while (!queue.isEmpty()) {

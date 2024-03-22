@@ -2,7 +2,6 @@ package a.mcmaster.se2aa4.island.team306;
 
 import ca.mcmaster.se2aa4.island.team306.*;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.jupiter.api.Assertions.*;
 

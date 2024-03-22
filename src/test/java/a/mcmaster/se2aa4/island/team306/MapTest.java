@@ -82,10 +82,12 @@ public class MapTest {
             drone.move(Direction.EAST);
             c = drone.getPosition();
             assertEquals(map.checkCoords(c), MapValue.UNKNOWN);
-            if (i == 0)
+            if (i == 0) {
                 assertNull(map.findNearestTile(MapValue.SCANNED_OCEAN));
-            else
+            }
+            else {
                 assertEquals(map.findNearestTile(MapValue.SCANNED_OCEAN), c.step(Direction.WEST));
+            }
             response = "{\"cost\": 2, \"extras\": { \"biomes\": [\"OCEAN\"], \"creeks\": [], \"sites\": []}, \"status\": \"OK\"}";
             map.updateStatus(ParsedResult.builder(PhotoScanner.getDecision()).populate(response).build());
             assertEquals(map.checkCoords(c), MapValue.SCANNED_OCEAN);
@@ -112,7 +114,9 @@ public class MapTest {
 
 
         // Distant creek
-        for (int i = 0; i < 10; i++) drone.move(Direction.SOUTH);
+        for (int i = 0; i < 10; i++) {
+            drone.move(Direction.SOUTH);
+        }
 
         assertEquals(map.currentValue(), MapValue.UNKNOWN);
         response = "{\"cost\": 2, \"extras\": { \"biomes\": [\"OCEAN\"], \"creeks\": [\"moon-beach\"], \"sites\": []}, \"status\": \"OK\"}";

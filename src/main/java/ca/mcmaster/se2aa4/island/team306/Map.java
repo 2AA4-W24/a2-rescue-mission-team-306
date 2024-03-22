@@ -166,7 +166,7 @@ public class Map {
 
     public void setReportCreek(){
         Tile creek = null;
-        double min_distance = Double.POSITIVE_INFINITY;
+        double minDistance = Double.POSITIVE_INFINITY;
         if(findNearestTile(MapValue.CREEK) == null){
             return;
         }
@@ -178,8 +178,8 @@ public class Map {
         Coords site = findNearestTile(MapValue.EMERGENCY_SITE);
         List<Coords> creeks = findTile(MapValue.CREEK);
         for(Coords creekCheck: creeks){
-            if(site.distance(creekCheck)<min_distance){
-                min_distance = site.distance(creekCheck);
+            if(site.distance(creekCheck)<minDistance){
+                minDistance = site.distance(creekCheck);
                 creek = getTileAt(creekCheck);
             }
         }

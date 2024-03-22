@@ -27,8 +27,8 @@ public class Aborter {
             default:
                 // Abort based in emergency criteria
         }
-        int min_energy = findMinEnergy();
-        if(min_energy > drone.getEnergy()){
+        int minEnergy = findMinEnergy();
+        if(minEnergy > drone.getEnergy()){
             tracker.failMission();
             logger.info("Our mission failed");
             return true;
@@ -41,7 +41,7 @@ public class Aborter {
         Coords pos = drone.getPosition();
         Coords base = map.getBase();
         int distance = (int) pos.distance(base);
-        return (2*(distance + 5));
+        return 2 * (distance + 5);
     }
 
     public static Decision getDecision(){

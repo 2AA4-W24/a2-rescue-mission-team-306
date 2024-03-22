@@ -22,6 +22,7 @@ public class Decision {
         return this.direction;
     }
 
+    @Override
     public String toString(){
         return String.format("Decision(%s, %s)", this.type, this.direction);
     }

@@ -1,10 +1,5 @@
 package ca.mcmaster.se2aa4.island.team306;
 
-import javax.sound.sampled.BooleanControl;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 public class Mover {
     private final Drone drone;
     private final Map map;
@@ -16,7 +11,6 @@ public class Mover {
     private Coords initial_water;
     private int start;
     private Coords start_pos;
-    private final Logger logger = LogManager.getLogger();
 
     // Constants representing movement decisions
     public static final Decision FLY_NORTH = 
@@ -95,7 +89,7 @@ public class Mover {
                 back = map.checkCoords(pos.step(facing.getBackwards())),
                 curr = map.checkCoords(pos);
         DecisionQueue pathQueue;
-        Decision first_step;
+        Decision firstStep;
         switch(tracker.getState()){
             case FIND_ISLAND:
                 if(map.findNearestTile(MapValue.GROUND) != null){
@@ -103,13 +97,12 @@ public class Mover {
                     initial_land = land;
                     path = new Path(drone.getPosition(), land, drone.getHeading(), map);
                     pathQueue = path.findPath();
-                    first_step = pathQueue.dequeue();
+                    firstStep = pathQueue.dequeue();
                     queue.enqueue(pathQueue);
-                    return first_step.getDirection();
+                    return firstStep.getDirection();
                 }
                 return START_ORIENT;
             case FOLLOW_COAST_OUTSIDE:
-                logger.info("OUTSIDE");
                 if(pos.equals(initial_land)){
                     if(left == MapValue.OCEAN){
                         initial_water = pos.step(facing.getLeft());
@@ -124,17 +117,16 @@ public class Mover {
                         start = 0;
                         path = new Path(pos, initial_land, facing, map);
                         pathQueue = path.findPath();
-                        first_step = pathQueue.dequeue();
+                        firstStep = pathQueue.dequeue();
                         queue.enqueue(pathQueue);
                         tracker.completeLoop();
-                        return first_step.getDirection();
+                        return firstStep.getDirection();
                     }
                     start++;
                 }
                 return hugCoastline();
 
             case FOLLOW_COAST_INSIDE:
-            logger.info("INSIDE");
                 if(pos.equals(start_pos)){
                     tracker.completeLoop();
                 }
@@ -145,41 +137,40 @@ public class Mover {
                 return loopInward();
                 
             case SEARCH:
-                logger.info("SEARCHING");
-                Boolean trapped = right.scanned() && left.scanned() && back.scanned() && forward.scanned();
-                Coords close_pos;
+                boolean trapped = right.scanned() && left.scanned() && back.scanned() && forward.scanned();
+                Coords closePos;
                 if(trapped){
                     if(!curr.isLand()){
                         return loopInward();
                     }
-                    close_pos = nearestUnscanned(pos, facing);
-                    path = new Path(pos, close_pos, facing, map);
+                    closePos = nearestUnscanned(pos, facing);
+                    path = new Path(pos, closePos, facing, map);
                     pathQueue = path.findPath();
-                    first_step = pathQueue.dequeue();
+                    firstStep = pathQueue.dequeue();
                     queue.enqueue(pathQueue);
-                    return first_step.getDirection();
+                    return firstStep.getDirection();
                     
                 }
                 
-                if(!(right.scanned())){
+                if(!right.scanned()){
                     path = new Path(pos, pos.step(facing.getRight()), facing, map);
                     pathQueue = path.findPath();
-                    first_step = pathQueue.dequeue();
+                    firstStep = pathQueue.dequeue();
                     queue.enqueue(pathQueue);
-                    return first_step.getDirection();
+                    return firstStep.getDirection();
                 }
-                if(!(forward.scanned())){
+                if(!forward.scanned()){
                     path = new Path(pos, pos.step(facing), facing, map);
                     pathQueue = path.findPath();
-                    first_step = pathQueue.dequeue();
+                    firstStep = pathQueue.dequeue();
                     queue.enqueue(pathQueue);
-                    return first_step.getDirection();
+                    return firstStep.getDirection();
                 }
                 path = new Path(pos, pos.step(facing.getLeft()), facing, map);
                 pathQueue = path.findPath();
-                first_step = pathQueue.dequeue();
+                firstStep = pathQueue.dequeue();
                 queue.enqueue(pathQueue);
-                return first_step.getDirection();
+                return firstStep.getDirection();
                 
                 
             default:
@@ -195,35 +186,35 @@ public class Mover {
                 forward = map.checkCoords(pos.step(facing)),
                 left = map.checkCoords(pos.step(facing.getLeft()));
         DecisionQueue pathQueue;
-        Decision first_step;
+        Decision firstStep;
         if(left == MapValue.OCEAN || left == MapValue.SCANNED_OCEAN){
             path = new Path(pos, pos.step(facing.getLeft()), facing, map);
             pathQueue = path.findPath();
-            first_step = pathQueue.dequeue();
+            firstStep = pathQueue.dequeue();
             queue.enqueue(pathQueue);
-            return first_step.getDirection();
+            return firstStep.getDirection();
         }
         if(forward == MapValue.OCEAN || forward == MapValue.SCANNED_OCEAN){
             path = new Path(pos, pos.step(facing), facing, map);
             pathQueue = path.findPath();
-            first_step = pathQueue.dequeue();
+            firstStep = pathQueue.dequeue();
             queue.enqueue(pathQueue);
-            return first_step.getDirection();
+            return firstStep.getDirection();
         }
         
         if(right == MapValue.OCEAN || right == MapValue.SCANNED_OCEAN){
             path = new Path(pos, pos.step(facing.getRight()), facing, map);
             pathQueue = path.findPath();
-            first_step = pathQueue.dequeue();
+            firstStep = pathQueue.dequeue();
             queue.enqueue(pathQueue);
-            return first_step.getDirection(); 
+            return firstStep.getDirection(); 
         }
 
         path = new Path(pos, pos.step(facing.getBackwards()), facing, map);
         pathQueue = path.findPath();
-        first_step = pathQueue.dequeue();
+        firstStep = pathQueue.dequeue();
         queue.enqueue(pathQueue);
-        return first_step.getDirection();
+        return firstStep.getDirection();
     }
 
     private Direction loopInward(){
@@ -234,106 +225,106 @@ public class Mover {
                 forward = map.checkCoords(pos.step(facing)),
                 left = map.checkCoords(pos.step(facing.getLeft()));
         DecisionQueue pathQueue;
-        Decision first_step;
+        Decision firstStep;
         if(right.isLand()){
             path = new Path(pos, pos.step(facing.getRight()), facing, map);
             pathQueue = path.findPath();
-            first_step = pathQueue.dequeue();
+            firstStep = pathQueue.dequeue();
             queue.enqueue(pathQueue);
-            return first_step.getDirection();
+            return firstStep.getDirection();
         }
         if(forward.isLand()){
             path = new Path(pos, pos.step(facing), facing, map);
             pathQueue = path.findPath();
-            first_step = pathQueue.dequeue();
+            firstStep = pathQueue.dequeue();
             queue.enqueue(pathQueue);
-            return first_step.getDirection();
+            return firstStep.getDirection();
         }
         
         if(left.isLand()){
             path = new Path(pos, pos.step(facing.getLeft()), facing, map);
             pathQueue = path.findPath();
-            first_step = pathQueue.dequeue();
+            firstStep = pathQueue.dequeue();
             queue.enqueue(pathQueue);
-            return first_step.getDirection();
+            return firstStep.getDirection();
         }
 
         path = new Path(pos, pos.step(facing.getBackwards()), facing, map);
         pathQueue = path.findPath();
-        first_step = pathQueue.dequeue();
+        firstStep = pathQueue.dequeue();
         queue.enqueue(pathQueue);
-        return first_step.getDirection();
+        return firstStep.getDirection();
     }
 
     private Coords nearestUnscanned(Coords pos, Direction facing){
-        Coords temp_pos = pos;
-        Coords close_pos = pos.step(facing);
+        Coords tempPos = pos;
+        Coords closePos = pos.step(facing);
         int closest = 1000;
-        MapValue check = map.checkCoords(temp_pos);
-        int close_check = 0;
+        MapValue check = map.checkCoords(tempPos);
+        int closeCheck = 0;
         while(check.scanned()){
-            temp_pos = temp_pos.step(facing.getRight());
-            close_check++;
-            check = map.checkCoords(temp_pos);
+            tempPos = tempPos.step(facing.getRight());
+            closeCheck++;
+            check = map.checkCoords(tempPos);
             if(check == MapValue.OCEAN || check == MapValue.SCANNED_OCEAN){
                 break;
             }
             if(check == MapValue.GROUND || check == MapValue.UNKNOWN){
-                if(close_check < closest){
-                    close_pos = temp_pos;
-                    closest = close_check;
+                if(closeCheck < closest){
+                    closePos = tempPos;
+                    closest = closeCheck;
                 }
             }
         }
-        close_check = 0;
-        temp_pos = pos;
+        closeCheck = 0;
+        tempPos = pos;
         while(check.scanned()){
-            temp_pos = temp_pos.step(facing);
-            close_check++;
-            check = map.checkCoords(temp_pos);
+            tempPos = tempPos.step(facing);
+            closeCheck++;
+            check = map.checkCoords(tempPos);
             if(check == MapValue.OCEAN || check == MapValue.SCANNED_OCEAN){
                 break;
             }
             if(check == MapValue.GROUND || check == MapValue.UNKNOWN){
-                if(close_check < closest){
-                    close_pos = temp_pos;
-                    closest = close_check;
+                if(closeCheck < closest){
+                    closePos = tempPos;
+                    closest = closeCheck;
                 }
             }
         }
-        close_check = 0;
-        temp_pos = pos;
+        closeCheck = 0;
+        tempPos = pos;
         while(check.scanned()){
-            temp_pos = temp_pos.step(facing.getLeft());
-            close_check++;
-            check = map.checkCoords(temp_pos);
+            tempPos = tempPos.step(facing.getLeft());
+            closeCheck++;
+            check = map.checkCoords(tempPos);
             if(check == MapValue.OCEAN || check == MapValue.SCANNED_OCEAN){
                 break;
             }
             if(check == MapValue.GROUND || check == MapValue.UNKNOWN){
-                if(close_check < closest){
-                    close_pos = temp_pos;
-                    closest = close_check;
+                if(closeCheck < closest){
+                    closePos = tempPos;
+                    closest = closeCheck;
                 }
             }
         }
-        close_check = 0;
-        temp_pos = pos;
+        closeCheck = 0;
+        tempPos = pos;
         while(check.scanned()){
-            temp_pos = temp_pos.step(facing.getBackwards());
-            close_check++;
-            check = map.checkCoords(temp_pos);
+            tempPos = tempPos.step(facing.getBackwards());
+            closeCheck++;
+            check = map.checkCoords(tempPos);
             if(check == MapValue.OCEAN || check == MapValue.SCANNED_OCEAN){
                 break;
             }
             if(check == MapValue.GROUND || check == MapValue.UNKNOWN){
-                if(close_check < closest){
-                    close_pos = temp_pos;
-                    closest = close_check;
+                if(closeCheck < closest){
+                    closePos = tempPos;
+                    closest = closeCheck;
                 }
             }
         }
-        return close_pos;
+        return closePos;
     }
 
     public Decision deriveDecision() {

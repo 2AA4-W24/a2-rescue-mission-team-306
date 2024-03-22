@@ -1,24 +1,20 @@
 package ca.mcmaster.se2aa4.island.team306;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 import org.json.JSONObject;
 import org.json.JSONArray;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class ParsedResultBuilder {
-    private DecisionType decisionType;
-    private Direction direction;
+    private final DecisionType decisionType;
+    private final Direction direction;
     private boolean hasResults;
     private List<MapValue> values;
     private int cost;
     private int range;
     private String id;
-
-    private static final Logger logger = LogManager.getLogger();
 
     ParsedResultBuilder(Decision decision){
         this.decisionType = decision.getType();
@@ -49,7 +45,7 @@ public class ParsedResultBuilder {
                 for(int i = 0; i<range; i++){
                     addValue(MapValue.OCEAN);
                 }
-                if(results.getJSONObject("extras").getString("found").equals("GROUND")){
+                if("GROUND".equals(results.getJSONObject("extras").getString("found"))){
                     addValue(MapValue.GROUND);
                 }
                 else {
@@ -59,21 +55,21 @@ public class ParsedResultBuilder {
             break;
 
             case DecisionType.PHOTO:
-                JSONArray creek_list = results.getJSONObject("extras").getJSONArray("creeks");
-                JSONArray site_list = results.getJSONObject("extras").getJSONArray("sites");
-                JSONArray biomes_list = results.getJSONObject("extras").getJSONArray("biomes");
+                JSONArray creekList = results.getJSONObject("extras").getJSONArray("creeks");
+                JSONArray siteList = results.getJSONObject("extras").getJSONArray("sites");
+                JSONArray biomesList = results.getJSONObject("extras").getJSONArray("biomes");
         
         
-                if(!creek_list.isEmpty()){
-                    this.id = creek_list.getString(0);
+                if(!creekList.isEmpty()){
+                    this.id = creekList.getString(0);
                     addValue(MapValue.CREEK);
-                }else if(!site_list.isEmpty()){
-                    this.id = site_list.getString(0);
+                }else if(!siteList.isEmpty()){
+                    this.id = siteList.getString(0);
                     addValue(MapValue.EMERGENCY_SITE);
-                }else if(biomes_list.length()>1){
+                }else if(biomesList.length()>1){
                     addValue(MapValue.REGULAR_LAND);
                     this.id = null;
-                }else if (!biomes_list.getString(0).equals("OCEAN")){
+                }else if (!"OCEAN".equals(biomesList.getString(0))){
                     addValue(MapValue.REGULAR_LAND);
                     this.id = null;
 
