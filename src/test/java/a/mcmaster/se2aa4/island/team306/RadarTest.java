@@ -8,9 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RadarTest {
     @Test
     public void verifyDerivation(){
-        assertEquals(Radar.deriveDecision(Direction.NORTH), Radar.SCAN_NORTH);
-        assertEquals(Radar.deriveDecision(Direction.SOUTH), Radar.SCAN_SOUTH);
-        assertEquals(Radar.deriveDecision(Direction.EAST), Radar.SCAN_EAST);
-        assertEquals(Radar.deriveDecision(Direction.WEST), Radar.SCAN_WEST);
+        assertEquals(SpiralRadar.deriveDecision(Direction.NORTH), SpiralRadar.SCAN_NORTH);
+        assertEquals(SpiralRadar.deriveDecision(Direction.SOUTH), SpiralRadar.SCAN_SOUTH);
+        assertEquals(SpiralRadar.deriveDecision(Direction.EAST), SpiralRadar.SCAN_EAST);
+        assertEquals(SpiralRadar.deriveDecision(Direction.WEST), SpiralRadar.SCAN_WEST);
     }
 }

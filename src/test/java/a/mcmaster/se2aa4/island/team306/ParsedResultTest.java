@@ -12,7 +12,7 @@ public class ParsedResultTest {
 
     @Test
     public void testFly(){
-        ParsedResultBuilder builder = ParsedResult.builder(Mover.FLY_EAST);
+        ParsedResultBuilder builder = ParsedResult.builder(SpiralMover.FLY_EAST);
         ParsedResult result;
         // Ensure empty result does not build
         boolean nullBuildable = true;
@@ -36,7 +36,7 @@ public class ParsedResultTest {
             Assertions.fail("Failed to build populated result");
             return;
         }
-        assertEquals(result.getType(), DecisionType.FLY_FORWARD);
+        assertEquals(result.getType(), SpiralDecisionType.FLY_FORWARD);
         assertEquals(result.getDirection(), Direction.EAST);
         assertEquals(result.getCost(), 2);
         assertNull(result.getID());
@@ -44,10 +44,10 @@ public class ParsedResultTest {
 
     @Test
     public void testTurn(){
-        ParsedResultBuilder builder = ParsedResult.builder(Mover.TURN_SOUTH);
+        ParsedResultBuilder builder = ParsedResult.builder(SpiralMover.TURN_SOUTH);
         String response = "{ \"cost\": 4, \"extras\": {}, \"status\": \"OK\" }";
         ParsedResult result = builder.populate(response).build(); // Funky behaviour tested in testFly
-        assertEquals(result.getType(), DecisionType.TURN);
+        assertEquals(result.getType(), SpiralDecisionType.TURN);
         assertEquals(result.getDirection(), Direction.SOUTH);
         assertEquals(result.getCost(), 4);
         assertNull(result.getID());
@@ -56,7 +56,7 @@ public class ParsedResultTest {
 
     @Test
     public void testRadar(){
-        ParsedResultBuilder builder = ParsedResult.builder(Radar.SCAN_NORTH);
+        ParsedResultBuilder builder = ParsedResult.builder(SpiralRadar.SCAN_NORTH);
 
         // Found land
         String response = "{ \"cost\": 1, \"extras\": { \"range\": 2, \"found\": \"GROUND\" }, \"status\": \"OK\" }";
@@ -64,7 +64,7 @@ public class ParsedResultTest {
 
         // General, not double-testing
         assertEquals(result.getDirection(), Direction.NORTH);
-        assertEquals(result.getType(), DecisionType.RADAR);
+        assertEquals(result.getType(), SpiralDecisionType.RADAR);
         assertEquals(result.getCost(), 1);
         assertNull(result.getID());
         assertEquals(result.getRange(), 2);
@@ -73,9 +73,9 @@ public class ParsedResultTest {
         List<MapValue> values = result.getValues();
         for (int i = 0; i + 1 < values.size(); i++){
             MapValue value = values.get(i);
-            assertEquals(value, MapValue.OCEAN);
+            assertEquals(value, SpiralMapValue.OCEAN);
         }
-        assertEquals(values.getLast(), MapValue.GROUND);
+        assertEquals(values.getLast(), SpiralMapValue.GROUND);
 
         // Hit out of range
         response = "{ \"cost\": 1, \"extras\": { \"range\": 2, \"found\": \"OUT_OF_RANGE\" }, \"status\": \"OK\" }";
@@ -83,17 +83,17 @@ public class ParsedResultTest {
         values = result.getValues();
         for (int i = 0; i + 1 < values.size(); i++){
             MapValue value = values.get(i);
-            assertEquals(value, MapValue.OCEAN);
+            assertEquals(value, SpiralMapValue.OCEAN);
         }
-        assertEquals(values.getLast(), MapValue.OUT_OF_RANGE);
+        assertEquals(values.getLast(), SpiralMapValue.OUT_OF_RANGE);
     }
 
     @Test
     public void testPhoto(){
-        ParsedResultBuilder builder = ParsedResult.builder(PhotoScanner.getDecision());
+        ParsedResultBuilder builder = ParsedResult.builder(SpiralPhotoScanner.getDecision());
         String response = "{\"cost\": 2, \"extras\": { \"biomes\": [\"GLACIER\", \"ALPINE\"], \"creeks\": [], \"sites\": []}, \"status\": \"OK\"}";
         ParsedResult result = builder.populate(response).build();
-        assertEquals(result.getType(), DecisionType.PHOTO);
+        assertEquals(result.getType(), SpiralDecisionType.PHOTO);
         assertNull(result.getDirection());
         assertEquals(result.getCost(), 2);
         assertNull(result.getID());
@@ -111,11 +111,11 @@ public class ParsedResultTest {
 
     @Test
     public void testAbort(){
-        ParsedResultBuilder builder = ParsedResult.builder(Aborter.getDecision());
+        ParsedResultBuilder builder = ParsedResult.builder(SpiralAborter.getDecision());
         String response = "{ \"cost\": 3, \"extras\": {}, \"status\": \"OK\" }";
         ParsedResult result = builder.populate(response).build();
 
-        assertEquals(result.getType(), DecisionType.ABORT);
+        assertEquals(result.getType(), SpiralDecisionType.ABORT);
         assertNull(result.getDirection());
         assertEquals(result.getCost(), 3);
         assertNull(result.getID());

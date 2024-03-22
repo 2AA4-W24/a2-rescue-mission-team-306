@@ -17,12 +17,12 @@ public class DroneTest {
     @Test
     public void testUpdateStatus(){
         
-        ParsedResult result = ParsedResult.builder(Mover.FLY_NORTH).populate(
+        ParsedResult result = ParsedResult.builder(SpiralMover.FLY_NORTH).populate(
          "{ \"cost\": 3, \"extras\": {}, \"status\": \"OK\" }").build();
         drone.updateResult(result);
         assertEquals(drone.getEnergy(), 97);
 
-        result = ParsedResult.builder(Mover.TURN_SOUTH).populate(
+        result = ParsedResult.builder(SpiralMover.TURN_SOUTH).populate(
          "{ \"cost\": 0, \"extras\": {}, \"status\": \"OK\" }").build();
         drone.updateResult(result);
         assertEquals(drone.getEnergy(), 97);

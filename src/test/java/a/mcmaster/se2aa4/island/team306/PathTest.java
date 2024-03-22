@@ -11,7 +11,7 @@ public class PathTest {
 
     Coords root;
     Drone drone;
-    Map map;
+    SpiralMap map;
 
 
 
@@ -19,12 +19,12 @@ public class PathTest {
     public void setup(){
         root = new Coords(0, 0);
         drone = new Drone(100, Direction.EAST);
-        map = new Map(drone, new ReportGenerator());
+        map = new SpiralMap(drone, new CreekReportGenerator());
     }
 
     @Test
     public void testEmpty(){
-        Path path = new Path(root, root, Direction.EAST, map);
+        Path path = new SpiralPath(root, root, Direction.EAST, map);
         DecisionQueue queue = path.findPath();
         assertTrue(queue.isEmpty());
     }
@@ -32,11 +32,11 @@ public class PathTest {
     @Test
     public void testStraightPath(){
         Coords dest = new Coords(5, 0);
-        Path path = new Path(root, dest, Direction.EAST, map);
+        SpiralPath path = new SpiralPath(root, dest, Direction.EAST, map);
         DecisionQueue queue = path.findPath();
         for (int i = 0; i < 5; i++){
             Decision decision = queue.dequeue();
-            assertEquals(decision.getType(),DecisionType.FLY_FORWARD);
+            assertEquals(decision.getType(),SpiralDecisionType.FLY_FORWARD);
             assertEquals(decision.getDirection(), Direction.EAST);
         }
         assertTrue(queue.isEmpty());

@@ -40,7 +40,7 @@ public class DecisionQueue {
      * @return The dequeued decision.
      */
     public Decision dequeue() {
-        return decisions.remove(0);
+        return decisions.removeFirst();
     }
 
     /**

@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DecisionQueueTest {
 
     private static final Decision[] decisions =
-            {Radar.SCAN_NORTH, PhotoScanner.getDecision(), Mover.TURN_SOUTH, Mover.FLY_SOUTH, Aborter.getDecision()};
+            {SpiralRadar.SCAN_NORTH, SpiralPhotoScanner.getDecision(), SpiralMover.TURN_SOUTH, SpiralMover.FLY_SOUTH, SpiralAborter.getDecision()};
 
     @Test
     public void verifyOne(){

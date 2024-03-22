@@ -3,14 +3,15 @@ package ca.mcmaster.se2aa4.island.team306;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class Map {
-    private final java.util.Map<Coords, Tile> tiles;
+public class SpiralMap implements GameMap{
+    private final Map<Coords, Tile> tiles;
     private final Coords base;
     private final Drone drone;
-    private final java.util.Map<Direction, Integer> bounds;
+    private final Map<Direction, Integer> bounds;
 
-    private final ReportGenerator generator;
+    private final CreekReportGenerator generator;
     
     /**
      * Constructs a new map with the given drone and report generator.
@@ -18,7 +19,7 @@ public class Map {
      * @param drone     the drone operating on the map
      * @param generator the report generator for generating reports
      */
-    public Map(Drone drone, ReportGenerator generator){
+    public SpiralMap(Drone drone, CreekReportGenerator generator){
         this.base = new Coords(0, 0);
         this.tiles = new HashMap<>();
         this.drone = drone;
@@ -45,18 +46,18 @@ public class Map {
         Direction drxn = result.getDirection();
         List<MapValue> values = result.getValues();
         String id = result.getID();
-        if (result.getType() == DecisionType.RADAR){
+        if (result.getType() == SpiralDecisionType.RADAR){
             for (MapValue value : values) {
                 pos = pos.step(drxn);
                 addTile(new Tile(value, pos));
             }
-        }else if(result.getType() == DecisionType.PHOTO){
+        }else if(result.getType() == SpiralDecisionType.PHOTO){
             MapValue value = values.getFirst();
             MapValue prev = checkCoords(pos);
-            if(prev == MapValue.GROUND && value == MapValue.SCANNED_OCEAN){
-                value = MapValue.REGULAR_LAND;
-            }else if(prev == MapValue.OCEAN && value == MapValue.REGULAR_LAND){
-                value = MapValue.SCANNED_OCEAN;
+            if(prev == SpiralMapValue.GROUND && value == SpiralMapValue.SCANNED_OCEAN){
+                value = SpiralMapValue.REGULAR_LAND;
+            }else if(prev == SpiralMapValue.OCEAN && value == SpiralMapValue.REGULAR_LAND){
+                value = SpiralMapValue.SCANNED_OCEAN;
             }
             addTile(new Tile(value, pos, id));
         }
@@ -73,7 +74,7 @@ public class Map {
 
     private void updateBounds(ParsedResult result){
 
-        if (result.getType() != DecisionType.RADAR){
+        if (result.getType() != SpiralDecisionType.RADAR){
             return;
         }
         Direction direction = result.getDirection();
@@ -119,9 +120,9 @@ public class Map {
      */
     public MapValue checkCoords(Coords loc){
         Tile tile = tiles.get(loc);
-        if (tile == null || tile.getType() == MapValue.UNKNOWN){
-            MapValue value = inRange(loc) ? MapValue.UNKNOWN : MapValue.OUT_OF_RANGE;
-            if (tile == null || value == MapValue.OUT_OF_RANGE) {
+        if (tile == null || tile.getType() == SpiralMapValue.UNKNOWN){
+            MapValue value = inRange(loc) ? SpiralMapValue.UNKNOWN : SpiralMapValue.OUT_OF_RANGE;
+            if (tile == null || value == SpiralMapValue.OUT_OF_RANGE) {
                 tiles.put(loc, new Tile(value, loc));
                 tile = tiles.get(loc);
             }
@@ -203,17 +204,17 @@ public class Map {
     public void setReportCreek(){
         Tile creek = null;
         double minDistance = Double.POSITIVE_INFINITY;
-        if(findNearestTile(MapValue.CREEK) == null){
+        if(findNearestTile(SpiralMapValue.CREEK) == null){
             return;
         }
-        if(findNearestTile(MapValue.EMERGENCY_SITE) == null){
-            creek = getTileAt(findNearestTile(MapValue.CREEK));
+        if(findNearestTile(SpiralMapValue.EMERGENCY_SITE) == null){
+            creek = getTileAt(findNearestTile(SpiralMapValue.CREEK));
             generator.setCreekId(creek.getID());
             return;
         }
         // Find the emergency site
-        Coords site = findNearestTile(MapValue.EMERGENCY_SITE);
-        List<Coords> creeks = findTile(MapValue.CREEK);
+        Coords site = findNearestTile(SpiralMapValue.EMERGENCY_SITE);
+        List<Coords> creeks = findTile(SpiralMapValue.CREEK);
 
         // Find the closest creek to the emergency site
         for(Coords creekCheck: creeks){

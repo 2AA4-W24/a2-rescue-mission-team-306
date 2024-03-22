@@ -16,7 +16,7 @@ public class ParsedResultBuilder {
     private int range;
     private String id;
 
-    ParsedResultBuilder(Decision decision){
+    public ParsedResultBuilder(Decision decision){
         this.decisionType = decision.getType();
         this.direction = decision.getDirection();
         this.hasResults = false;
@@ -43,30 +43,22 @@ public class ParsedResultBuilder {
         this.cost = results.getInt("cost");
 
         switch (decisionType) {
-            case DecisionType.FLY_FORWARD:
-                this.id = null;
-            break;
-
-            case DecisionType.TURN: 
-                this.id = null;  
-            break;
-
-            case DecisionType.RADAR: 
+            case SpiralDecisionType.RADAR: 
                 this.values = new ArrayList<>();
                 this.range = results.getJSONObject("extras").getInt("range");
                 for(int i = 0; i<range; i++){
-                    addValue(MapValue.OCEAN);
+                    addValue(SpiralMapValue.OCEAN);
                 }
                 if("GROUND".equals(results.getJSONObject("extras").getString("found"))){
-                    addValue(MapValue.GROUND);
+                    addValue(SpiralMapValue.GROUND);
                 }
                 else {
-                    addValue(MapValue.OUT_OF_RANGE);
+                    addValue(SpiralMapValue.OUT_OF_RANGE);
                 }
                 this.id = null;
             break;
 
-            case DecisionType.PHOTO:
+            case SpiralDecisionType.PHOTO:
                 JSONArray creekList = results.getJSONObject("extras").getJSONArray("creeks");
                 JSONArray siteList = results.getJSONObject("extras").getJSONArray("sites");
                 JSONArray biomesList = results.getJSONObject("extras").getJSONArray("biomes");
@@ -74,19 +66,19 @@ public class ParsedResultBuilder {
         
                 if(!creekList.isEmpty()){
                     this.id = creekList.getString(0);
-                    addValue(MapValue.CREEK);
+                    addValue(SpiralMapValue.CREEK);
                 }else if(!siteList.isEmpty()){
                     this.id = siteList.getString(0);
-                    addValue(MapValue.EMERGENCY_SITE);
+                    addValue(SpiralMapValue.EMERGENCY_SITE);
                 }else if(biomesList.length()>1){
-                    addValue(MapValue.REGULAR_LAND);
+                    addValue(SpiralMapValue.REGULAR_LAND);
                     this.id = null;
                 }else if (!"OCEAN".equals(biomesList.getString(0))){
-                    addValue(MapValue.REGULAR_LAND);
+                    addValue(SpiralMapValue.REGULAR_LAND);
                     this.id = null;
 
                 }else{
-                    addValue(MapValue.SCANNED_OCEAN);
+                    addValue(SpiralMapValue.SCANNED_OCEAN);
                     this.id = null;
                 }
             break;
