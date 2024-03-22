@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DecisionQueue {
-    private List<Decision> decisions;
+    private final List<Decision> decisions;
 
     public DecisionQueue(){
         this.decisions = new ArrayList<>();
@@ -13,7 +13,7 @@ public class DecisionQueue {
 
     public void enqueue(Decision decision){
         this.decisions.add(decision);
-    };
+    }
 
     public void enqueue(DecisionQueue queue){
         while (!queue.isEmpty()) {

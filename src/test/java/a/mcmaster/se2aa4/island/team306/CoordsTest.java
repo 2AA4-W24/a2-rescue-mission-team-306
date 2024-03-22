@@ -16,8 +16,14 @@ public class CoordsTest {
     private final Coords thirdC1;
     private final Coords c2;
     
-    private final Coords unitNorth, unitEast, unitWest, unitSouth;
-    private final Coords c1North, c1East, c1West, c1South;
+    private final Coords unitNorth;
+    private final Coords unitEast;
+    private final Coords unitWest;
+    private final Coords unitSouth;
+    private final Coords c1North;
+    private final Coords c1East;
+    private final Coords c1West;
+    private final Coords c1South;
 
     public CoordsTest(){
         root = new Coords(0, 0);

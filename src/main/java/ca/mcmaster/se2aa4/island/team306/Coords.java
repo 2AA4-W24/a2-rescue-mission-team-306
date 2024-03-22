@@ -10,21 +10,24 @@ public class Coords {
     }
 
     public double distance(Coords other){
-        return Math.sqrt(Math.pow((other.x - this.x), 2) + Math.pow((other.y - this.y), 2));
+        return Math.sqrt(Math.pow(other.x - this.x, 2) + Math.pow(other.y - this.y, 2));
     }
 
     public Coords offset(int xOffset, int yOffset){
-        if (xOffset == 0 && yOffset == 0) return this;
+        if (xOffset == 0 && yOffset == 0) {
+            return this;
+        }
         return new Coords(this.x + xOffset, this.y + yOffset);
     }
 
     @Override
     public boolean equals(Object o){
-        if (this == o)  return true;
-        if (!(o instanceof Coords)){
+        if (this == o)  {
+            return true;
+        }
+        if (!(o instanceof Coords c)){
             return false;
         }
-        Coords c = (Coords) o;
         return c.x == this.x && c.y == this.y;
     }
 
@@ -34,19 +37,15 @@ public class Coords {
     }
 
     public Coords step(Direction heading) {
-        switch(heading){
-            case Direction.NORTH:
-                return offset(0, 1);
-            case Direction.WEST:
-                return offset(-1, 0);
-            case SOUTH:
-                return offset(0, -1);
-            case EAST:
-                return offset(1, 0);
-        }
-        throw new NullPointerException();
+        return switch (heading) {
+            case Direction.NORTH -> offset(0, 1);
+            case Direction.WEST -> offset(-1, 0);
+            case SOUTH -> offset(0, -1);
+            case EAST -> offset(1, 0);
+        };
     }
 
+    @Override
     public String toString(){
         return String.format("(%d, %d)", this.x, this.y);
     }

@@ -3,7 +3,7 @@ package a.mcmaster.se2aa4.island.team306;
 import ca.mcmaster.se2aa4.island.team306.*;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RadarTest {
     @Test

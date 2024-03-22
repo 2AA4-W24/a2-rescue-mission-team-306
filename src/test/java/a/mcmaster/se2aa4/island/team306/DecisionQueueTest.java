@@ -2,10 +2,6 @@ package a.mcmaster.se2aa4.island.team306;
 
 import ca.mcmaster.se2aa4.island.team306.*;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,7 +33,8 @@ public class DecisionQueueTest {
 
     @Test
     public void verifyMultiple(){
-        DecisionQueue queue1 = new DecisionQueue(), queue2 = new DecisionQueue();
+        DecisionQueue queue1 = new DecisionQueue();
+        DecisionQueue queue2 = new DecisionQueue();
         for (Decision decision : decisions) {
             queue1.enqueue(decision);
             queue2.enqueue(decision);

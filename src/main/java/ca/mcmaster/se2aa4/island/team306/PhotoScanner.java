@@ -11,18 +11,12 @@ public class PhotoScanner implements Scanner{
     }
 
     public boolean scan(){
-        switch (tracker.getState()){
-            case GameState.FOLLOW_COAST_OUTSIDE:
-            case GameState.FOLLOW_COAST_INSIDE:
-            case GameState.SEARCH:
-                // Current (end of radar batch) or previous (already on land)
-                    if (!map.currentValue().scanned()){
-                        return true;
-                    }
-                    return map.currentValue() == MapValue.UNKNOWN && map.previousValue().isLand();
-            default:
-                return false;
-        }
+        return switch (tracker.getState()) {
+            case GameState.FOLLOW_COAST_OUTSIDE, GameState.FOLLOW_COAST_INSIDE, GameState.SEARCH ->
+                // Scan unless current value is already scanned
+                    !map.currentValue().scanned();
+            default -> false;
+        };
     }
 
     public static Decision getDecision(){

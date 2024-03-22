@@ -1,13 +1,13 @@
 package ca.mcmaster.se2aa4.island.team306;
 
 public class Decider {
-    private Mover mover;
-    private Radar radar;
-    private Aborter aborter;
-    private PhotoScanner photo;
+    private final Mover mover;
+    private final Radar radar;
+    private final Aborter aborter;
+    private final PhotoScanner photo;
     private Decision decision;
-    private GameTracker tracker;
-    private DecisionQueue queue;
+    private final GameTracker tracker;
+    private final DecisionQueue queue;
 
     public Decider(Drone drone, Map map){
         this.queue = new DecisionQueue();
@@ -48,7 +48,6 @@ public class Decider {
         boolean moveCheck = mover.move();
         if (moveCheck){
             this.decision = mover.deriveDecision();
-            return;
         }
         else {
             // No decision was made, abort as a failure
