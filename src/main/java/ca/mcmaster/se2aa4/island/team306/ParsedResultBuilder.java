@@ -43,14 +43,6 @@ public class ParsedResultBuilder {
         this.cost = results.getInt("cost");
 
         switch (decisionType) {
-            case SpiralDecisionType.FLY_FORWARD:
-                this.id = null;
-            break;
-
-            case SpiralDecisionType.TURN: 
-                this.id = null;  
-            break;
-
             case SpiralDecisionType.RADAR: 
                 this.values = new ArrayList<>();
                 this.range = results.getJSONObject("extras").getInt("range");

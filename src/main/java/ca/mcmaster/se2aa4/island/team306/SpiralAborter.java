@@ -8,7 +8,7 @@ public class SpiralAborter implements Aborter {
     private final Drone drone;
     private final GameMap map;
     private final GameTracker tracker;
-    private static final SpiralDecision DECISION = new SpiralDecision(SpiralDecisionType.ABORT);
+    private static final Decision DECISION = new SpiralDecision(SpiralDecisionType.ABORT);
 
     private static final Logger logger = LogManager.getLogger();
 
@@ -19,7 +19,7 @@ public class SpiralAborter implements Aborter {
      * @param map      The map instance.
      * @param tracker  The game tracker instance.
      */
-    public SpiralAborter(Drone drone, GameMap map, SpiralGameTracker tracker){
+    public SpiralAborter(Drone drone, GameMap map, GameTracker tracker){
         this.drone = drone;
         this.map = map;
         this.tracker = tracker;
@@ -63,7 +63,7 @@ public class SpiralAborter implements Aborter {
      *
      * @return The decision to abort the mission.
      */
-    public static SpiralDecision getDecision(){
+    public static Decision getDecision(){
         return DECISION;
     }
 

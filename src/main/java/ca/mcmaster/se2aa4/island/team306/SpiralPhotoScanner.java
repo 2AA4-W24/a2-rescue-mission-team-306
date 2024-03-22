@@ -2,8 +2,8 @@ package ca.mcmaster.se2aa4.island.team306;
 
 public class SpiralPhotoScanner implements PhotoScanner{
     private static final SpiralDecision DECISION = new SpiralDecision(SpiralDecisionType.PHOTO);
-    private GameTracker tracker;
-    private GameMap map;
+    private final GameTracker tracker;
+    private final GameMap map;
 
     /**
      * Constructs a new PhotoScanner object.

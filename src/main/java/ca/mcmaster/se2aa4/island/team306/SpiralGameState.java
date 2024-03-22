@@ -14,7 +14,7 @@ public enum SpiralGameState implements GameState{
      *
      * @return The next state in the sequence, or the same state if no next state is defined.
      */
-    public SpiralGameState next(){
+    public GameState next(){
         return switch (this) {
             case SETUP -> FIND_ISLAND;
             case FIND_ISLAND -> FOLLOW_COAST_OUTSIDE;

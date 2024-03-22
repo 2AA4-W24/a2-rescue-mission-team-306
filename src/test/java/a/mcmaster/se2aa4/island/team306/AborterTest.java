@@ -22,7 +22,7 @@ public class AborterTest {
     @Test
     public void testDecision(){
         // Properties
-        SpiralDecision abortDecision = SpiralAborter.getDecision();
+        Decision abortDecision = SpiralAborter.getDecision();
         assertNull(abortDecision.getDirection());
         assertEquals(abortDecision.getType(), SpiralDecisionType.ABORT);
 

@@ -24,7 +24,7 @@ public class SpiralDecision implements Decision {
      *
      * @return The decision type.
      */
-    public SpiralDecisionType getType(){
+    public DecisionType getType(){
         return this.type;
     }
 

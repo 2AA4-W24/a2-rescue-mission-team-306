@@ -63,6 +63,6 @@ public class ParsedResult{
      * @return True if land is found in the parsed result, false otherwise.
      */
     public boolean foundLand(){
-        return this.values.getLast().equals(SpiralMapValue.GROUND);
+        return this.values.getLast().isLand();
     }
 }

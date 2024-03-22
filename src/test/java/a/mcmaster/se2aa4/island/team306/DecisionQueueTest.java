@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class DecisionQueueTest {
 
-    private static final SpiralDecision[] decisions =
+    private static final Decision[] decisions =
             {SpiralRadar.SCAN_NORTH, SpiralPhotoScanner.getDecision(), SpiralMover.TURN_SOUTH, SpiralMover.FLY_SOUTH, SpiralAborter.getDecision()};
 
     @Test
@@ -35,7 +35,7 @@ public class DecisionQueueTest {
     public void verifyMultiple(){
         DecisionQueue queue1 = new DecisionQueue();
         DecisionQueue queue2 = new DecisionQueue();
-        for (SpiralDecision decision : decisions) {
+        for (Decision decision : decisions) {
             queue1.enqueue(decision);
             queue2.enqueue(decision);
         }
@@ -53,7 +53,7 @@ public class DecisionQueueTest {
         assertTrue(queue1.isEmpty());
         assertTrue(queue2.isEmpty());
 
-        for (SpiralDecision decision : decisions) {
+        for (Decision decision : decisions) {
             queue2.enqueue(decision);
         }
 

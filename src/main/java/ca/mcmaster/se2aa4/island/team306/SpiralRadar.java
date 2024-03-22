@@ -10,14 +10,14 @@ public class SpiralRadar implements RadarScanner{
     public static final SpiralDecision SCAN_WEST = 
         new SpiralDecision(SpiralDecisionType.RADAR, Direction.WEST);
 
-    private Drone drone;
-    private GameMap map;
-    private DecisionQueue queue;
-    private SpiralGameTracker tracker;
+    private final Drone drone;
+    private final GameMap map;
+    private final DecisionQueue queue;
+    private final GameTracker tracker;
     private Direction towards;
-    private DecisionQueue scanQueue;
+    private final DecisionQueue scanQueue;
 
-    public SpiralRadar(Drone drone, GameMap map, DecisionQueue queue, SpiralGameTracker tracker){ //constructor
+    public SpiralRadar(Drone drone, GameMap map, DecisionQueue queue, GameTracker tracker){ //constructor
         this.drone = drone;
         this.map = map;
         this.queue = queue;
