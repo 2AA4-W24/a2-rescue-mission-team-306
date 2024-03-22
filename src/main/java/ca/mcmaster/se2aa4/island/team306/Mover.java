@@ -113,7 +113,7 @@ public class Mover {
                     }
                 }
                 if(pos.equals(initial_water)){
-                    if(start > 1){
+                    if(start == 1){
                         start = 0;
                         path = new Path(pos, initial_land, facing, map);
                         pathQueue = path.findPath();
