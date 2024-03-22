@@ -266,7 +266,7 @@ public class Mover {
             tempPos = tempPos.step(facing.getRight());
             closeCheck++;
             check = map.checkCoords(tempPos);
-            if(check == MapValue.OCEAN || check == MapValue.SCANNED_OCEAN){
+            if(check == MapValue.OCEAN || check == MapValue.SCANNED_OCEAN || check == MapValue.CREEK){
                 break;
             }
             if(check == MapValue.GROUND || check == MapValue.UNKNOWN){
@@ -282,7 +282,7 @@ public class Mover {
             tempPos = tempPos.step(facing);
             closeCheck++;
             check = map.checkCoords(tempPos);
-            if(check == MapValue.OCEAN || check == MapValue.SCANNED_OCEAN){
+            if(check == MapValue.OCEAN || check == MapValue.SCANNED_OCEAN || check == MapValue.CREEK){
                 break;
             }
             if(check == MapValue.GROUND || check == MapValue.UNKNOWN){
@@ -298,7 +298,7 @@ public class Mover {
             tempPos = tempPos.step(facing.getLeft());
             closeCheck++;
             check = map.checkCoords(tempPos);
-            if(check == MapValue.OCEAN || check == MapValue.SCANNED_OCEAN){
+            if(check == MapValue.OCEAN || check == MapValue.SCANNED_OCEAN || check == MapValue.CREEK){
                 break;
             }
             if(check == MapValue.GROUND || check == MapValue.UNKNOWN){
@@ -317,7 +317,7 @@ public class Mover {
             if(check == MapValue.OCEAN || check == MapValue.SCANNED_OCEAN){
                 break;
             }
-            if(check == MapValue.GROUND || check == MapValue.UNKNOWN){
+            if(check == MapValue.GROUND || check == MapValue.UNKNOWN || check == MapValue.CREEK){
                 if(closeCheck < closest){
                     closePos = tempPos;
                     closest = closeCheck;
