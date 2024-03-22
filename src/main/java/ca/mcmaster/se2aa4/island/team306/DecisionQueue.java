@@ -5,7 +5,7 @@ import java.util.List;
 
 
 public class DecisionQueue {
-    private List<Decision> decisions;
+    private final List<Decision> decisions;
 
     /**
      * Constructs an empty DecisionQueue.

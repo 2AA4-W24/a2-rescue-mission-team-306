@@ -9,7 +9,7 @@ public class Decision {
      *
      * @param type The type of decision.
      */
-    public Decision(DecisionType type){
+    Decision(DecisionType type){
         this.type = type;
         this.direction = null;
     }
@@ -35,6 +35,11 @@ public class Decision {
      */
     public Direction getDirection(){
         return this.direction;
+    }
+
+    @Override
+    public String toString(){
+        return String.format("Decision(%s, %s)", this.type, this.direction);
     }
 
 

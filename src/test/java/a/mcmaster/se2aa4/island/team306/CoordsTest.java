@@ -1,13 +1,10 @@
 package a.mcmaster.se2aa4.island.team306;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
-
 
 import ca.mcmaster.se2aa4.island.team306.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CoordsTest {
     private static final double double_margin = 0.0001;
@@ -18,6 +15,15 @@ public class CoordsTest {
     private final Coords c1cpy;
     private final Coords thirdC1;
     private final Coords c2;
+    
+    private final Coords unitNorth;
+    private final Coords unitEast;
+    private final Coords unitWest;
+    private final Coords unitSouth;
+    private final Coords c1North;
+    private final Coords c1East;
+    private final Coords c1West;
+    private final Coords c1South;
 
     public CoordsTest(){
         root = new Coords(0, 0);
@@ -27,10 +33,18 @@ public class CoordsTest {
         c1cpy = new Coords(11, 10);
         thirdC1 = new Coords(11, 10);
         c2 = new Coords(3, 4);
+        unitNorth = new Coords(0, 1);
+        unitSouth = new Coords(0, -1);
+        unitEast = new Coords(1, 0);
+        unitWest = new Coords(-1, 0);
+        c1East = new Coords(12, 10);
+        c1West = new Coords(10, 10);
+        c1North = new Coords(11, 11);
+        c1South = new Coords(11, 9);
     }
 
     private boolean doubleEquals(double d1, double d2){
-        // Account for floating-point errrors
+        // Account for floating-point errors
         return Math.abs(d1 - d2) < double_margin;
     }
 
@@ -85,15 +99,15 @@ public class CoordsTest {
         assertEquals(c1, c1cpy);
         assertEquals(c1cpy, thirdC1);
         assertEquals(c1, thirdC1);
-        // Consistency ommitted because coords are immutable
+        // Consistency omitted because coords are immutable
         // Non-nullity
-        assertFalse(root.equals(null));
-        assertFalse(c1.equals(null));
-        assertFalse(c2.equals(null));
+        assertNotEquals(null, root);
+        assertNotEquals(null, c1);
+        assertNotEquals(null, c2);
         // Non-equivalent elements (equivalent elements verified above)
-        assertFalse(root.equals(c1));
-        assertFalse(c2.equals(root));
-        assertFalse(c1.equals(c2));
+        assertNotEquals(root, c1);
+        assertNotEquals(c2, root);
+        assertNotEquals(c1, c2);
     }
 
     @Test
@@ -103,9 +117,9 @@ public class CoordsTest {
         assertEquals(root.hashCode(), rootcpy.hashCode());
 
         // Two different objects (almost always) have different hashcodes
-        assertFalse(root.hashCode() == c1.hashCode());
-        assertFalse(root.hashCode() == c2.hashCode());
-        assertFalse(c1.hashCode() == c2.hashCode());
+        assertNotEquals(root.hashCode(), c1.hashCode());
+        assertNotEquals(root.hashCode(), c2.hashCode());
+        assertNotEquals(c1.hashCode(), c2.hashCode());
     }
 
     @Test
@@ -116,5 +130,26 @@ public class CoordsTest {
         assertEquals(root.offset(c1.x, c1.y), c1);
         assertEquals(c1.offset(c2.x - c1.x, c2.y - c1.y), c2);
         assertEquals(c2.offset(-c2.x, -c2.y), root);
+    }
+    
+    @Test 
+    public void testStep(){
+        // Test inverses
+        assertEquals(root, root.step(Direction.NORTH).step(Direction.SOUTH));
+        assertEquals(root, root.step(Direction.EAST).step(Direction.WEST));
+        assertEquals(c1, c1.step(Direction.SOUTH).step(Direction.NORTH));
+        assertEquals(c1, c1.step(Direction.WEST).step(Direction.EAST));
+        
+        // Test root's branching
+        assertEquals(root.step(Direction.NORTH), unitNorth);
+        assertEquals(root.step(Direction.SOUTH), unitSouth);
+        assertEquals(root.step(Direction.EAST), unitEast);
+        assertEquals(root.step(Direction.WEST), unitWest);
+        
+        // Test c1's branching
+        assertEquals(c1.step(Direction.NORTH), c1North);
+        assertEquals(c1.step(Direction.SOUTH), c1South);
+        assertEquals(c1.step(Direction.EAST), c1East);
+        assertEquals(c1.step(Direction.WEST), c1West);
     }
 }

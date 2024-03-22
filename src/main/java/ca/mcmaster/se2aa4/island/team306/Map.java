@@ -44,6 +44,7 @@ public class Map {
         Coords pos = drone.getPosition();
         Direction drxn = result.getDirection();
         List<MapValue> values = result.getValues();
+        String id = result.getID();
         if (result.getType() == DecisionType.RADAR){
             for (MapValue value : values) {
                 pos = pos.step(drxn);
@@ -51,18 +52,27 @@ public class Map {
             }
         }else if(result.getType() == DecisionType.PHOTO){
             MapValue value = values.getFirst();
-            addTile(new Tile(value, pos));
+            MapValue prev = checkCoords(pos);
+            if(prev == MapValue.GROUND && value == MapValue.SCANNED_OCEAN){
+                value = MapValue.REGULAR_LAND;
+            }else if(prev == MapValue.OCEAN && value == MapValue.REGULAR_LAND){
+                value = MapValue.SCANNED_OCEAN;
+            }
+            addTile(new Tile(value, pos, id));
         }
 
         updateBounds(result);
     }
+
 
     /**
      * Updates the boundaries of the map based on the parsed result.
      * 
      * @param result the parsed result containing information about the update
      */
-    public void updateBounds(ParsedResult result){
+
+    private void updateBounds(ParsedResult result){
+
         if (result.getType() != DecisionType.RADAR){
             return;
         }
@@ -192,7 +202,7 @@ public class Map {
      */
     public void setReportCreek(){
         Tile creek = null;
-        double min_distance = Double.POSITIVE_INFINITY;
+        double minDistance = Double.POSITIVE_INFINITY;
         if(findNearestTile(MapValue.CREEK) == null){
             return;
         }
@@ -207,11 +217,13 @@ public class Map {
 
         // Find the closest creek to the emergency site
         for(Coords creekCheck: creeks){
-            if(site.distance(creekCheck)<min_distance){
-                min_distance = site.distance(creekCheck);
+            if(site.distance(creekCheck)<minDistance){
+                minDistance = site.distance(creekCheck);
                 creek = getTileAt(creekCheck);
             }
         }
+
+
 
         generator.setCreekId(creek.getID());
     }

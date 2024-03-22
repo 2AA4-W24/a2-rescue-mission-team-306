@@ -7,6 +7,10 @@ public class Mover {
     private final GameTracker tracker;
     private final Direction START_ORIENT;
     private Direction towards;
+    private Coords initial_land;
+    private Coords initial_water;
+    private int start;
+    private Coords start_pos;
 
     // Constants representing movement decisions
     public static final Decision FLY_NORTH = 
@@ -42,6 +46,7 @@ public class Mover {
         this.tracker = tracker;
         this.START_ORIENT = drone.getHeading();
         this.towards = null;
+        start = 0;
     }
 
     /**
@@ -50,17 +55,10 @@ public class Mover {
      * @return true if the drone should make a movement decision, false otherwise
      */
     private boolean shouldMove(){
-        switch(tracker.getState()){
-            case SETUP:
-            case SUCCESS:
-            case FAILURE:
-                return false;
-            case FIND_ISLAND:
-            case SEARCH:
-            default:
-                return true;
-
-        }
+        return switch (tracker.getState()) {
+            case SETUP, SUCCESS, FAILURE -> false;
+            default -> true;
+        };
     }
 
     /**
@@ -71,10 +69,7 @@ public class Mover {
     public boolean move(){
         if (shouldMove()){
             towards = goTowards();
-            if (towards == drone.getHeading().getBackwards()){
-                return false;
-            }
-            return true;
+            return towards != drone.getHeading().getBackwards();
         }
         return false;
     }
@@ -85,62 +80,251 @@ public class Mover {
      * @return the direction towards which the drone should move
      */
     public Direction goTowards(){
+        Coords pos = drone.getPosition();
+        Direction facing = drone.getHeading();
+        Path path;
+        MapValue right = map.checkCoords(pos.step(facing.getRight())),
+                forward = map.checkCoords(pos.step(facing)),
+                left = map.checkCoords(pos.step(facing.getLeft())),
+                back = map.checkCoords(pos.step(facing.getBackwards())),
+                curr = map.checkCoords(pos);
+        DecisionQueue pathQueue;
+        Decision firstStep;
         switch(tracker.getState()){
             case FIND_ISLAND:
                 if(map.findNearestTile(MapValue.GROUND) != null){
                     Coords land = map.findNearestTile(MapValue.GROUND);
-                    Path path = new Path(drone.getPosition(), land, drone.getHeading(), map);
-                    DecisionQueue pathQueue = path.findPath();
-                    Decision first_step = pathQueue.dequeue();
+                    initial_land = land;
+                    path = new Path(drone.getPosition(), land, drone.getHeading(), map);
+                    pathQueue = path.findPath();
+                    firstStep = pathQueue.dequeue();
                     queue.enqueue(pathQueue);
-                    return first_step.getDirection();
+                    return firstStep.getDirection();
                 }
                 return START_ORIENT;
-            case SEARCH:
-                Coords pos = drone.getPosition();
-                Direction facing = drone.getHeading();
-                Path path;
-                MapValue up_right = map.checkCoords(pos.step(facing.getRight()).step(facing)),
-                    back_left = map.checkCoords(pos.step(facing.getBackwards()).step(facing.getLeft())),
-                    back_right = map.checkCoords(pos.step(facing.getBackwards()).step(facing.getRight())),
-                    up_left = map.checkCoords(pos.step(facing.getLeft()).step(facing)),
-                    right = map.checkCoords(pos.step(facing.getRight())),
-                    forward = map.checkCoords(pos.step(facing)),
-                    left = map.checkCoords(pos.step(facing.getLeft()));
-                MapValue curr = map.currentValue();
-
-                if(right.scanned() && forward.scanned() && left.scanned() && up_right.scanned() && up_left.scanned() && back_right.scanned() && back_left.scanned()){
-                    if (map.findNearestTile(MapValue.EMERGENCY_SITE) != null){
-                        tracker.succeedMission();
+            case FOLLOW_COAST_OUTSIDE:
+                if(pos.equals(initial_land)){
+                    if(left == MapValue.OCEAN){
+                        initial_water = pos.step(facing.getLeft());
+                    }else if(forward == MapValue.OCEAN){
+                        initial_water = pos.step(facing);
+                    }else{
+                        initial_water = pos.step(facing.getRight());
                     }
                 }
+                if(pos.equals(initial_water)){
+                    if(start > 1){
+                        start = 0;
+                        path = new Path(pos, initial_land, facing, map);
+                        pathQueue = path.findPath();
+                        firstStep = pathQueue.dequeue();
+                        queue.enqueue(pathQueue);
+                        tracker.completeLoop();
+                        return firstStep.getDirection();
+                    }
+                    start++;
+                }
+                return hugCoastline();
+
+            case FOLLOW_COAST_INSIDE:
+                if(pos.equals(start_pos)){
+                    tracker.completeLoop();
+                }
+                if(start == 0){
+                    start_pos = pos;
+                    start++;
+                }
+                return loopInward();
                 
+            case SEARCH:
+                boolean trapped = right.scanned() && left.scanned() && back.scanned() && forward.scanned();
+                Coords closePos;
+                if(trapped){
+                    if(!curr.isLand()){
+                        return loopInward();
+                    }
+                    closePos = nearestUnscanned(pos, facing);
+                    path = new Path(pos, closePos, facing, map);
+                    pathQueue = path.findPath();
+                    firstStep = pathQueue.dequeue();
+                    queue.enqueue(pathQueue);
+                    return firstStep.getDirection();
+                    
+                }
                 
-                if(right == MapValue.GROUND||(curr.isLand()&&!right.isLand())){
+                if(!right.scanned()){
                     path = new Path(pos, pos.step(facing.getRight()), facing, map);
-                    DecisionQueue pathQueue = path.findPath();
-                    Decision first_step = pathQueue.dequeue();
+                    pathQueue = path.findPath();
+                    firstStep = pathQueue.dequeue();
                     queue.enqueue(pathQueue);
-                    return first_step.getDirection();
+                    return firstStep.getDirection();
                 }
-                if(forward == MapValue.GROUND){
+                if(!forward.scanned()){
                     path = new Path(pos, pos.step(facing), facing, map);
-                    DecisionQueue pathQueue = path.findPath();
-                    Decision first_step = pathQueue.dequeue();
+                    pathQueue = path.findPath();
+                    firstStep = pathQueue.dequeue();
                     queue.enqueue(pathQueue);
-                    return first_step.getDirection();
+                    return firstStep.getDirection();
                 }
-                
                 path = new Path(pos, pos.step(facing.getLeft()), facing, map);
-                DecisionQueue pathQueue = path.findPath();
-                Decision first_step = pathQueue.dequeue();
+                pathQueue = path.findPath();
+                firstStep = pathQueue.dequeue();
                 queue.enqueue(pathQueue);
-                return first_step.getDirection(); 
+                return firstStep.getDirection();
                 
                 
             default:
                 return START_ORIENT;
         }
+    }
+
+    private Direction hugCoastline(){
+        Coords pos = drone.getPosition();
+        Direction facing = drone.getHeading();
+        Path path;
+        MapValue right = map.checkCoords(pos.step(facing.getRight())),
+                forward = map.checkCoords(pos.step(facing)),
+                left = map.checkCoords(pos.step(facing.getLeft()));
+        DecisionQueue pathQueue;
+        Decision firstStep;
+        if(left == MapValue.OCEAN || left == MapValue.SCANNED_OCEAN){
+            path = new Path(pos, pos.step(facing.getLeft()), facing, map);
+            pathQueue = path.findPath();
+            firstStep = pathQueue.dequeue();
+            queue.enqueue(pathQueue);
+            return firstStep.getDirection();
+        }
+        if(forward == MapValue.OCEAN || forward == MapValue.SCANNED_OCEAN){
+            path = new Path(pos, pos.step(facing), facing, map);
+            pathQueue = path.findPath();
+            firstStep = pathQueue.dequeue();
+            queue.enqueue(pathQueue);
+            return firstStep.getDirection();
+        }
+        
+        if(right == MapValue.OCEAN || right == MapValue.SCANNED_OCEAN){
+            path = new Path(pos, pos.step(facing.getRight()), facing, map);
+            pathQueue = path.findPath();
+            firstStep = pathQueue.dequeue();
+            queue.enqueue(pathQueue);
+            return firstStep.getDirection(); 
+        }
+
+        path = new Path(pos, pos.step(facing.getBackwards()), facing, map);
+        pathQueue = path.findPath();
+        firstStep = pathQueue.dequeue();
+        queue.enqueue(pathQueue);
+        return firstStep.getDirection();
+    }
+
+    private Direction loopInward(){
+        Coords pos = drone.getPosition();
+        Direction facing = drone.getHeading();
+        Path path;
+        MapValue right = map.checkCoords(pos.step(facing.getRight())),
+                forward = map.checkCoords(pos.step(facing)),
+                left = map.checkCoords(pos.step(facing.getLeft()));
+        DecisionQueue pathQueue;
+        Decision firstStep;
+        if(right.isLand()){
+            path = new Path(pos, pos.step(facing.getRight()), facing, map);
+            pathQueue = path.findPath();
+            firstStep = pathQueue.dequeue();
+            queue.enqueue(pathQueue);
+            return firstStep.getDirection();
+        }
+        if(forward.isLand()){
+            path = new Path(pos, pos.step(facing), facing, map);
+            pathQueue = path.findPath();
+            firstStep = pathQueue.dequeue();
+            queue.enqueue(pathQueue);
+            return firstStep.getDirection();
+        }
+        
+        if(left.isLand()){
+            path = new Path(pos, pos.step(facing.getLeft()), facing, map);
+            pathQueue = path.findPath();
+            firstStep = pathQueue.dequeue();
+            queue.enqueue(pathQueue);
+            return firstStep.getDirection();
+        }
+
+        path = new Path(pos, pos.step(facing.getBackwards()), facing, map);
+        pathQueue = path.findPath();
+        firstStep = pathQueue.dequeue();
+        queue.enqueue(pathQueue);
+        return firstStep.getDirection();
+    }
+
+    private Coords nearestUnscanned(Coords pos, Direction facing){
+        Coords tempPos = pos;
+        Coords closePos = pos.step(facing);
+        int closest = 1000;
+        MapValue check = map.checkCoords(tempPos);
+        int closeCheck = 0;
+        while(check.scanned()){
+            tempPos = tempPos.step(facing.getRight());
+            closeCheck++;
+            check = map.checkCoords(tempPos);
+            if(check == MapValue.OCEAN || check == MapValue.SCANNED_OCEAN){
+                break;
+            }
+            if(check == MapValue.GROUND || check == MapValue.UNKNOWN){
+                if(closeCheck < closest){
+                    closePos = tempPos;
+                    closest = closeCheck;
+                }
+            }
+        }
+        closeCheck = 0;
+        tempPos = pos;
+        while(check.scanned()){
+            tempPos = tempPos.step(facing);
+            closeCheck++;
+            check = map.checkCoords(tempPos);
+            if(check == MapValue.OCEAN || check == MapValue.SCANNED_OCEAN){
+                break;
+            }
+            if(check == MapValue.GROUND || check == MapValue.UNKNOWN){
+                if(closeCheck < closest){
+                    closePos = tempPos;
+                    closest = closeCheck;
+                }
+            }
+        }
+        closeCheck = 0;
+        tempPos = pos;
+        while(check.scanned()){
+            tempPos = tempPos.step(facing.getLeft());
+            closeCheck++;
+            check = map.checkCoords(tempPos);
+            if(check == MapValue.OCEAN || check == MapValue.SCANNED_OCEAN){
+                break;
+            }
+            if(check == MapValue.GROUND || check == MapValue.UNKNOWN){
+                if(closeCheck < closest){
+                    closePos = tempPos;
+                    closest = closeCheck;
+                }
+            }
+        }
+        closeCheck = 0;
+        tempPos = pos;
+        while(check.scanned()){
+            tempPos = tempPos.step(facing.getBackwards());
+            closeCheck++;
+            check = map.checkCoords(tempPos);
+            if(check == MapValue.OCEAN || check == MapValue.SCANNED_OCEAN){
+                break;
+            }
+            if(check == MapValue.GROUND || check == MapValue.UNKNOWN){
+                if(closeCheck < closest){
+                    closePos = tempPos;
+                    closest = closeCheck;
+                }
+            }
+        }
+        return closePos;
     }
 
     public Decision deriveDecision() {
@@ -174,7 +358,7 @@ public class Mover {
      * @return the forward movement decision derived from the specified direction
      * @throws NullPointerException if the specified direction is null
      */
-    public Decision deriveFly(Direction drxn){
+    public static Decision deriveFly(Direction drxn){
         switch(drxn){
             case Direction.NORTH:
                 return FLY_NORTH;
@@ -196,7 +380,7 @@ public class Mover {
      * @return the turning decision corresponding to the specified direction
      * @throws NullPointerException if the specified direction is null
      */
-    public Decision deriveTurn(Direction drxn){
+    public static Decision deriveTurn(Direction drxn){
         switch(drxn){
             case Direction.NORTH:
                 return TURN_NORTH;

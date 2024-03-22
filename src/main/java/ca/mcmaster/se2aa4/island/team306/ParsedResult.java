@@ -31,7 +31,9 @@ public class ParsedResult{
      * @return The list of map values.
      */
     public List<MapValue> getValues(){
-        if (values == null) return null;
+        if (values == null) {
+            return Collections.emptyList();
+        }
         return Collections.unmodifiableList(values);
     }
 

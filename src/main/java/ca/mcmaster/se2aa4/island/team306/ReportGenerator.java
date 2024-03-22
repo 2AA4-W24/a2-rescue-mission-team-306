@@ -1,7 +1,5 @@
 package ca.mcmaster.se2aa4.island.team306;
 
-import java.util.List;
-
 public class ReportGenerator {
     private String creekId;
 
@@ -10,6 +8,15 @@ public class ReportGenerator {
     }
 
     /**
+     * Get the ID of the nearest creek.
+     *
+     * @return the ID of the nearest creek.
+     */
+    public String getCreekId(){
+        return creekId;
+    }
+
+  /**
      * Sets the ID of the closest creek.
      *
      * @param id The ID of the closest creek.

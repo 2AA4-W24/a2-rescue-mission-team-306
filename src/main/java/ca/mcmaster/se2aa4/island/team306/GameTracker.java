@@ -1,14 +1,13 @@
 package ca.mcmaster.se2aa4.island.team306;
 
-
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-
 public class GameTracker {
     private GameState state;
-    private Drone drone;
-    private Map map;
-    private DecisionQueue queue;
+    private final Drone drone;
+    private final Map map;
+    private final DecisionQueue queue;
+    private boolean complete_loop_1;
+    private boolean complete_loop_2;
+
 
     /**
      * Constructs a GameTracker object with the given drone, map, and decision queue.
@@ -22,6 +21,8 @@ public class GameTracker {
         this.map = map;
         this.queue = queue;
         this.state = GameState.SETUP;
+        complete_loop_1 = false;
+        complete_loop_2 = false;
     }
 
     /**
@@ -41,6 +42,14 @@ public class GameTracker {
         }
     }
 
+    public void completeLoop(){
+        if(state == GameState.FOLLOW_COAST_OUTSIDE){
+            complete_loop_1 = true;
+        }else{
+            complete_loop_2 = true;
+        }
+    }
+
     public void succeedMission(){
         this.state = GameState.SUCCESS;
     }
@@ -50,36 +59,26 @@ public class GameTracker {
     }
 
     private boolean shouldProgress(){
-        switch (state) {
-            case GameState.SETUP:
-                return this.queue.isEmpty() && this.map.nextValue() != MapValue.UNKNOWN;
-            case GameState.FIND_ISLAND:
+
+        return switch (state) {
+            case GameState.SETUP -> this.queue.isEmpty() && this.map.nextValue() != MapValue.UNKNOWN;
+            case GameState.FIND_ISLAND -> {
                 MapValue current = map.checkCoords(drone.getPosition());
-                return current.isLand();
-            case GameState.SEARCH:
-                // MapValue goal = MapValue.EMERGENCY_SITE; // Switch to emergency site after MVP
-                // return this.map.findNearestTile(goal) != null;
-            default:
-                return false;
-        }
-    }
-
-
-    private void testBounds(){
-        if (state == GameState.SETUP) {
-            Logger logger = LogManager.getLogger();
-            for (Direction direction : Direction.values()) {
-                Integer boundBox = map.getBound(direction);
-                int bound = boundBox != null ? boundBox : Integer.MIN_VALUE;
-                logger.info(String.format("%c: %d", direction.toChar(), bound));
+                yield current.isLand();
             }
-        }
+            case GameState.FOLLOW_COAST_OUTSIDE -> complete_loop_1;
+            case GameState.FOLLOW_COAST_INSIDE -> complete_loop_2;
+            case GameState.SEARCH -> {
+                Coords site = map.findNearestTile(MapValue.EMERGENCY_SITE);
+                yield site != null;
+            }
+            default -> false;
+        };
     }
+
 
     public void update(){
         if (shouldProgress()) {
-            // Uncomment to test bounds
-            //testBounds();
             progressState();
         }
     }

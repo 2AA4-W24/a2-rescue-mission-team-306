@@ -49,6 +49,8 @@ public class Radar implements Scanner{
                 this.towards = initHeading;
                 return true;
             case GameState.FIND_ISLAND:
+            case GameState.FOLLOW_COAST_OUTSIDE:
+            case GameState.FOLLOW_COAST_INSIDE:
             case GameState.SEARCH:
                 scanQueue.clear();
                     if(map.checkCoords(left) == MapValue.UNKNOWN){
@@ -90,18 +92,16 @@ public class Radar implements Scanner{
      * @return The decision object for radar scanning in the current direction.
      */
     public Decision deriveDecision(){
-       switch(scanTowards()){
-            case Direction.NORTH:
-                return SCAN_NORTH;
-            case Direction.EAST:
-                return SCAN_EAST;
-            case Direction.SOUTH:
-                return SCAN_SOUTH;
-            case Direction.WEST:
-                return SCAN_WEST;
-            default:
-                throw new NullPointerException();
-       }
+       return deriveDecision(scanTowards());
+    }
+
+    public static Decision deriveDecision(Direction direction){
+        return switch (direction) {
+            case Direction.NORTH -> SCAN_NORTH;
+            case Direction.EAST -> SCAN_EAST;
+            case Direction.SOUTH -> SCAN_SOUTH;
+            case Direction.WEST -> SCAN_WEST;
+        };
     }
 
     
