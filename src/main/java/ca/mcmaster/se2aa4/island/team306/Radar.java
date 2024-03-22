@@ -17,7 +17,7 @@ public class Radar implements Scanner{
     private Direction towards;
     private DecisionQueue scanQueue;
 
-    public Radar(Drone drone, Map map, DecisionQueue queue, GameTracker tracker){
+    public Radar(Drone drone, Map map, DecisionQueue queue, GameTracker tracker){ //constructor
         this.drone = drone;
         this.map = map;
         this.queue = queue;
@@ -26,8 +26,11 @@ public class Radar implements Scanner{
         this.scanQueue = new DecisionQueue();
     }
 
-
-
+    /**
+     * Performs radar scanning based on the current game state.
+     *
+     * @return true if scanning is needed based on the game state, false otherwise.
+     */
     public boolean scan(){
         Direction initHeading = drone.getHeading();
         Coords pos = drone.getPosition();
@@ -74,10 +77,20 @@ public class Radar implements Scanner{
         }
     }
 
+    /**
+     * Returns the direction towards which the radar is scanning.
+     *
+     * @return The direction towards which the radar is scanning.
+     */
     public Direction scanTowards(){
         return this.towards;
     }
 
+    /**
+     * Derives the decision associated with the current scanning direction.
+     *
+     * @return The decision object for radar scanning in the current direction.
+     */
     public Decision deriveDecision(){
        return deriveDecision(scanTowards());
     }

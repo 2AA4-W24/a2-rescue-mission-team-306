@@ -23,10 +23,22 @@ public class ParsedResultBuilder {
         this.values = new ArrayList<>();
     }
 
+    /**
+     * Populates the builder with results from a JSON string.
+     *
+     * @param results The JSON string containing decision results.
+     * @return This ParsedResultBuilder instance.
+     */
     public ParsedResultBuilder populate(String results){
         return populate(new JSONObject(results));
     }
 
+    /**
+     * Populates the builder with results from a JSONObject.
+     *
+     * @param results The JSONObject containing decision results.
+     * @return This ParsedResultBuilder instance.
+     */
     public ParsedResultBuilder populate(JSONObject results){
         this.cost = results.getInt("cost");
 
@@ -91,6 +103,12 @@ public class ParsedResultBuilder {
         values.add(value);
     }
 
+    /**
+     * Builds and returns a ParsedResult object based on the populated builder.
+     *
+     * @return The built ParsedResult object.
+     * @throws AssertionError if the builder does not have any results.
+     */
     public ParsedResult build(){
         if(hasResults){
             return new ParsedResult(direction, decisionType, values, id, cost, range);

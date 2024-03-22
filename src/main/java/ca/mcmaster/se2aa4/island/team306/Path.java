@@ -10,6 +10,14 @@ public class Path {
     private final Coords end;
     private final Map map;
 
+    /**
+     * Constructs a new Path object.
+     *
+     * @param start The starting coordinates of the path.
+     * @param end The ending coordinates of the path.
+     * @param heading The initial heading of the path.
+     * @param map The map on which the path is constructed.
+     */
     public Path(Coords start, Coords end, Direction heading, Map map){
         this.heading = heading;
         this.start = this.pos = start;
@@ -17,6 +25,11 @@ public class Path {
         this.map = map;
     }
 
+    /**
+     * Finds the sequence of decisions to follow the path.
+     *
+     * @return A decision queue representing the path to be followed.
+     */
     public DecisionQueue findPath(){
         DecisionQueue queue = new DecisionQueue();
         Direction goTowards;

@@ -25,6 +25,11 @@ public class ParsedResult{
         this.range = range;
     }
 
+    /**
+     * Returns the list of map values associated with the parsed result.
+     *
+     * @return The list of map values.
+     */
     public List<MapValue> getValues(){
         if (values == null) {
             return Collections.emptyList();
@@ -51,7 +56,12 @@ public class ParsedResult{
     public int getRange(){
         return this.range;
     }
-
+    
+    /**
+     * Checks if the parsed result indicates the presence of land.
+     *
+     * @return True if land is found in the parsed result, false otherwise.
+     */
     public boolean foundLand(){
         return this.values.getLast().equals(MapValue.GROUND);
     }

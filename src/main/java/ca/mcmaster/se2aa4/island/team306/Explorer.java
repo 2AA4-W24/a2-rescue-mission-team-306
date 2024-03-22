@@ -20,6 +20,11 @@ public class Explorer implements IExplorerRaid {
 
     private ReportGenerator generator;
 
+    /**
+     * Initializes the exploration command center with the given information.
+     *
+     * @param s The initialization information containing the heading direction and battery level.
+     */
     @Override
     public void initialize(String s) {
         logger.info("** Initializing the Exploration Command Center");
@@ -40,6 +45,11 @@ public class Explorer implements IExplorerRaid {
 
     }
 
+    /**
+     * Takes a decision based on the current state of the exploration.
+     *
+     * @return A string representing the decision to be taken.
+     */
     @Override
     public String takeDecision() {
         JSONObject decisionJson = new JSONObject();
@@ -78,6 +88,11 @@ public class Explorer implements IExplorerRaid {
         return decisionJson.toString();
     }
 
+    /**
+     * Acknowledges the results obtained from the exploration.
+     *
+     * @param s The results obtained from the exploration.
+     */
     @Override
     public void acknowledgeResults(String s) {
         ParsedResult r = ParsedResult.builder(prevDecision).populate(s).build();
@@ -85,13 +100,16 @@ public class Explorer implements IExplorerRaid {
         map.updateStatus(r);
     }
 
+    /**
+     * Delivers the final report of the exploration.
+     *
+     * @return A string representing the final report of the exploration.
+     */
     @Override
     public String deliverFinalReport() {
         String dump =  generator.deliverReport();
         logger.info(dump);
         return dump;
     }
-
-
-
+    
 }

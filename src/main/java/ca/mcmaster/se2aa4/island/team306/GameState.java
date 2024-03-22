@@ -9,6 +9,11 @@ public enum GameState {
     SUCCESS, // Mission was a success, abort
     FAILURE; // Mission was a failure, abort
 
+    /**
+     * Returns the next state in the sequence of states.
+     *
+     * @return The next state in the sequence, or the same state if no next state is defined.
+     */
     public GameState next(){
         return switch (this) {
             case SETUP -> FIND_ISLAND;
