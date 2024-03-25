@@ -15,7 +15,7 @@ This product is an _exploration command center_ for the [Island](https://ace-des
 
 ### Strategy description
 
-The exploration strategy is for now to stop exploring as soon as we start. We stay safe and fly back to base immediately.
+The exploration strategy is broken into 3 stages. The first stage is to fly straight across the map until our radar picks up ground. Then we follow the coastline of the islnad to locate all of the creeks. Finally, we spiral inwards towards the center of the island until the emergency site is found and return the closest creek.
 
 ## How to compile, run and deploy
 
